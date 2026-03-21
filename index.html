@@ -69,6 +69,7 @@
     <div class="row" style="margin-top:10px">
       <button class="ok" id="submitBtn" disabled>提交</button>
       <button class="pri" id="nextBtn" disabled>下一题</button>
+      <button class="ghost" id="speakBtn" disabled>🔊 读单词</button>
       <button class="warn" id="restartBtn" disabled>重开本轮</button>
       <button class="ghost" id="downloadWrongBtn" disabled>下载错词本</button>
     </div>
@@ -103,7 +104,7 @@ let className="", studentName="", total=20;
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
-const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), restartBtn=$("restartBtn"), downloadWrongBtn=$("downloadWrongBtn");
+const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), downloadWrongBtn=$("downloadWrongBtn");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 function pick(a,n){return shuffle([...a]).slice(0,n)}
@@ -117,7 +118,7 @@ function startGame(){
   total = Number($("questionCount").value || 20);
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
-  submitBtn.disabled=false; restartBtn.disabled=false; downloadWrongBtn.disabled=false;
+  submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; downloadWrongBtn.disabled=false;
   showQ();
 }
 
@@ -140,6 +141,7 @@ function showQ(){
     spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }
   renderMeta();
+  speakCurrentWord();
 }
 
 function renderChoice(correct,distr){
@@ -175,13 +177,26 @@ function submit(){
 function nextQ(){ idx++; showQ(); }
 function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
 
+function speakCurrentWord(){
+  if(!current || !("speechSynthesis" in window)) return;
+  const [en] = current;
+  const text = String(en || "").trim();
+  if(!text) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "en-US";
+  utter.rate = 0.9;
+  utter.pitch = 1.0;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+}
+
 function renderMeta(){ meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName}`; }
 
 function finish(){
   let level="💪 再练一轮会更稳"; if(score>=120) level="🏆 词汇达人"; else if(score>=90) level="🌟 掌握不错";
   q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}`;
   opts.innerHTML=""; spellWrap.style.display="none"; fb.textContent=`错题数：${wrongItems.length}`;
-  submitBtn.disabled=true; nextBtn.disabled=true;
+  submitBtn.disabled=true; nextBtn.disabled=true; speakBtn.disabled=true;
   saveRank(); renderRank();
 }
 
@@ -235,6 +250,7 @@ function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<'
 $("startBtn").onclick=startGame;
 submitBtn.onclick=submit;
 nextBtn.onclick=nextQ;
+speakBtn.onclick=speakCurrentWord;
 restartBtn.onclick=restartRound;
 downloadWrongBtn.onclick=downloadWrong;
 $("importBtn").onclick=importBank;
