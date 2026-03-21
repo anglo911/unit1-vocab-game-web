@@ -44,7 +44,12 @@
         <input id="className" placeholder="班级名（如：七1班）" style="width:180px" />
         <input id="studentName" placeholder="学生姓名" style="width:160px" />
         <select id="questionCount"><option>10</option><option selected>20</option><option>30</option></select>
-        <select id="unitSelect"><option value="unit1" selected>题库：Unit 1</option><option value="unit3">题库：Unit 3</option><option value="mix">题库：Unit1+3 混合</option></select>
+        <select id="unitSelect">
+          <option value="unit1" selected>题库：Unit 1</option><option value="unit2">题库：Unit 2</option><option value="unit3">题库：Unit 3</option><option value="unit4">题库：Unit 4</option>
+          <option value="unit5">题库：Unit 5</option><option value="unit6">题库：Unit 6</option><option value="unit7">题库：Unit 7</option><option value="unit8">题库：Unit 8</option>
+          <option value="unit9">题库：Unit 9</option><option value="unit10">题库：Unit 10</option><option value="unit11">题库：Unit 11</option><option value="unit12">题库：Unit 12</option>
+          <option value="mix">题库：Unit1~12 混合</option>
+        </select>
         <select id="difficulty"><option value="easy">简单</option><option value="normal" selected>标准</option><option value="hard">困难</option></select>
         <button class="pri" id="startBtn">开始闯关</button>
       </div>
@@ -106,22 +111,105 @@ const UNIT1_WORDS = [
   ["name","名字；名称"],["nice","令人愉快的；宜人的"],["to","用于动词原形前，构成不定式"],["meet","遇见；相逢"],["too","也；又；太"],
   ["your","你的；你们的"],["his","他的"],["her","她的"],["and","和；又；而"],["yes","是的"],["no","不；不是"],["not","不；没有"],
   ["zero","零"],["one","一"],["two","二"],["three","三"],["four","四"],["five","五"],["six","六"],["seven","七"],["eight","八"],["nine","九"],
-  ["telephone","电话；电话机"],["number","号码；数字"],["phone","电话；电话机"],["first","第一；首先"],["last","最后的；末尾的"],["friend","朋友"],
-  ["China","中国"],["middle","中间的"],["school","学校"],["middle school","中学；初中"],["first name","名字"],["last name","姓"],
-  ["Gina","吉娜（女名）"],["Jenny","珍妮（女名）"],["Brown","布朗（姓）"],["Miller","米勒（姓）"]
+  ["telephone","电话；电话机"],["number","号码；数字"],["phone","电话；电话机"],["first","第一；首先"],["last","最后的；末尾的"],["friend","朋友"]
 ];
 
-// 人教版七上 Unit 3（常见核心词）
+const UNIT2_WORDS = [
+  ["sister","姐妹"],["mother","母亲"],["father","父亲"],["parent","父(母)亲"],["brother","兄；弟"],
+  ["grandmother","(外)祖母"],["grandfather","(外)祖父"],["grandparent","(外)祖父(母)"],["family","家庭"],["those","那些"],
+  ["who","谁"],["these","这些"],["they","他(她、它)们"],["well","嗯；好吧"],["have","经受；经历"],
+  ["day","一天；一日"],["bye","再见"],["son","儿子"],["cousin","堂(表)兄弟姐妹"],["photo","照片"],
+  ["picture","图画；照片"],["here","这里"],["of","属于(某人或某物)；关于"],["next","下一个(的)"],["girl","女孩"]
+];
+
 const UNIT3_WORDS = [
   ["this","这；这个"],["that","那；那个"],["these","这些"],["those","那些"],["schoolbag","书包"],
   ["book","书"],["dictionary","词典"],["pen","钢笔"],["pencil","铅笔"],["eraser","橡皮"],
-  ["ruler","尺；直尺"],["pencil box","文具盒"],["mine","我的（名词性物主代词）"],["his","他的"],["hers","她的"],
-  ["yours","你的；你们的"],["excuse","原谅；宽恕"],["me","我（宾格）"],["thank","感谢"],["teacher","老师"],
-  ["about","关于"],["what about","……怎么样"],["for","为了；给；对"],["welcome","受欢迎的"],["help","帮助"],
-  ["ask","询问；请求"],["find","找到"],["some","一些"],["classroom","教室"],["e-mail","电子邮件"],
-  ["at","在（某处）"],["call","给……打电话"],["must","必须"],["lost","丢失的"],["set","一套；一副"],
-  ["ID card","学生卡；身份证"],["computer game","电子游戏"],["notebook","笔记本"],["ring","戒指"],["bag","袋；包"]
+  ["ruler","尺；直尺"],["pencil box","文具盒"],["mine","我的（名词性物主代词）"],["hers","她的"],["yours","你的；你们的"],
+  ["excuse","原谅；宽恕"],["me","我（宾格）"],["thank","感谢"],["teacher","老师"],["about","关于"],
+  ["for","为了；给；对"],["welcome","受欢迎的"],["help","帮助"],["find","找到"],["ask","询问；请求"]
 ];
+
+const UNIT4_WORDS = [
+  ["where","在哪里"],["table","桌子"],["bed","床"],["bookcase","书架"],["sofa","沙发"],
+  ["chair","椅子"],["on","在……上"],["under","在……下"],["come","来；来到"],["desk","书桌"],
+  ["think","认为；想"],["room","房间"],["their","他(她、它)们的"],["hat","帽子"],["head","头"],
+  ["yeah","是的；对"],["know","知道；了解"],["radio","收音机"],["clock","时钟"],["tape","磁带"],
+  ["player","播放机"],["model","模型"],["plane","飞机"],["tidy","整洁的"],["everywhere","到处"],
+  ["always","总是"],["our","我们的"],["in","在……里"],["box","箱；盒"],["English book","英语书"]
+];
+
+// 七年级下册 Unit 5~12（常见核心词）
+const UNIT5_WORDS = [
+  ["panda","熊猫"],["zoo","动物园"],["tiger","老虎"],["elephant","大象"],["koala","考拉"],
+  ["lion","狮子"],["giraffe","长颈鹿"],["animal","动物"],["cute","可爱的"],["lazy","懒惰的"],
+  ["smart","聪明的"],["beautiful","美丽的"],["kind of","有点儿"],["Australia","澳大利亚"],["South Africa","南非"],
+  ["pet","宠物"],["leg","腿"],["sleep","睡觉"],["friendly","友好的"],["save","拯救"]
+];
+
+const UNIT6_WORDS = [
+  ["newspaper","报纸"],["use","使用"],["soup","汤"],["wash","洗"],["movie","电影"],
+  ["just","只是；恰好"],["house","房子"],["drink","喝"],["tea","茶"],["tomorrow","明天"],
+  ["pool","游泳池"],["shop","商店"],["supermarket","超市"],["man","男人"],["race","竞赛"],
+  ["study","学习"],["state","州"],["American","美国的"],["dragon","龙"],["wish","希望"]
+];
+
+const UNIT7_WORDS = [
+  ["rain","下雨"],["windy","多风的"],["cloudy","多云的"],["sunny","晴朗的"],["snow","下雪"],
+  ["weather","天气"],["cook","做饭"],["bad","坏的"],["park","公园"],["message","信息"],
+  ["him","他（宾格）"],["could","能；可以"],["back","回来"],["problem","问题"],["again","再一次"],
+  ["dry","干燥的"],["cold","冷的"],["hot","热的"],["warm","温暖的"],["visit","拜访"]
+];
+
+const UNIT8_WORDS = [
+  ["post office","邮局"],["police station","警察局"],["hotel","旅馆"],["restaurant","餐馆"],["bank","银行"],
+  ["hospital","医院"],["street","街道"],["pay","付费"],["near","在附近"],["across","在对面"],
+  ["behind","在后面"],["town","镇；市镇"],["around","在周围"],["north","北；北方"],["along","沿着"],
+  ["turn","转向"],["left","左边"],["right","右边"],["crossing","十字路口"],["spend","花费"]
+];
+
+const UNIT9_WORDS = [
+  ["curly","卷曲的"],["straight","直的"],["tall","高的"],["medium","中等的"],["height","身高"],
+  ["thin","瘦的"],["heavy","重的"],["build","体格"],["cinema","电影院"],["glasses","眼镜"],
+  ["later","以后"],["handsome","英俊的"],["actor","演员"],["actress","女演员"],["person","人"],
+  ["nose","鼻子"],["mouth","嘴"],["face","脸"],["round","圆形的"],["real","真正的"]
+];
+
+const UNIT10_WORDS = [
+  ["noodle","面条"],["beef","牛肉"],["mutton","羊肉"],["cabbage","卷心菜"],["potato","土豆"],
+  ["special","特色菜"],["would","愿意"],["yet","还；仍然"],["large","大号的"],["order","点菜"],
+  ["size","尺寸"],["bowl","碗"],["tofu","豆腐"],["meat","肉"],["dumpling","饺子"],
+  ["porridge","粥"],["onion","洋葱"],["fish","鱼"],["pancake","烙饼"],["world","世界"]
+];
+
+const UNIT11_WORDS = [
+  ["milk","牛奶"],["cow","奶牛"],["horse","马"],["feed","喂养"],["farmer","农民"],
+  ["quite","相当"],["anything","任何事物"],["grow","种植；生长"],["farm","农场"],["pick","采摘"],
+  ["excellent","极好的"],["countryside","乡村"],["yesterday","昨天"],["flower","花"],["worry","担心"],
+  ["luckily","幸运地"],["museum","博物馆"],["fire","火"],["painting","绘画"],["exciting","令人激动的"]
+];
+
+const UNIT12_WORDS = [
+  ["camp","扎营"],["lake","湖"],["beach","海滩"],["sheep","羊"],["as","作为；像"],
+  ["natural","自然的"],["butterfly","蝴蝶"],["visitor","游客"],["tired","疲倦的"],["stay","停留"],
+  ["mouse","老鼠"],["baby","幼小的"],["language","语言"],["kite","风筝"],["moon","月亮"],
+  ["surprise","惊奇"],["snake","蛇"],["jump","跳"],["forest","森林"],["ear","耳朵"]
+];
+
+const ALL_UNITS = {
+  unit1: UNIT1_WORDS,
+  unit2: UNIT2_WORDS,
+  unit3: UNIT3_WORDS,
+  unit4: UNIT4_WORDS,
+  unit5: UNIT5_WORDS,
+  unit6: UNIT6_WORDS,
+  unit7: UNIT7_WORDS,
+  unit8: UNIT8_WORDS,
+  unit9: UNIT9_WORDS,
+  unit10: UNIT10_WORDS,
+  unit11: UNIT11_WORDS,
+  unit12: UNIT12_WORDS,
+};
 
 const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
@@ -145,9 +233,11 @@ function updateBankStat(){ $("bankStat").textContent = `当前词条：${WORDS.l
 updateBankStat();
 
 function applyUnitBank(){
-  if(selectedUnit==='unit1') WORDS=[...UNIT1_WORDS];
-  else if(selectedUnit==='unit3') WORDS=[...UNIT3_WORDS];
-  else WORDS=[...UNIT1_WORDS, ...UNIT3_WORDS];
+  if(selectedUnit==='mix'){
+    WORDS = Object.values(ALL_UNITS).flat();
+  }else{
+    WORDS = [...(ALL_UNITS[selectedUnit] || UNIT1_WORDS)];
+  }
   updateBankStat();
 }
 
