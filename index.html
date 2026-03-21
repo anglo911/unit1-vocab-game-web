@@ -44,6 +44,7 @@
         <input id="className" placeholder="班级名（如：七1班）" style="width:180px" />
         <input id="studentName" placeholder="学生姓名" style="width:160px" />
         <select id="questionCount"><option>10</option><option selected>20</option><option>30</option></select>
+        <select id="difficulty"><option value="easy">简单</option><option value="normal" selected>标准</option><option value="hard">困难</option></select>
         <button class="pri" id="startBtn">开始闯关</button>
       </div>
       <div class="muted">建议：投屏时先录入班级和学生姓名，便于成绩榜统计。</div>
@@ -113,6 +114,7 @@ let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false
 let className="", studentName="", total=20;
 let combo=0, bestCombo=0, stage=1;
 let timer=15, timerId=null;
+let difficulty='normal';
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
@@ -129,6 +131,7 @@ function startGame(){
   className = $("className").value.trim() || "未命名班级";
   studentName = $("studentName").value.trim() || "匿名学生";
   total = Number($("questionCount").value || 20);
+  difficulty = $("difficulty").value || 'normal';
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
   combo=0; bestCombo=0; stage=1;
@@ -146,16 +149,18 @@ function showQ(){
 
   const [en,cn] = current;
   if(mode==="cn2en"){
-    q.innerHTML = `【中译英】把中文选成英文：<br><b>${cn}</b>`;
+    q.innerHTML = `【中译英（基础）】把中文选成英文：<br><b>${cn}</b>`;
     renderChoice(en, WORDS.filter(w=>w[0]!==en).map(w=>w[0]));
   }else if(mode==="en2cn"){
-    q.innerHTML = `【英译中】选择英文词义：<br><b>${en}</b>`;
+    q.innerHTML = `【英译中（基础）】选择英文词义：<br><b>${en}</b>`;
     renderChoice(cn, WORDS.filter(w=>w[1]!==cn).map(w=>w[1]));
   }else{
-    q.innerHTML = `【拼写题】请根据中文写出英文：<br><b>${cn}</b>`;
+    q.innerHTML = `【拼写题（进阶）】请根据中文写出英文：<br><b>${cn}</b>`;
     spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }
-  timer = 15;
+  const baseTimer = difficulty==='easy' ? 20 : (difficulty==='hard' ? 12 : 15);
+  const stagePenalty = mode==='spell' ? Math.max(0, stage-1) : 0;
+  timer = Math.max(8, baseTimer - stagePenalty);
   startTimer();
   renderMeta();
   speakCurrentWord();
@@ -163,7 +168,8 @@ function showQ(){
 
 function renderChoice(correct,distr){
   spellWrap.style.display="none"; opts.style.display="grid";
-  const options = shuffle([correct,...pick(distr,3)]);
+  const optionsCount = difficulty==='easy' ? 3 : 4;
+  const options = shuffle([correct,...pick(distr, optionsCount-1)]);
   options.forEach(t=>{
     const label=document.createElement("label"); label.className="opt";
     label.innerHTML=`<input type="radio" name="opt" value="${escapeHtml(t)}"> ${escapeHtml(t)}`;
@@ -171,7 +177,12 @@ function renderChoice(correct,distr){
   });
 }
 
-function randomMode(){ const r=Math.random(); return r<0.4?"cn2en":r<0.8?"en2cn":"spell"; }
+function randomMode(){
+  const r=Math.random();
+  if(difficulty==='easy') return r<0.45?"cn2en":r<0.9?"en2cn":"spell";      // 拼写少
+  if(difficulty==='hard') return r<0.2?"cn2en":r<0.4?"en2cn":"spell";       // 拼写多
+  return r<0.35?"cn2en":r<0.7?"en2cn":"spell";                               // 标准
+}
 
 function submit(){
   if(!started) return;
@@ -189,11 +200,12 @@ function submit(){
   if(right){
     combo += 1;
     bestCombo = Math.max(bestCombo, combo);
-    const base=(mode==="spell"?8:5);
+    const base=(mode==="spell"?12:4);  // 选择题低分、拼写题高分
+    const diffBonus = difficulty==='hard' ? 2 : (difficulty==='easy' ? 0 : 1);
     const bonus=Math.min(10, Math.floor(combo/2));
-    const add=base+bonus;
+    const add=base+bonus+diffBonus;
     score+=add;
-    fb.textContent=`✅ 正确 +${add}（连击奖励 +${bonus}）`;
+    fb.textContent=`✅ 正确 +${add}（连击 +${bonus}，难度 +${diffBonus}）`;
     fb.className="fb good";
   }
   else {
@@ -247,7 +259,7 @@ function speakCurrentWord(){
 }
 
 function renderMeta(){
-  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName}`;
+  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · 难度 ${difficulty}`;
   stagePill.textContent = `关卡 Lv.${stage}`;
   comboPill.textContent = `连击 x${combo}`;
   const pct = pool.length ? Math.round((idx / pool.length) * 100) : 0;
@@ -256,7 +268,10 @@ function renderMeta(){
 
 function finish(){
   stopTimer();
-  let level="💪 再练一轮会更稳"; if(score>=120) level="🏆 词汇达人"; else if(score>=90) level="🌟 掌握不错";
+  let level="💪 再练一轮会更稳";
+  if(difficulty==='hard'){ if(score>=170) level="🏆 大师级"; else if(score>=130) level="🌟 高阶通过"; }
+  else if(difficulty==='easy'){ if(score>=90) level="🏆 基础扎实"; else if(score>=65) level="🌟 入门通过"; }
+  else { if(score>=140) level="🏆 词汇达人"; else if(score>=100) level="🌟 掌握不错"; }
   q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}<br>🔥 最高连击：x${bestCombo}`;
   opts.innerHTML=""; spellWrap.style.display="none"; fb.textContent=`错题数：${wrongItems.length}`;
   submitBtn.disabled=true; nextBtn.disabled=true; speakBtn.disabled=true;
