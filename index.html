@@ -72,6 +72,7 @@
         <button class="pri" id="speakStudyBtn">🔊 拼读发音</button>
       </div>
       <div id="studyProgress" class="muted">学习进度：未开始</div>
+      <div class="bar" style="width:100%;max-width:420px;margin-top:6px"><span id="studyProgressBar" style="width:0%"></span></div>
       <div id="studyWord" style="font-size:28px;font-weight:700;margin-top:6px">-</div>
       <div id="studyPhonics" class="muted" style="font-size:18px;margin-top:4px">拼读：-</div>
       <div id="studyCn" class="muted" style="margin-top:4px">中文：-</div>
@@ -238,7 +239,7 @@ const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const studyUnit=$("studyUnit"), startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
-const studyProgress=$("studyProgress"), studyWord=$("studyWord"), studyPhonics=$("studyPhonics"), studyCn=$("studyCn");
+const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyPhonics=$("studyPhonics"), studyCn=$("studyCn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
@@ -277,13 +278,16 @@ function phonicsBreak(word){
 function renderStudyCard(){
   if(!studyList.length){
     studyProgress.textContent = '学习进度：当前题库暂无词';
+    studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
     studyPhonics.textContent = '拼读：-';
     studyCn.textContent = '中文：-';
     return;
   }
   const [en, cn] = studyList[studyIdx];
+  const pct = Math.round(((studyIdx+1)/studyList.length)*100);
   studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(studyUnit.value||'unit1').toUpperCase()}`;
+  studyProgressBar.style.width = `${pct}%`;
   studyWord.textContent = en;
   studyPhonics.textContent = `拼读：${phonicsBreak(en)}`;
   studyCn.textContent = `中文：${cn}`;
@@ -305,6 +309,7 @@ function startStudy(){
   studyIdx = 0;
   renderStudyCard();
   speakStudyWord();
+  startStudyBtn.textContent = '从第一个重学';
 }
 
 function prevStudy(){
@@ -315,7 +320,15 @@ function prevStudy(){
 
 function nextStudy(){
   if(!studyList.length) return;
-  studyIdx = (studyIdx + 1) % studyList.length;
+  if(studyIdx >= studyList.length - 1){
+    // 学完后自动切到闯关（按当前学习题库）
+    $("unitSelect").value = studyUnit.value;
+    className = $("className").value.trim() || "未命名班级";
+    studentName = $("studentName").value.trim() || "匿名学生";
+    startGame();
+    return;
+  }
+  studyIdx += 1;
   renderStudyCard();
   speakStudyWord();
 }
