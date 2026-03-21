@@ -57,14 +57,17 @@
     </div>
 
     <div class="card">
-      <h2>2) 题库导入（可选）</h2>
-      <div class="muted">格式：每行 <code>英文,中文</code>，例如：<code>name,名字；名称</code></div>
-      <textarea id="bankInput" placeholder="不填则使用默认 Unit 1 词表"></textarea>
-      <div class="row">
-        <button class="ok" id="importBtn">导入题库</button>
-        <button class="ghost" id="resetBankBtn">恢复默认词表</button>
-        <span id="bankStat" class="muted"></span>
+      <h2>2) 生词学习（可选）</h2>
+      <div class="muted">添加课堂生词后，会自动合并到当前题库；也可以只练生词。</div>
+      <div class="row" style="margin-bottom:8px">
+        <input id="newWordEn" placeholder="英文（如: notebook）" style="width:220px" />
+        <input id="newWordCn" placeholder="中文（如: 笔记本）" style="width:220px" />
+        <button class="ok" id="addWordBtn">加入生词</button>
+        <button class="ghost" id="practiceNewBtn">仅练生词</button>
+        <button class="warn" id="clearWordBtn">清空生词</button>
       </div>
+      <div id="newWordList" class="muted">当前生词：暂无</div>
+      <div class="muted" id="bankStat" style="margin-top:6px"></div>
     </div>
   </div>
 
@@ -220,23 +223,80 @@ let timer=15, timerId=null;
 let difficulty='normal';
 let selectedUnit='unit1';
 let isRedoMode=false;
+let newWords=[];
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
+const addWordBtn=$("addWordBtn"), practiceNewBtn=$("practiceNewBtn"), clearWordBtn=$("clearWordBtn"), newWordEn=$("newWordEn"), newWordCn=$("newWordCn"), newWordList=$("newWordList");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 function pick(a,n){return shuffle([...a]).slice(0,n)}
 
-function updateBankStat(){ $("bankStat").textContent = `当前词条：${WORDS.length}` }
+function updateBankStat(){ $("bankStat").textContent = `当前词条：${WORDS.length}（含生词 ${newWords.length}）` }
 updateBankStat();
+
+function renderNewWords(){
+  if(!newWords.length){
+    newWordList.textContent = '当前生词：暂无';
+    return;
+  }
+  const preview = newWords.slice(0, 8).map(w=>`${w[0]}(${w[1]})`).join('、');
+  newWordList.textContent = `当前生词（${newWords.length}）：${preview}${newWords.length>8?' ...':''}`;
+}
+
+function addNewWord(){
+  const en = (newWordEn.value||'').trim();
+  const cn = (newWordCn.value||'').trim();
+  if(!en || !cn) return alert('请先填写英文和中文');
+  const key = `${en.toLowerCase()}|||${cn}`;
+  const exists = newWords.some(w => `${w[0].toLowerCase()}|||${w[1]}` === key);
+  if(!exists) newWords.push([en,cn]);
+  newWordEn.value=''; newWordCn.value='';
+  applyUnitBank();
+  renderNewWords();
+}
+
+function practiceOnlyNewWords(){
+  if(!newWords.length) return alert('当前还没有生词');
+  WORDS = [...newWords];
+  selectedUnit = 'new';
+  total = Number($("questionCount").value || 20);
+  pool = pick(WORDS, Math.min(total, WORDS.length));
+  idx=0; score=0; wrongItems=[]; started=true;
+  combo=0; bestCombo=0; stage=1; isRedoMode=false;
+  submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; redoWrongBtn.disabled=false; downloadWrongBtn.disabled=false;
+  updateBankStat();
+  renderMeta();
+  showQ();
+}
+
+function clearNewWords(){
+  if(!newWords.length) return;
+  if(!confirm('确认清空生词？')) return;
+  newWords = [];
+  applyUnitBank();
+  renderNewWords();
+}
+
+renderNewWords();
 
 function applyUnitBank(){
   if(selectedUnit==='mix'){
     WORDS = Object.values(ALL_UNITS).flat();
+  }else if(selectedUnit==='new'){
+    WORDS = [...newWords];
   }else{
     WORDS = [...(ALL_UNITS[selectedUnit] || UNIT1_WORDS)];
+  }
+  // 默认把生词并入当前题库
+  if(selectedUnit!=='new' && newWords.length){
+    const set = new Set(WORDS.map(w => `${w[0].toLowerCase()}|||${w[1]}`));
+    newWords.forEach(w=>{
+      const k = `${w[0].toLowerCase()}|||${w[1]}`;
+      if(!set.has(k)) WORDS.push(w);
+    });
   }
   updateBankStat();
 }
@@ -509,7 +569,7 @@ function importBank(){
   WORDS=parsed; updateBankStat(); alert(`导入成功：${parsed.length} 条`);
 }
 
-function resetBank(){ selectedUnit = $("unitSelect").value || 'unit1'; applyUnitBank(); alert(`已恢复默认词表：${selectedUnit.toUpperCase()}`); }
+function resetBank(){ selectedUnit = $("unitSelect").value || 'unit1'; applyUnitBank(); renderNewWords(); alert(`已按当前选择加载词表：${selectedUnit.toUpperCase()}`); }
 function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 $("startBtn").onclick=startGame;
@@ -519,11 +579,14 @@ speakBtn.onclick=speakCurrentWord;
 restartBtn.onclick=restartRound;
 redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
-$("importBtn").onclick=importBank;
-$("resetBankBtn").onclick=resetBank;
+addWordBtn.onclick=addNewWord;
+practiceNewBtn.onclick=practiceOnlyNewWords;
+clearWordBtn.onclick=clearNewWords;
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
+newWordEn.addEventListener('keydown',e=>{if(e.key==='Enter') addNewWord();});
+newWordCn.addEventListener('keydown',e=>{if(e.key==='Enter') addNewWord();});
 renderRank();
 </script>
 </body>
