@@ -14,8 +14,15 @@
     input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:10px;padding:10px}
     input,select{height:40px}
     textarea{width:100%;min-height:120px}
-    button{border:0;border-radius:10px;padding:10px 14px;color:#fff;font-weight:700;cursor:pointer}
-    .pri{background:var(--pri)} .ok{background:var(--ok)} .warn{background:var(--warn);color:#111827} .ghost{background:#374151}
+    button{border:1px solid transparent;border-radius:10px;padding:10px 14px;color:#fff;font-weight:700;cursor:pointer;transition:all .18s ease}
+    .pri{background:#7b6ed6;border-color:#6f63c9}
+    .pri:hover{background:#6f63c9}
+    .ok{background:#4a8f72;border-color:#3f7f64}
+    .ok:hover{background:#3f7f64}
+    .warn{background:#d3a85d;color:#2f2a24;border-color:#c2974b}
+    .warn:hover{background:#c2974b}
+    .ghost{background:#f1e8da;color:#51463a;border-color:#d8cfc1}
+    .ghost:hover{background:#e8dcc9}
     .q{font-size:24px;line-height:1.4;margin:10px 0}
     .opts{display:grid;gap:8px}
     .opt{padding:10px;border:1px solid #d8cfc1;border-radius:10px;cursor:pointer;background:#fffaf3}
