@@ -214,6 +214,18 @@ function submit(){
     fb.textContent=`✅ 正确 +${add}（连击 +${bonus}，难度 +${diffBonus}${bossBonus?`，Boss +${bossBonus}`:''}）`;
     fb.className="fb good";
     playSfx('ok');
+
+    submitBtn.disabled=true;
+    nextBtn.disabled=true;
+    renderMeta();
+
+    // 提交正确后自动下一题（Boss 关答对会进入结算）
+    setTimeout(()=>{
+      if(idx < pool.length){
+        nextQ();
+      }
+    }, 450);
+    return;
   }
   else {
     combo = 0;
