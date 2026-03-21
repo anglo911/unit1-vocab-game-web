@@ -319,15 +319,20 @@ function toSplitPron(word){
 }
 
 function toApproxCn(word){
-  // 教学用近似中文读法（简化版）
-  const ipa = toIpaLike(word)
-    .replace(/[\/]/g,'')
-    .replace(/iː/g,'伊').replace(/ɪ/g,'衣').replace(/eɪ/g,'诶').replace(/e/g,'哎')
-    .replace(/aʊ/g,'奥').replace(/oʊ/g,'欧').replace(/uː/g,'乌').replace(/ʌ/g,'阿')
-    .replace(/æ/g,'啊').replace(/ɒ/g,'奥').replace(/ɜːr/g,'儿').replace(/ɑːr/g,'啊尔').replace(/ɔːr/g,'奥尔')
-    .replace(/tʃ/g,'吃').replace(/ʃ/g,'诗').replace(/θ/g,'思').replace(/ŋ/g,'嗯')
-    .replace(/ʒ/g,'日').replace(/ə/g,'呃');
-  return ipa.replace(/\s+/g,'-').slice(0, 36) || '-';
+  // 保守模式：仅返回人工校准词；未覆盖词不输出近似谐音，避免误导
+  const APPROX_MAP = {
+    ability: '呃-BI-利-提',
+    name: '内姆',
+    nice: '奈斯',
+    meet: '米特',
+    sister: '西斯特',
+    brother: '布拉泽',
+    dictionary: '迪克-神-瑞',
+    schoolbag: '思库尔-拜格',
+  };
+  const k = String(word||'').toLowerCase().trim();
+  if(!k) return '-';
+  return APPROX_MAP[k] || '请听发音';
 }
 
 function renderStudyCard(){
