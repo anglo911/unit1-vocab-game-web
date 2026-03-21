@@ -66,16 +66,19 @@
           <option value="unit9">学习题库：Unit 9</option><option value="unit10">学习题库：Unit 10</option><option value="unit11">学习题库：Unit 11</option><option value="unit12">学习题库：Unit 12</option>
           <option value="mix">学习题库：Unit1~12 混合</option>
         </select>
+      </div>
+      <div id="studyProgress" class="muted">学习进度：未开始</div>
+      <div class="bar" style="width:100%;max-width:420px;margin-top:6px"><span id="studyProgressBar" style="width:0%"></span></div>
+      <div id="studyWord" style="font-size:28px;font-weight:700;margin-top:6px">-</div>
+      <div id="studyIpa" class="muted" style="font-size:18px;margin-top:4px">音标：-</div>
+      <div id="studyPhonics" class="muted" style="font-size:18px;margin-top:4px">拼读：-</div>
+      <div id="studyCn" class="muted" style="margin-top:4px">中文：-</div>
+      <div class="row" style="margin-top:10px">
         <button class="ok" id="startStudyBtn">开始学习</button>
         <button class="ghost" id="prevStudyBtn">上一个</button>
         <button class="ghost" id="nextStudyBtn">下一个</button>
         <button class="pri" id="speakStudyBtn">🔊 拼读发音</button>
       </div>
-      <div id="studyProgress" class="muted">学习进度：未开始</div>
-      <div class="bar" style="width:100%;max-width:420px;margin-top:6px"><span id="studyProgressBar" style="width:0%"></span></div>
-      <div id="studyWord" style="font-size:28px;font-weight:700;margin-top:6px">-</div>
-      <div id="studyPhonics" class="muted" style="font-size:18px;margin-top:4px">拼读：-</div>
-      <div id="studyCn" class="muted" style="margin-top:4px">中文：-</div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
   </div>
@@ -239,7 +242,7 @@ const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const studyUnit=$("studyUnit"), startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
-const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyPhonics=$("studyPhonics"), studyCn=$("studyCn");
+const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyIpa=$("studyIpa"), studyPhonics=$("studyPhonics"), studyCn=$("studyCn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
@@ -275,11 +278,27 @@ function phonicsBreak(word){
   return chunks;
 }
 
+function toIpaLike(word){
+  // 教学用近似音标（简化版）
+  const one = (w)=>{
+    let s = w.toLowerCase();
+    s = s.replace(/tion/g,'ʃən').replace(/sion/g,'ʒən').replace(/ing/g,'ɪŋ');
+    s = s.replace(/sh/g,'ʃ').replace(/ch/g,'tʃ').replace(/th/g,'θ').replace(/ph/g,'f').replace(/ck/g,'k');
+    s = s.replace(/ee|ea/g,'iː').replace(/oo/g,'uː').replace(/ai|ay/g,'eɪ').replace(/oa/g,'oʊ').replace(/ou|ow/g,'aʊ');
+    s = s.replace(/er/g,'ɜːr').replace(/ar/g,'ɑːr').replace(/or/g,'ɔːr');
+    s = s.replace(/a/g,'æ').replace(/e/g,'e').replace(/i/g,'ɪ').replace(/o/g,'ɒ').replace(/u/g,'ʌ');
+    return '/' + s + '/';
+  };
+  const parts = String(word||'').trim().split(/\s+/).filter(Boolean);
+  return parts.map(one).join(' ');
+}
+
 function renderStudyCard(){
   if(!studyList.length){
     studyProgress.textContent = '学习进度：当前题库暂无词';
     studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
+    studyIpa.textContent = '音标：-';
     studyPhonics.textContent = '拼读：-';
     studyCn.textContent = '中文：-';
     return;
@@ -289,6 +308,7 @@ function renderStudyCard(){
   studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(studyUnit.value||'unit1').toUpperCase()}`;
   studyProgressBar.style.width = `${pct}%`;
   studyWord.textContent = en;
+  studyIpa.textContent = `音标：${toIpaLike(en)}`;
   studyPhonics.textContent = `拼读：${phonicsBreak(en)}`;
   studyCn.textContent = `中文：${cn}`;
 }
