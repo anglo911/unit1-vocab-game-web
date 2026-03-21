@@ -60,11 +60,16 @@
       <h2>2) 生词学习（可选）</h2>
       <div class="muted">添加课堂生词后，会自动合并到当前题库；也可以只练生词。</div>
       <div class="row" style="margin-bottom:8px">
+        <select id="newWordUnit">
+          <option value="unit1" selected>生词分类：Unit 1</option><option value="unit2">生词分类：Unit 2</option><option value="unit3">生词分类：Unit 3</option><option value="unit4">生词分类：Unit 4</option>
+          <option value="unit5">生词分类：Unit 5</option><option value="unit6">生词分类：Unit 6</option><option value="unit7">生词分类：Unit 7</option><option value="unit8">生词分类：Unit 8</option>
+          <option value="unit9">生词分类：Unit 9</option><option value="unit10">生词分类：Unit 10</option><option value="unit11">生词分类：Unit 11</option><option value="unit12">生词分类：Unit 12</option>
+        </select>
         <input id="newWordEn" placeholder="英文（如: notebook）" style="width:220px" />
         <input id="newWordCn" placeholder="中文（如: 笔记本）" style="width:220px" />
         <button class="ok" id="addWordBtn">加入生词</button>
-        <button class="ghost" id="practiceNewBtn">仅练生词</button>
-        <button class="warn" id="clearWordBtn">清空生词</button>
+        <button class="ghost" id="practiceNewBtn">仅练当前分类生词</button>
+        <button class="warn" id="clearWordBtn">清空当前分类生词</button>
       </div>
       <div id="newWordList" class="muted">当前生词：暂无</div>
       <div class="muted" id="bankStat" style="margin-top:6px"></div>
@@ -223,44 +228,61 @@ let timer=15, timerId=null;
 let difficulty='normal';
 let selectedUnit='unit1';
 let isRedoMode=false;
-let newWords=[];
+let newWordsByUnit={};
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const addWordBtn=$("addWordBtn"), practiceNewBtn=$("practiceNewBtn"), clearWordBtn=$("clearWordBtn"), newWordEn=$("newWordEn"), newWordCn=$("newWordCn"), newWordList=$("newWordList");
+const addWordBtn=$("addWordBtn"), practiceNewBtn=$("practiceNewBtn"), clearWordBtn=$("clearWordBtn"), newWordUnit=$("newWordUnit"), newWordEn=$("newWordEn"), newWordCn=$("newWordCn"), newWordList=$("newWordList");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 function pick(a,n){return shuffle([...a]).slice(0,n)}
 
-function updateBankStat(){ $("bankStat").textContent = `当前词条：${WORDS.length}（含生词 ${newWords.length}）` }
+function getCurrentUnitNewWords(){
+  const u = newWordUnit.value || 'unit1';
+  if(!newWordsByUnit[u]) newWordsByUnit[u] = [];
+  return newWordsByUnit[u];
+}
+
+function countAllNewWords(){
+  return Object.values(newWordsByUnit).reduce((n, arr)=>n + (arr?.length||0), 0);
+}
+
+function updateBankStat(){
+  const cur = getCurrentUnitNewWords().length;
+  const all = countAllNewWords();
+  $("bankStat").textContent = `当前词条：${WORDS.length}（当前分类生词 ${cur}，总生词 ${all}）`;
+}
 updateBankStat();
 
 function renderNewWords(){
-  if(!newWords.length){
-    newWordList.textContent = '当前生词：暂无';
+  const arr = getCurrentUnitNewWords();
+  if(!arr.length){
+    newWordList.textContent = `当前生词（${(newWordUnit.value||'unit1').toUpperCase()}）：暂无`;
     return;
   }
-  const preview = newWords.slice(0, 8).map(w=>`${w[0]}(${w[1]})`).join('、');
-  newWordList.textContent = `当前生词（${newWords.length}）：${preview}${newWords.length>8?' ...':''}`;
+  const preview = arr.slice(0, 8).map(w=>`${w[0]}(${w[1]})`).join('、');
+  newWordList.textContent = `当前生词（${(newWordUnit.value||'unit1').toUpperCase()}，${arr.length}）：${preview}${arr.length>8?' ...':''}`;
 }
 
 function addNewWord(){
   const en = (newWordEn.value||'').trim();
   const cn = (newWordCn.value||'').trim();
   if(!en || !cn) return alert('请先填写英文和中文');
+  const arr = getCurrentUnitNewWords();
   const key = `${en.toLowerCase()}|||${cn}`;
-  const exists = newWords.some(w => `${w[0].toLowerCase()}|||${w[1]}` === key);
-  if(!exists) newWords.push([en,cn]);
+  const exists = arr.some(w => `${w[0].toLowerCase()}|||${w[1]}` === key);
+  if(!exists) arr.push([en,cn]);
   newWordEn.value=''; newWordCn.value='';
   applyUnitBank();
   renderNewWords();
 }
 
 function practiceOnlyNewWords(){
-  if(!newWords.length) return alert('当前还没有生词');
-  WORDS = [...newWords];
+  const arr = getCurrentUnitNewWords();
+  if(!arr.length) return alert('当前分类还没有生词');
+  WORDS = [...arr];
   selectedUnit = 'new';
   total = Number($("questionCount").value || 20);
   pool = pick(WORDS, Math.min(total, WORDS.length));
@@ -273,9 +295,10 @@ function practiceOnlyNewWords(){
 }
 
 function clearNewWords(){
-  if(!newWords.length) return;
-  if(!confirm('确认清空生词？')) return;
-  newWords = [];
+  const arr = getCurrentUnitNewWords();
+  if(!arr.length) return;
+  if(!confirm(`确认清空 ${(newWordUnit.value||'unit1').toUpperCase()} 分类生词？`)) return;
+  newWordsByUnit[newWordUnit.value || 'unit1'] = [];
   applyUnitBank();
   renderNewWords();
 }
@@ -290,12 +313,16 @@ function applyUnitBank(){
   }else{
     WORDS = [...(ALL_UNITS[selectedUnit] || UNIT1_WORDS)];
   }
-  // 默认把生词并入当前题库
-  if(selectedUnit!=='new' && newWords.length){
+  // 默认把当前题库对应分类的生词并入
+  if(selectedUnit!=='new'){
     const set = new Set(WORDS.map(w => `${w[0].toLowerCase()}|||${w[1]}`));
-    newWords.forEach(w=>{
-      const k = `${w[0].toLowerCase()}|||${w[1]}`;
-      if(!set.has(k)) WORDS.push(w);
+    const targetUnits = selectedUnit==='mix' ? Object.keys(ALL_UNITS) : [selectedUnit];
+    targetUnits.forEach(u=>{
+      const arr = newWordsByUnit[u] || [];
+      arr.forEach(w=>{
+        const k = `${w[0].toLowerCase()}|||${w[1]}`;
+        if(!set.has(k)) WORDS.push(w);
+      });
     });
   }
   updateBankStat();
@@ -582,6 +609,7 @@ downloadWrongBtn.onclick=downloadWrong;
 addWordBtn.onclick=addNewWord;
 practiceNewBtn.onclick=practiceOnlyNewWords;
 clearWordBtn.onclick=clearNewWords;
+newWordUnit.onchange=()=>{ renderNewWords(); applyUnitBank(); };
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
