@@ -38,7 +38,6 @@
     .study-page .study-top{justify-content:center}
     .study-page #studyWord{font-size:52px;font-weight:800;letter-spacing:.6px}
     .study-page #studyIpa{font-size:22px}
-    .study-page #studyPhonics{font-size:22px}
     .study-page #studyCn{font-size:20px}
     .study-page .study-actions{justify-content:center;gap:12px;flex-wrap:wrap}
     @media (max-width:900px){.grid2{grid-template-columns:1fr}}
@@ -71,21 +70,20 @@
     </div>
 
     <div class="card study-page">
-      <h2>2) 生词学习（自然拼读）</h2>
-      <div class="muted">先按题库学习单词，再开始闯关。支持拆分拼读 + 发音。</div>
+      <h2>2) 生词学习</h2>
+      <div class="muted">先按题库学习单词，再开始闯关。</div>
 
       <div id="studyProgress" class="muted">学习进度：未开始</div>
       <div class="bar" style="width:100%;max-width:560px;margin:8px auto 0"><span id="studyProgressBar" style="width:0%"></span></div>
       <div id="studyWord" style="font-size:32px;font-weight:700;margin-top:6px">-</div>
       <div id="studyIpa" class="muted" style="font-size:18px;margin-top:4px">音标：-</div>
-      <div id="studyPhonics" class="muted" style="font-size:18px;margin-top:4px">拼读：-</div>
       <div id="studyRoot" class="muted" style="font-size:17px;margin-top:4px">词根助记：-</div>
       <div id="studyCn" class="muted" style="margin-top:4px">中文：-</div>
       <div class="row study-actions" style="margin-top:14px">
         <button class="ok" id="startStudyBtn">开始学习</button>
         <button class="ghost" id="prevStudyBtn">上一个</button>
         <button class="ghost" id="nextStudyBtn">下一个</button>
-        <button class="pri" id="speakStudyBtn">🔊 拼读发音</button>
+        <button class="pri" id="speakStudyBtn">🔊 单词发音</button>
       </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
@@ -250,7 +248,7 @@ const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
-const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyIpa=$("studyIpa"), studyPhonics=$("studyPhonics"), studyRoot=$("studyRoot"), studyCn=$("studyCn");
+const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyIpa=$("studyIpa"), studyRoot=$("studyRoot"), studyCn=$("studyCn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
@@ -273,7 +271,7 @@ function updateStudyUnitTag(){
 function phonicsBreak(word){
   const w = String(word||'').toLowerCase().trim();
   if(!w) return '';
-  // 简单自然拼读分段（启发式）
+  // 简单分段（启发式）
   const chunks = w
     .replace(/tion/g,'-tion')
     .replace(/sion/g,'-sion')
@@ -336,7 +334,6 @@ function renderStudyCard(){
     studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
     studyIpa.textContent = '音标：-';
-    studyPhonics.textContent = '拼读：-';
     studyRoot.textContent = '词根助记：-';
     studyCn.textContent = '中文：-';
     return;
@@ -347,7 +344,6 @@ function renderStudyCard(){
   studyProgressBar.style.width = `${pct}%`;
   studyWord.textContent = en;
   studyIpa.textContent = `音标：${toIpaLike(en)}`;
-  studyPhonics.textContent = `拼读：${phonicsBreak(en)}`;
   studyRoot.textContent = rootMnemonic(en);
   studyCn.textContent = `中文：${cn}`;
 }
