@@ -66,9 +66,7 @@
     <div class="card study-page">
       <h2>2) 生词学习（自然拼读）</h2>
       <div class="muted">先按题库学习单词，再开始闯关。支持拆分拼读 + 发音。</div>
-      <div class="row study-top" style="margin:10px 0">
-        <span class="pill" id="studyUnitTag">学习题库：UNIT1</span>
-      </div>
+
       <div id="studyProgress" class="muted">学习进度：未开始</div>
       <div class="bar" style="width:100%;max-width:560px;margin:8px auto 0"><span id="studyProgressBar" style="width:0%"></span></div>
       <div id="studyWord" style="font-size:32px;font-weight:700;margin-top:6px">-</div>
@@ -244,7 +242,7 @@ let studyIdx=0;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const studyUnitTag=$("studyUnitTag"), startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyIpa=$("studyIpa"), studyPhonics=$("studyPhonics"), studyRoot=$("studyRoot"), studyCn=$("studyCn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
@@ -262,7 +260,7 @@ function getStudyWords(unit){
 }
 
 function updateStudyUnitTag(){
-  studyUnitTag.textContent = `学习题库：${(selectedUnit || 'unit1').toUpperCase()}`;
+  // 已移除学习题库标题行，此函数保留兼容调用
 }
 
 function phonicsBreak(word){
