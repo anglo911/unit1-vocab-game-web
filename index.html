@@ -67,12 +67,7 @@
       <h2>2) 生词学习（自然拼读）</h2>
       <div class="muted">先按题库学习单词，再开始闯关。支持拆分拼读 + 发音。</div>
       <div class="row study-top" style="margin:10px 0">
-        <select id="studyUnit">
-          <option value="unit1" selected>学习题库：Unit 1</option><option value="unit2">学习题库：Unit 2</option><option value="unit3">学习题库：Unit 3</option><option value="unit4">学习题库：Unit 4</option>
-          <option value="unit5">学习题库：Unit 5</option><option value="unit6">学习题库：Unit 6</option><option value="unit7">学习题库：Unit 7</option><option value="unit8">学习题库：Unit 8</option>
-          <option value="unit9">学习题库：Unit 9</option><option value="unit10">学习题库：Unit 10</option><option value="unit11">学习题库：Unit 11</option><option value="unit12">学习题库：Unit 12</option>
-          <option value="mix">学习题库：Unit1~12 混合</option>
-        </select>
+        <span class="pill" id="studyUnitTag">学习题库：UNIT1（跟随课堂设置）</span>
       </div>
       <div id="studyProgress" class="muted">学习进度：未开始</div>
       <div class="bar" style="width:100%;max-width:560px;margin:8px auto 0"><span id="studyProgressBar" style="width:0%"></span></div>
@@ -248,7 +243,7 @@ let studyIdx=0;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const studyUnit=$("studyUnit"), startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
+const studyUnitTag=$("studyUnitTag"), startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyIpa=$("studyIpa"), studyPhonics=$("studyPhonics"), studyCn=$("studyCn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
@@ -263,6 +258,10 @@ updateBankStat();
 function getStudyWords(unit){
   if(unit==='mix') return Object.values(ALL_UNITS).flat();
   return [...(ALL_UNITS[unit] || UNIT1_WORDS)];
+}
+
+function updateStudyUnitTag(){
+  studyUnitTag.textContent = `学习题库：${(selectedUnit || 'unit1').toUpperCase()}（跟随课堂设置）`;
 }
 
 function phonicsBreak(word){
@@ -312,7 +311,7 @@ function renderStudyCard(){
   }
   const [en, cn] = studyList[studyIdx];
   const pct = Math.round(((studyIdx+1)/studyList.length)*100);
-  studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(studyUnit.value||'unit1').toUpperCase()}`;
+  studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
   studyProgressBar.style.width = `${pct}%`;
   studyWord.textContent = en;
   studyIpa.textContent = `音标：${toIpaLike(en)}`;
@@ -332,7 +331,9 @@ function speakStudyWord(){
 }
 
 function startStudy(){
-  studyList = getStudyWords(studyUnit.value || 'unit1');
+  selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
+  updateStudyUnitTag();
+  studyList = getStudyWords(selectedUnit);
   studyIdx = 0;
   renderStudyCard();
   speakStudyWord();
@@ -348,8 +349,7 @@ function prevStudy(){
 function nextStudy(){
   if(!studyList.length) return;
   if(studyIdx >= studyList.length - 1){
-    // 学完后自动切到闯关（按当前学习题库）
-    $("unitSelect").value = studyUnit.value;
+    // 学完后自动切到闯关（按课堂设置题库）
     className = $("className").value.trim() || "未命名班级";
     studentName = $("studentName").value.trim() || "匿名学生";
     startGame();
@@ -635,8 +635,7 @@ startStudyBtn.onclick=startStudy;
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=speakStudyWord;
-studyUnit.onchange=()=>{ startStudy(); };
-$("unitSelect").onchange=()=>{ studyUnit.value = $("unitSelect").value; };
+$("unitSelect").onchange=()=>{ selectedUnit = $("unitSelect").value || 'unit1'; updateStudyUnitTag(); startStudy(); };
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
