@@ -5,27 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Unit 1 教学网页（班级版原型）</title>
   <style>
-    :root{--bg:#0b1020;--card:#111827;--line:#263244;--text:#e5e7eb;--muted:#9ca3af;--ok:#16a34a;--bad:#dc2626;--pri:#2563eb;--warn:#f59e0b}
-    *{box-sizing:border-box} body{margin:0;background:linear-gradient(120deg,#0b1020,#111827);color:var(--text);font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}
+    :root{--bg:#f1f5f9;--card:#ffffff;--line:#cbd5e1;--text:#0f172a;--muted:#475569;--ok:#16a34a;--bad:#dc2626;--pri:#2563eb;--warn:#f59e0b}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(120deg,#f8fafc,#e2e8f0);color:var(--text);font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif}
     .wrap{max-width:1100px;margin:20px auto;padding:0 14px}
-    .card{background:rgba(17,24,39,.95);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(15,23,42,.08)}
     h1,h2{margin:0 0 8px} .muted{color:var(--muted)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    input,select,textarea{background:#0b1220;color:var(--text);border:1px solid #334155;border-radius:10px;padding:10px}
+    input,select,textarea{background:#ffffff;color:var(--text);border:1px solid #cbd5e1;border-radius:10px;padding:10px}
     input,select{height:40px}
     textarea{width:100%;min-height:120px}
     button{border:0;border-radius:10px;padding:10px 14px;color:#fff;font-weight:700;cursor:pointer}
     .pri{background:var(--pri)} .ok{background:var(--ok)} .warn{background:var(--warn);color:#111827} .ghost{background:#374151}
     .q{font-size:24px;line-height:1.4;margin:10px 0}
     .opts{display:grid;gap:8px}
-    .opt{padding:10px;border:1px solid #334155;border-radius:10px;cursor:pointer;background:#0b1220}
-    .opt:hover{border-color:#60a5fa}
-    .fb{min-height:24px;font-weight:700;margin-top:6px}.good{color:#86efac}.bad{color:#fca5a5}
-    table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid #223047;padding:8px;text-align:left;font-size:14px}
+    .opt{padding:10px;border:1px solid #cbd5e1;border-radius:10px;cursor:pointer;background:#f8fafc}
+    .opt:hover{border-color:#2563eb}
+    .fb{min-height:24px;font-weight:700;margin-top:6px}.good{color:#15803d}.bad{color:#b91c1c}
+    table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid #e2e8f0;padding:8px;text-align:left;font-size:14px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}
-    .pill{padding:6px 10px;border:1px solid #334155;border-radius:999px;background:#0b1220;font-size:13px}
-    .bar{width:220px;height:10px;border-radius:999px;background:#1f2937;overflow:hidden;border:1px solid #334155}
+    .pill{padding:6px 10px;border:1px solid #cbd5e1;border-radius:999px;background:#ffffff;font-size:13px}
+    .bar{width:220px;height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden;border:1px solid #cbd5e1}
     .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
     @media (max-width:900px){.grid2{grid-template-columns:1fr}}
   </style>
@@ -82,6 +82,7 @@
       <button class="pri" id="nextBtn" disabled>下一题</button>
       <button class="ghost" id="speakBtn" disabled>🔊 读单词</button>
       <button class="warn" id="restartBtn" disabled>重开本轮</button>
+      <button class="ghost" id="redoWrongBtn" disabled>错题重做</button>
       <button class="ghost" id="downloadWrongBtn" disabled>下载错词本</button>
     </div>
   </div>
@@ -115,10 +116,11 @@ let className="", studentName="", total=20;
 let combo=0, bestCombo=0, stage=1;
 let timer=15, timerId=null;
 let difficulty='normal';
+let isRedoMode=false;
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
-const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), downloadWrongBtn=$("downloadWrongBtn");
+const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
@@ -135,7 +137,7 @@ function startGame(){
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
   combo=0; bestCombo=0; stage=1;
-  submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; downloadWrongBtn.disabled=false;
+  submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; redoWrongBtn.disabled=false; downloadWrongBtn.disabled=false;
   showQ();
 }
 
@@ -144,6 +146,8 @@ function showQ(){
   current = pool[idx];
   mode = randomMode();
   stage = Math.min(5, Math.floor(idx/5)+1);
+  const isBoss = idx === pool.length - 1; // 最后一题 Boss 关
+  if(isBoss) mode = 'spell';
   fb.textContent=""; fb.className="fb"; nextBtn.disabled=true; submitBtn.disabled=false;
   spellInput.value=""; opts.innerHTML="";
 
@@ -155,12 +159,12 @@ function showQ(){
     q.innerHTML = `【英译中（基础）】选择英文词义：<br><b>${en}</b>`;
     renderChoice(cn, WORDS.filter(w=>w[1]!==cn).map(w=>w[1]));
   }else{
-    q.innerHTML = `【拼写题（进阶）】请根据中文写出英文：<br><b>${cn}</b>`;
+    q.innerHTML = `${isBoss ? '👑【Boss关·拼写题】' : '【拼写题（进阶）】'}请根据中文写出英文：<br><b>${cn}</b>`;
     spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }
   const baseTimer = difficulty==='easy' ? 20 : (difficulty==='hard' ? 12 : 15);
   const stagePenalty = mode==='spell' ? Math.max(0, stage-1) : 0;
-  timer = Math.max(8, baseTimer - stagePenalty);
+  timer = Math.max(7, baseTimer - stagePenalty - (isBoss ? 2 : 0));
   startTimer();
   renderMeta();
   speakCurrentWord();
@@ -200,26 +204,48 @@ function submit(){
   if(right){
     combo += 1;
     bestCombo = Math.max(bestCombo, combo);
+    const isBoss = idx === pool.length - 1;
     const base=(mode==="spell"?12:4);  // 选择题低分、拼写题高分
-    const diffBonus = difficulty==='hard' ? 2 : (difficulty==='easy' ? 0 : 1);
-    const bonus=Math.min(10, Math.floor(combo/2));
-    const add=base+bonus+diffBonus;
+    const diffBonus = difficulty==='hard' ? 3 : (difficulty==='easy' ? 0 : 1);
+    const bonus=Math.min(14, Math.floor(combo*1.2)); // 连击加分更高
+    const bossBonus = isBoss ? 8 : 0;
+    const add=base+bonus+diffBonus+bossBonus;
     score+=add;
-    fb.textContent=`✅ 正确 +${add}（连击 +${bonus}，难度 +${diffBonus}）`;
+    fb.textContent=`✅ 正确 +${add}（连击 +${bonus}，难度 +${diffBonus}${bossBonus?`，Boss +${bossBonus}`:''}）`;
     fb.className="fb good";
+    playSfx('ok');
   }
   else {
     combo = 0;
     wrongItems.push({mode,en,cn,your,correct});
     fb.textContent=`❌ 正确答案：${correct}`;
     fb.className="fb bad";
+    playSfx('bad');
   }
 
   submitBtn.disabled=true; nextBtn.disabled=false; renderMeta();
 }
 
 function nextQ(){ idx++; showQ(); }
-function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
+function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; isRedoMode=false; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
+
+function redoWrong(){
+  if(!wrongItems.length) return alert("当前没有错题可重做");
+  const uniq = [];
+  const seen = new Set();
+  wrongItems.forEach(w=>{
+    const k = `${w.en}|||${w.cn}`;
+    if(!seen.has(k)){ seen.add(k); uniq.push([w.en, w.cn]); }
+  });
+  pool = uniq;
+  idx = 0;
+  combo = 0;
+  bestCombo = 0;
+  isRedoMode = true;
+  fb.textContent = "🧠 已进入错题重做模式";
+  fb.className = "fb";
+  showQ();
+}
 
 function startTimer(){
   stopTimer();
@@ -234,6 +260,7 @@ function startTimer(){
         wrongItems.push({mode, en: current?.[0]||"", cn: current?.[1]||"", your: "超时", correct: mode==="cn2en"?(current?.[0]||""):(mode==="en2cn"?(current?.[1]||""):(current?.[0]||""))});
         fb.textContent = "⏰ 超时，本题判错";
         fb.className = "fb bad";
+        playSfx('bad');
         submitBtn.disabled = true;
         nextBtn.disabled = false;
         renderMeta();
@@ -258,8 +285,32 @@ function speakCurrentWord(){
   window.speechSynthesis.speak(utter);
 }
 
+function playSfx(type='ok'){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    const ac = new AC();
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = 'sine';
+    if(type==='ok'){
+      osc.frequency.setValueAtTime(660, ac.currentTime);
+      osc.frequency.linearRampToValueAtTime(880, ac.currentTime + 0.12);
+    }else{
+      osc.frequency.setValueAtTime(300, ac.currentTime);
+      osc.frequency.linearRampToValueAtTime(180, ac.currentTime + 0.12);
+    }
+    gain.gain.setValueAtTime(0.0001, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.12, ac.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.16);
+    osc.connect(gain); gain.connect(ac.destination);
+    osc.start();
+    osc.stop(ac.currentTime + 0.18);
+  }catch(e){}
+}
+
 function renderMeta(){
-  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · 难度 ${difficulty}`;
+  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · 难度 ${difficulty}${isRedoMode?' · 错题重做':''}`;
   stagePill.textContent = `关卡 Lv.${stage}`;
   comboPill.textContent = `连击 x${combo}`;
   const pct = pool.length ? Math.round((idx / pool.length) * 100) : 0;
@@ -269,13 +320,21 @@ function renderMeta(){
 function finish(){
   stopTimer();
   let level="💪 再练一轮会更稳";
-  if(difficulty==='hard'){ if(score>=170) level="🏆 大师级"; else if(score>=130) level="🌟 高阶通过"; }
-  else if(difficulty==='easy'){ if(score>=90) level="🏆 基础扎实"; else if(score>=65) level="🌟 入门通过"; }
-  else { if(score>=140) level="🏆 词汇达人"; else if(score>=100) level="🌟 掌握不错"; }
-  q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}<br>🔥 最高连击：x${bestCombo}`;
+  if(difficulty==='hard'){ if(score>=190) level="🏆 大师级"; else if(score>=145) level="🌟 高阶通过"; }
+  else if(difficulty==='easy'){ if(score>=95) level="🏆 基础扎实"; else if(score>=70) level="🌟 入门通过"; }
+  else { if(score>=150) level="🏆 词汇达人"; else if(score>=110) level="🌟 掌握不错"; }
+
+  const medals = [];
+  if(bestCombo>=8) medals.push('🔥 连击王');
+  if(wrongItems.length<=2) medals.push('🛡️ 稳定输出');
+  if(difficulty==='hard' && score>=145) medals.push('👑 困难征服者');
+  if(isRedoMode && wrongItems.length===0) medals.push('🧠 纠错达人');
+
+  q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}<br>🔥 最高连击：x${bestCombo}<br>${medals.length?('🏅 勋章：'+medals.join(' / ')):'🏅 勋章：继续挑战'}`;
   opts.innerHTML=""; spellWrap.style.display="none"; fb.textContent=`错题数：${wrongItems.length}`;
   submitBtn.disabled=true; nextBtn.disabled=true; speakBtn.disabled=true;
   progressBar.style.width = `100%`;
+  playSfx('ok');
   saveRank(); renderRank();
 }
 
@@ -331,6 +390,7 @@ submitBtn.onclick=submit;
 nextBtn.onclick=nextQ;
 speakBtn.onclick=speakCurrentWord;
 restartBtn.onclick=restartRound;
+redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
 $("importBtn").onclick=importBank;
 $("resetBankBtn").onclick=resetBank;
