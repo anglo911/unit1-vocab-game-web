@@ -312,7 +312,7 @@ function toSplitPron(word){
 }
 
 function toApproxCn(word){
-  // 保守模式：仅返回人工校准词；未覆盖词不输出近似谐音，避免误导
+  // 全量近似读法：优先人工校准，未命中则使用规则近似
   const APPROX_MAP = {
     ability: '呃-BI-利-提',
     name: '内姆',
@@ -325,7 +325,16 @@ function toApproxCn(word){
   };
   const k = String(word||'').toLowerCase().trim();
   if(!k) return '-';
-  return APPROX_MAP[k] || '请听发音';
+  if(APPROX_MAP[k]) return APPROX_MAP[k];
+
+  const ipa = toIpaLike(k)
+    .replace(/[\/]/g,'')
+    .replace(/iː/g,'伊').replace(/ɪ/g,'衣').replace(/eɪ/g,'诶').replace(/e/g,'哎')
+    .replace(/aʊ/g,'奥').replace(/oʊ/g,'欧').replace(/uː/g,'乌').replace(/ʌ/g,'阿')
+    .replace(/æ/g,'啊').replace(/ɒ/g,'奥').replace(/ɜːr/g,'儿').replace(/ɑːr/g,'啊尔').replace(/ɔːr/g,'奥尔')
+    .replace(/tʃ/g,'吃').replace(/ʃ/g,'诗').replace(/θ/g,'思').replace(/ŋ/g,'嗯')
+    .replace(/ʒ/g,'日').replace(/ə/g,'呃');
+  return ipa.replace(/\s+/g,'-').slice(0, 40) || '-';
 }
 
 function renderStudyCard(){
