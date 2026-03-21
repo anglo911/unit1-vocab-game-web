@@ -302,25 +302,25 @@ function rootMnemonic(word){
   const w = String(word||'').toLowerCase();
   if(!w) return '词根助记：-';
   const rules = [
-    [/^un/, 'un- 否定前缀：不、非'],
-    [/^re/, 're- 前缀：再、重新'],
-    [/^pre/, 'pre- 前缀：在……之前'],
-    [/^dis/, 'dis- 前缀：否定、分开'],
-    [/^in|^im|^il|^ir/, 'in-/im-/il-/ir- 否定前缀'],
-    [/tion$/, '-tion 名词后缀（行为/状态）'],
-    [/sion$/, '-sion 名词后缀'],
-    [/ment$/, '-ment 名词后缀'],
-    [/er$/, '-er 后缀：人/物'],
-    [/or$/, '-or 后缀：人/物'],
-    [/ful$/, '-ful 后缀：充满…的'],
-    [/less$/, '-less 后缀：没有…的'],
-    [/ly$/, '-ly 后缀：副词常见'],
-    [/ing$/, '-ing 后缀：进行/动名词'],
+    [/^un/, 'un-'],
+    [/^re/, 're-'],
+    [/^pre/, 'pre-'],
+    [/^dis/, 'dis-'],
+    [/^in|^im|^il|^ir/, 'in-/im-/il-/ir-'],
+    [/tion$/, '-tion'],
+    [/sion$/, '-sion'],
+    [/ment$/, '-ment'],
+    [/er$/, '-er'],
+    [/or$/, '-or'],
+    [/ful$/, '-ful'],
+    [/less$/, '-less'],
+    [/ly$/, '-ly'],
+    [/ing$/, '-ing'],
   ];
   const hit = rules.find(([re])=>re.test(w));
   if(hit) return `词根助记：${hit[1]}`;
-  if(w.length<=4) return '词根助记：短词按字母-音素对应记忆';
-  return '词根助记：可按前缀 + 词干 + 后缀分块记忆';
+  // 没匹配到时展示拼读分块
+  return `词根助记：${phonicsBreak(w) || '-'}`;
 }
 
 function renderStudyCard(){
