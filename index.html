@@ -57,22 +57,25 @@
     </div>
 
     <div class="card">
-      <h2>2) 生词学习（可选）</h2>
-      <div class="muted">添加课堂生词后，会自动合并到当前题库；也可以只练生词。</div>
+      <h2>2) 生词学习（自然拼读）</h2>
+      <div class="muted">先按题库学习单词，再开始闯关。支持拆分拼读 + 发音。</div>
       <div class="row" style="margin-bottom:8px">
-        <select id="newWordUnit">
-          <option value="unit1" selected>生词分类：Unit 1</option><option value="unit2">生词分类：Unit 2</option><option value="unit3">生词分类：Unit 3</option><option value="unit4">生词分类：Unit 4</option>
-          <option value="unit5">生词分类：Unit 5</option><option value="unit6">生词分类：Unit 6</option><option value="unit7">生词分类：Unit 7</option><option value="unit8">生词分类：Unit 8</option>
-          <option value="unit9">生词分类：Unit 9</option><option value="unit10">生词分类：Unit 10</option><option value="unit11">生词分类：Unit 11</option><option value="unit12">生词分类：Unit 12</option>
+        <select id="studyUnit">
+          <option value="unit1" selected>学习题库：Unit 1</option><option value="unit2">学习题库：Unit 2</option><option value="unit3">学习题库：Unit 3</option><option value="unit4">学习题库：Unit 4</option>
+          <option value="unit5">学习题库：Unit 5</option><option value="unit6">学习题库：Unit 6</option><option value="unit7">学习题库：Unit 7</option><option value="unit8">学习题库：Unit 8</option>
+          <option value="unit9">学习题库：Unit 9</option><option value="unit10">学习题库：Unit 10</option><option value="unit11">学习题库：Unit 11</option><option value="unit12">学习题库：Unit 12</option>
+          <option value="mix">学习题库：Unit1~12 混合</option>
         </select>
-        <input id="newWordEn" placeholder="英文（如: notebook）" style="width:220px" />
-        <input id="newWordCn" placeholder="中文（如: 笔记本）" style="width:220px" />
-        <button class="ok" id="addWordBtn">加入生词</button>
-        <button class="ghost" id="practiceNewBtn">仅练当前分类生词</button>
-        <button class="warn" id="clearWordBtn">清空当前分类生词</button>
+        <button class="ok" id="startStudyBtn">开始学习</button>
+        <button class="ghost" id="prevStudyBtn">上一个</button>
+        <button class="ghost" id="nextStudyBtn">下一个</button>
+        <button class="pri" id="speakStudyBtn">🔊 拼读发音</button>
       </div>
-      <div id="newWordList" class="muted">当前生词：暂无</div>
-      <div class="muted" id="bankStat" style="margin-top:6px"></div>
+      <div id="studyProgress" class="muted">学习进度：未开始</div>
+      <div id="studyWord" style="font-size:28px;font-weight:700;margin-top:6px">-</div>
+      <div id="studyPhonics" class="muted" style="font-size:18px;margin-top:4px">拼读：-</div>
+      <div id="studyCn" class="muted" style="margin-top:4px">中文：-</div>
+      <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
   </div>
 
@@ -228,103 +231,100 @@ let timer=15, timerId=null;
 let difficulty='normal';
 let selectedUnit='unit1';
 let isRedoMode=false;
-let newWordsByUnit={};
+let studyList=[];
+let studyIdx=0;
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const addWordBtn=$("addWordBtn"), practiceNewBtn=$("practiceNewBtn"), clearWordBtn=$("clearWordBtn"), newWordUnit=$("newWordUnit"), newWordEn=$("newWordEn"), newWordCn=$("newWordCn"), newWordList=$("newWordList");
+const studyUnit=$("studyUnit"), startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
+const studyProgress=$("studyProgress"), studyWord=$("studyWord"), studyPhonics=$("studyPhonics"), studyCn=$("studyCn");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 function pick(a,n){return shuffle([...a]).slice(0,n)}
 
-function getCurrentUnitNewWords(){
-  const u = newWordUnit.value || 'unit1';
-  if(!newWordsByUnit[u]) newWordsByUnit[u] = [];
-  return newWordsByUnit[u];
-}
-
-function countAllNewWords(){
-  return Object.values(newWordsByUnit).reduce((n, arr)=>n + (arr?.length||0), 0);
-}
-
 function updateBankStat(){
-  const cur = getCurrentUnitNewWords().length;
-  const all = countAllNewWords();
-  $("bankStat").textContent = `当前词条：${WORDS.length}（当前分类生词 ${cur}，总生词 ${all}）`;
+  $("bankStat").textContent = `当前闯关题库词条：${WORDS.length}`;
 }
 updateBankStat();
 
-function renderNewWords(){
-  const arr = getCurrentUnitNewWords();
-  if(!arr.length){
-    newWordList.textContent = `当前生词（${(newWordUnit.value||'unit1').toUpperCase()}）：暂无`;
+function getStudyWords(unit){
+  if(unit==='mix') return Object.values(ALL_UNITS).flat();
+  return [...(ALL_UNITS[unit] || UNIT1_WORDS)];
+}
+
+function phonicsBreak(word){
+  const w = String(word||'').toLowerCase().trim();
+  if(!w) return '';
+  // 简单自然拼读分段（启发式）
+  const chunks = w
+    .replace(/tion/g,'-tion')
+    .replace(/sion/g,'-sion')
+    .replace(/ing/g,'-ing')
+    .replace(/th/g,'th-')
+    .replace(/sh/g,'sh-')
+    .replace(/ch/g,'ch-')
+    .replace(/ph/g,'ph-')
+    .replace(/ck/g,'-ck')
+    .replace(/([aeiou]{2})/g,'-$1-')
+    .replace(/([bcdfghjklmnpqrstvwxyz])([aeiou])/g,'$1-$2')
+    .replace(/--+/g,'-')
+    .replace(/^-|-$|\s+/g,'');
+  return chunks;
+}
+
+function renderStudyCard(){
+  if(!studyList.length){
+    studyProgress.textContent = '学习进度：当前题库暂无词';
+    studyWord.textContent = '-';
+    studyPhonics.textContent = '拼读：-';
+    studyCn.textContent = '中文：-';
     return;
   }
-  const preview = arr.slice(0, 8).map(w=>`${w[0]}(${w[1]})`).join('、');
-  newWordList.textContent = `当前生词（${(newWordUnit.value||'unit1').toUpperCase()}，${arr.length}）：${preview}${arr.length>8?' ...':''}`;
+  const [en, cn] = studyList[studyIdx];
+  studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(studyUnit.value||'unit1').toUpperCase()}`;
+  studyWord.textContent = en;
+  studyPhonics.textContent = `拼读：${phonicsBreak(en)}`;
+  studyCn.textContent = `中文：${cn}`;
 }
 
-function addNewWord(){
-  const en = (newWordEn.value||'').trim();
-  const cn = (newWordCn.value||'').trim();
-  if(!en || !cn) return alert('请先填写英文和中文');
-  const arr = getCurrentUnitNewWords();
-  const key = `${en.toLowerCase()}|||${cn}`;
-  const exists = arr.some(w => `${w[0].toLowerCase()}|||${w[1]}` === key);
-  if(!exists) arr.push([en,cn]);
-  newWordEn.value=''; newWordCn.value='';
-  applyUnitBank();
-  renderNewWords();
+function speakStudyWord(){
+  if(!studyList.length || !("speechSynthesis" in window)) return;
+  const [en] = studyList[studyIdx];
+  const u = new SpeechSynthesisUtterance(String(en||''));
+  u.lang = 'en-US';
+  u.rate = 0.82; // 慢速便于跟读
+  u.pitch = 1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
 }
 
-function practiceOnlyNewWords(){
-  const arr = getCurrentUnitNewWords();
-  if(!arr.length) return alert('当前分类还没有生词');
-  WORDS = [...arr];
-  selectedUnit = 'new';
-  total = Number($("questionCount").value || 20);
-  pool = pick(WORDS, Math.min(total, WORDS.length));
-  idx=0; score=0; wrongItems=[]; started=true;
-  combo=0; bestCombo=0; stage=1; isRedoMode=false;
-  submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; redoWrongBtn.disabled=false; downloadWrongBtn.disabled=false;
-  updateBankStat();
-  renderMeta();
-  showQ();
+function startStudy(){
+  studyList = getStudyWords(studyUnit.value || 'unit1');
+  studyIdx = 0;
+  renderStudyCard();
+  speakStudyWord();
 }
 
-function clearNewWords(){
-  const arr = getCurrentUnitNewWords();
-  if(!arr.length) return;
-  if(!confirm(`确认清空 ${(newWordUnit.value||'unit1').toUpperCase()} 分类生词？`)) return;
-  newWordsByUnit[newWordUnit.value || 'unit1'] = [];
-  applyUnitBank();
-  renderNewWords();
+function prevStudy(){
+  if(!studyList.length) return;
+  studyIdx = (studyIdx - 1 + studyList.length) % studyList.length;
+  renderStudyCard();
 }
 
-renderNewWords();
+function nextStudy(){
+  if(!studyList.length) return;
+  studyIdx = (studyIdx + 1) % studyList.length;
+  renderStudyCard();
+  speakStudyWord();
+}
+
+renderStudyCard();
 
 function applyUnitBank(){
-  if(selectedUnit==='mix'){
-    WORDS = Object.values(ALL_UNITS).flat();
-  }else if(selectedUnit==='new'){
-    WORDS = [...newWords];
-  }else{
-    WORDS = [...(ALL_UNITS[selectedUnit] || UNIT1_WORDS)];
-  }
-  // 默认把当前题库对应分类的生词并入
-  if(selectedUnit!=='new'){
-    const set = new Set(WORDS.map(w => `${w[0].toLowerCase()}|||${w[1]}`));
-    const targetUnits = selectedUnit==='mix' ? Object.keys(ALL_UNITS) : [selectedUnit];
-    targetUnits.forEach(u=>{
-      const arr = newWordsByUnit[u] || [];
-      arr.forEach(w=>{
-        const k = `${w[0].toLowerCase()}|||${w[1]}`;
-        if(!set.has(k)) WORDS.push(w);
-      });
-    });
-  }
+  if(selectedUnit==='mix') WORDS = Object.values(ALL_UNITS).flat();
+  else WORDS = [...(ALL_UNITS[selectedUnit] || UNIT1_WORDS)];
   updateBankStat();
 }
 
@@ -581,22 +581,7 @@ function renderRank(){
 
 function clearRank(){ if(confirm("确认清空成绩榜？")){ localStorage.removeItem("unit1_rank_v1"); renderRank(); } }
 
-function importBank(){
-  const t=$("bankInput").value.trim();
-  if(!t) return alert("请输入词表内容（每行 英文,中文）");
-  const lines=t.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const parsed=[];
-  for(const line of lines){
-    const i=line.indexOf(',');
-    if(i<1) continue;
-    const en=line.slice(0,i).trim(); const cn=line.slice(i+1).trim();
-    if(en && cn) parsed.push([en,cn]);
-  }
-  if(parsed.length<5) return alert("可用词条太少（至少5条）");
-  WORDS=parsed; updateBankStat(); alert(`导入成功：${parsed.length} 条`);
-}
-
-function resetBank(){ selectedUnit = $("unitSelect").value || 'unit1'; applyUnitBank(); renderNewWords(); alert(`已按当前选择加载词表：${selectedUnit.toUpperCase()}`); }
+function resetBank(){ selectedUnit = $("unitSelect").value || 'unit1'; applyUnitBank(); alert(`已按当前选择加载词表：${selectedUnit.toUpperCase()}`); }
 function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 $("startBtn").onclick=startGame;
@@ -606,16 +591,17 @@ speakBtn.onclick=speakCurrentWord;
 restartBtn.onclick=restartRound;
 redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
-addWordBtn.onclick=addNewWord;
-practiceNewBtn.onclick=practiceOnlyNewWords;
-clearWordBtn.onclick=clearNewWords;
-newWordUnit.onchange=()=>{ renderNewWords(); applyUnitBank(); };
+startStudyBtn.onclick=startStudy;
+prevStudyBtn.onclick=prevStudy;
+nextStudyBtn.onclick=nextStudy;
+speakStudyBtn.onclick=speakStudyWord;
+studyUnit.onchange=()=>{ startStudy(); };
+$("unitSelect").onchange=()=>{ studyUnit.value = $("unitSelect").value; };
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
-newWordEn.addEventListener('keydown',e=>{if(e.key==='Enter') addNewWord();});
-newWordCn.addEventListener('keydown',e=>{if(e.key==='Enter') addNewWord();});
 renderRank();
+startStudy();
 </script>
 </body>
 </html>
