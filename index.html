@@ -23,6 +23,10 @@
     .fb{min-height:24px;font-weight:700;margin-top:6px}.good{color:#86efac}.bad{color:#fca5a5}
     table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid #223047;padding:8px;text-align:left;font-size:14px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}
+    .pill{padding:6px 10px;border:1px solid #334155;border-radius:999px;background:#0b1220;font-size:13px}
+    .bar{width:220px;height:10px;border-radius:999px;background:#1f2937;overflow:hidden;border:1px solid #334155}
+    .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
     @media (max-width:900px){.grid2{grid-template-columns:1fr}}
   </style>
 </head>
@@ -59,6 +63,12 @@
 
   <div class="card" id="gameCard">
     <h2>3) 闯关区</h2>
+    <div class="hud">
+      <span class="pill" id="stagePill">关卡 Lv.1</span>
+      <span class="pill" id="comboPill">连击 x0</span>
+      <span class="pill" id="timerPill">⏱️ 15s</span>
+      <div class="bar"><span id="progressBar"></span></div>
+    </div>
     <div class="row muted" id="meta">第 0/0 题 · 得分 0 · 错题 0</div>
     <div id="question" class="q">请先点击“开始闯关”</div>
     <div id="options" class="opts"></div>
@@ -101,10 +111,13 @@ const DEFAULT_WORDS = [
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
 let className="", studentName="", total=20;
+let combo=0, bestCombo=0, stage=1;
+let timer=15, timerId=null;
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), downloadWrongBtn=$("downloadWrongBtn");
+const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 function pick(a,n){return shuffle([...a]).slice(0,n)}
@@ -118,6 +131,7 @@ function startGame(){
   total = Number($("questionCount").value || 20);
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
+  combo=0; bestCombo=0; stage=1;
   submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; downloadWrongBtn.disabled=false;
   showQ();
 }
@@ -126,6 +140,7 @@ function showQ(){
   if(idx>=pool.length) return finish();
   current = pool[idx];
   mode = randomMode();
+  stage = Math.min(5, Math.floor(idx/5)+1);
   fb.textContent=""; fb.className="fb"; nextBtn.disabled=true; submitBtn.disabled=false;
   spellInput.value=""; opts.innerHTML="";
 
@@ -140,6 +155,8 @@ function showQ(){
     q.innerHTML = `【拼写题】请根据中文写出英文：<br><b>${cn}</b>`;
     spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }
+  timer = 15;
+  startTimer();
   renderMeta();
   speakCurrentWord();
 }
@@ -158,6 +175,7 @@ function randomMode(){ const r=Math.random(); return r<0.4?"cn2en":r<0.8?"en2cn"
 
 function submit(){
   if(!started) return;
+  stopTimer();
   const [en,cn] = current;
   let your="", correct="", right=false;
   if(mode==="spell"){
@@ -168,16 +186,54 @@ function submit(){
     your=picked.value; correct=(mode==="cn2en"?en:cn); right=(your===correct);
   }
 
-  if(right){ const add=(mode==="spell"?8:5); score+=add; fb.textContent=`✅ 正确 +${add}`; fb.className="fb good"; }
-  else { wrongItems.push({mode,en,cn,your,correct}); fb.textContent=`❌ 正确答案：${correct}`; fb.className="fb bad"; }
+  if(right){
+    combo += 1;
+    bestCombo = Math.max(bestCombo, combo);
+    const base=(mode==="spell"?8:5);
+    const bonus=Math.min(10, Math.floor(combo/2));
+    const add=base+bonus;
+    score+=add;
+    fb.textContent=`✅ 正确 +${add}（连击奖励 +${bonus}）`;
+    fb.className="fb good";
+  }
+  else {
+    combo = 0;
+    wrongItems.push({mode,en,cn,your,correct});
+    fb.textContent=`❌ 正确答案：${correct}`;
+    fb.className="fb bad";
+  }
 
   submitBtn.disabled=true; nextBtn.disabled=false; renderMeta();
 }
 
 function nextQ(){ idx++; showQ(); }
-function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
+function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
+
+function startTimer(){
+  stopTimer();
+  timerPill.textContent = `⏱️ ${timer}s`;
+  timerId = setInterval(()=>{
+    timer -= 1;
+    timerPill.textContent = `⏱️ ${timer}s`;
+    if(timer<=0){
+      stopTimer();
+      if(!submitBtn.disabled){
+        combo = 0;
+        wrongItems.push({mode, en: current?.[0]||"", cn: current?.[1]||"", your: "超时", correct: mode==="cn2en"?(current?.[0]||""):(mode==="en2cn"?(current?.[1]||""):(current?.[0]||""))});
+        fb.textContent = "⏰ 超时，本题判错";
+        fb.className = "fb bad";
+        submitBtn.disabled = true;
+        nextBtn.disabled = false;
+        renderMeta();
+      }
+    }
+  },1000);
+}
+
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
 
 function speakCurrentWord(){
+
   if(!current || !("speechSynthesis" in window)) return;
   const [en] = current;
   const text = String(en || "").trim();
@@ -190,13 +246,21 @@ function speakCurrentWord(){
   window.speechSynthesis.speak(utter);
 }
 
-function renderMeta(){ meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName}`; }
+function renderMeta(){
+  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName}`;
+  stagePill.textContent = `关卡 Lv.${stage}`;
+  comboPill.textContent = `连击 x${combo}`;
+  const pct = pool.length ? Math.round((idx / pool.length) * 100) : 0;
+  progressBar.style.width = `${pct}%`;
+}
 
 function finish(){
+  stopTimer();
   let level="💪 再练一轮会更稳"; if(score>=120) level="🏆 词汇达人"; else if(score>=90) level="🌟 掌握不错";
-  q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}`;
+  q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}<br>🔥 最高连击：x${bestCombo}`;
   opts.innerHTML=""; spellWrap.style.display="none"; fb.textContent=`错题数：${wrongItems.length}`;
   submitBtn.disabled=true; nextBtn.disabled=true; speakBtn.disabled=true;
+  progressBar.style.width = `100%`;
   saveRank(); renderRank();
 }
 
