@@ -44,6 +44,7 @@
         <input id="className" placeholder="班级名（如：七1班）" style="width:180px" />
         <input id="studentName" placeholder="学生姓名" style="width:160px" />
         <select id="questionCount"><option>10</option><option selected>20</option><option>30</option></select>
+        <select id="unitSelect"><option value="unit1" selected>题库：Unit 1</option><option value="unit3">题库：Unit 3</option><option value="mix">题库：Unit1+3 混合</option></select>
         <select id="difficulty"><option value="easy">简单</option><option value="normal" selected>标准</option><option value="hard">困难</option></select>
         <button class="pri" id="startBtn">开始闯关</button>
       </div>
@@ -94,14 +95,14 @@
       <button class="warn" id="clearRankBtn">清空成绩榜</button>
     </div>
     <table>
-      <thead><tr><th>时间</th><th>班级</th><th>学生</th><th>得分</th><th>错题</th><th>题量</th></tr></thead>
+      <thead><tr><th>时间</th><th>班级</th><th>学生</th><th>题库</th><th>得分</th><th>错题</th><th>题量</th></tr></thead>
       <tbody id="rankBody"></tbody>
     </table>
   </div>
 </div>
 
 <script>
-const DEFAULT_WORDS = [
+const UNIT1_WORDS = [
   ["name","名字；名称"],["nice","令人愉快的；宜人的"],["to","用于动词原形前，构成不定式"],["meet","遇见；相逢"],["too","也；又；太"],
   ["your","你的；你们的"],["his","他的"],["her","她的"],["and","和；又；而"],["yes","是的"],["no","不；不是"],["not","不；没有"],
   ["zero","零"],["one","一"],["two","二"],["three","三"],["four","四"],["five","五"],["six","六"],["seven","七"],["eight","八"],["nine","九"],
@@ -110,12 +111,26 @@ const DEFAULT_WORDS = [
   ["Gina","吉娜（女名）"],["Jenny","珍妮（女名）"],["Brown","布朗（姓）"],["Miller","米勒（姓）"]
 ];
 
+// 人教版七上 Unit 3（常见核心词）
+const UNIT3_WORDS = [
+  ["this","这；这个"],["that","那；那个"],["these","这些"],["those","那些"],["schoolbag","书包"],
+  ["book","书"],["dictionary","词典"],["pen","钢笔"],["pencil","铅笔"],["eraser","橡皮"],
+  ["ruler","尺；直尺"],["pencil box","文具盒"],["mine","我的（名词性物主代词）"],["his","他的"],["hers","她的"],
+  ["yours","你的；你们的"],["excuse","原谅；宽恕"],["me","我（宾格）"],["thank","感谢"],["teacher","老师"],
+  ["about","关于"],["what about","……怎么样"],["for","为了；给；对"],["welcome","受欢迎的"],["help","帮助"],
+  ["ask","询问；请求"],["find","找到"],["some","一些"],["classroom","教室"],["e-mail","电子邮件"],
+  ["at","在（某处）"],["call","给……打电话"],["must","必须"],["lost","丢失的"],["set","一套；一副"],
+  ["ID card","学生卡；身份证"],["computer game","电子游戏"],["notebook","笔记本"],["ring","戒指"],["bag","袋；包"]
+];
+
+const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
 let className="", studentName="", total=20;
 let combo=0, bestCombo=0, stage=1;
 let timer=15, timerId=null;
 let difficulty='normal';
+let selectedUnit='unit1';
 let isRedoMode=false;
 
 const $=id=>document.getElementById(id);
@@ -129,11 +144,21 @@ function pick(a,n){return shuffle([...a]).slice(0,n)}
 function updateBankStat(){ $("bankStat").textContent = `当前词条：${WORDS.length}` }
 updateBankStat();
 
+function applyUnitBank(){
+  if(selectedUnit==='unit1') WORDS=[...UNIT1_WORDS];
+  else if(selectedUnit==='unit3') WORDS=[...UNIT3_WORDS];
+  else WORDS=[...UNIT1_WORDS, ...UNIT3_WORDS];
+  updateBankStat();
+}
+
+
 function startGame(){
   className = $("className").value.trim() || "未命名班级";
   studentName = $("studentName").value.trim() || "匿名学生";
   total = Number($("questionCount").value || 20);
   difficulty = $("difficulty").value || 'normal';
+  selectedUnit = $("unitSelect").value || 'unit1';
+  applyUnitBank();
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
   combo=0; bestCombo=0; stage=1;
@@ -322,7 +347,7 @@ function playSfx(type='ok'){
 }
 
 function renderMeta(){
-  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · 难度 ${difficulty}${isRedoMode?' · 错题重做':''}`;
+  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · ${selectedUnit.toUpperCase()} · 难度 ${difficulty}${isRedoMode?' · 错题重做':''}`;
   stagePill.textContent = `关卡 Lv.${stage}`;
   comboPill.textContent = `连击 x${combo}`;
   const pct = pool.length ? Math.round((idx / pool.length) * 100) : 0;
@@ -363,7 +388,7 @@ function downloadWrong(){
 function saveRank(){
   const key="unit1_rank_v1";
   const old=JSON.parse(localStorage.getItem(key)||"[]");
-  old.unshift({time:new Date().toLocaleString(), className, studentName, score, wrong:wrongItems.length, total:pool.length});
+  old.unshift({time:new Date().toLocaleString(), className, studentName, unit:selectedUnit, score, wrong:wrongItems.length, total:pool.length});
   localStorage.setItem(key, JSON.stringify(old.slice(0,200)));
 }
 
@@ -372,7 +397,7 @@ function renderRank(){
   const rows=JSON.parse(localStorage.getItem(key)||"[]");
   rows.forEach(r=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${r.time}</td><td>${escapeHtml(r.className)}</td><td>${escapeHtml(r.studentName)}</td><td>${r.score}</td><td>${r.wrong}</td><td>${r.total}</td>`;
+    tr.innerHTML=`<td>${r.time}</td><td>${escapeHtml(r.className)}</td><td>${escapeHtml(r.studentName)}</td><td>${escapeHtml((r.unit||'unit1').toUpperCase())}</td><td>${r.score}</td><td>${r.wrong}</td><td>${r.total}</td>`;
     body.appendChild(tr);
   });
 }
@@ -394,7 +419,7 @@ function importBank(){
   WORDS=parsed; updateBankStat(); alert(`导入成功：${parsed.length} 条`);
 }
 
-function resetBank(){ WORDS=[...DEFAULT_WORDS]; updateBankStat(); alert("已恢复默认 Unit 1 词表"); }
+function resetBank(){ selectedUnit = $("unitSelect").value || 'unit1'; applyUnitBank(); alert(`已恢复默认词表：${selectedUnit.toUpperCase()}`); }
 function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 $("startBtn").onclick=startGame;
