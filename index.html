@@ -158,6 +158,12 @@
   <div class="card" id="morphCard">
     <h2>5) 字根拼图</h2>
     <div class="muted" id="morphMeta">把打乱的字根拼成正确单词（按所选 Unit）</div>
+    <div class="hud" style="margin-top:8px">
+      <span class="pill" id="morphScorePill">得分 0</span>
+      <span class="pill" id="morphComboPill">连击 x0</span>
+      <span class="pill" id="morphTimerPill">⏱️ 25s</span>
+      <div class="bar"><span id="morphProgressBar"></span></div>
+    </div>
     <div id="morphWord" class="q" style="font-size:38px">点击“开始拼图”</div>
     <div id="morphMeaning" class="muted" style="font-size:20px;margin-top:6px">-</div>
     <div id="morphBlocks" class="opts" style="margin-top:10px"></div>
@@ -748,13 +754,17 @@ let dictChecked=false;
 let morphList=[];
 let morphIdx=0;
 let morphPicked=[];
+let morphScore=0;
+let morphCombo=0;
+let morphTimer=25;
+let morphTimerId=null;
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
-const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta");
+const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
@@ -937,12 +947,37 @@ function buildMorphList(){
   morphList = src.slice(0, 20).map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
 }
 
+function updateMorphHud(){
+  morphScorePill.textContent = `得分 ${morphScore}`;
+  morphComboPill.textContent = `连击 x${morphCombo}`;
+  morphTimerPill.textContent = `⏱️ ${morphTimer}s`;
+  const pct = morphList.length ? Math.round(((morphIdx+1)/morphList.length)*100) : 0;
+  morphProgressBar.style.width = `${pct}%`;
+}
+
+function startMorphTimer(){
+  clearInterval(morphTimerId);
+  morphTimer = 25;
+  updateMorphHud();
+  morphTimerId = setInterval(()=>{
+    morphTimer--;
+    updateMorphHud();
+    if(morphTimer<=0){
+      clearInterval(morphTimerId);
+      morphCombo = 0;
+      morphFb.textContent = '⏰ 超时，自动下一词';
+      setTimeout(nextMorph, 500);
+    }
+  },1000);
+}
+
 function renderMorph(){
   if(!morphList.length){
     morphWord.textContent = '当前题库暂无可拼词';
     morphMeaning.textContent = '-';
     morphBlocks.innerHTML='';
     morphFb.textContent='-';
+    updateMorphHud();
     return;
   }
   const item = morphList[morphIdx];
@@ -961,6 +996,7 @@ function renderMorph(){
     btn.onclick=()=>pickMorphBlock(b,btn);
     morphBlocks.appendChild(btn);
   });
+  startMorphTimer();
 }
 
 function pickMorphBlock(part, btn){
@@ -970,10 +1006,16 @@ function pickMorphBlock(part, btn){
   const item = morphList[morphIdx];
   const cur = morphPicked.join('');
   if(cur===item.en){
+    clearInterval(morphTimerId);
+    morphScore += 10;
+    morphCombo += 1;
+    updateMorphHud();
     morphFb.textContent = `✅ 拼图成功：${item.parts.join(' + ')} = ${item.en}`;
     return;
   }
   if(!item.en.startsWith(cur)){
+    morphCombo = 0;
+    updateMorphHud();
     morphFb.textContent = `❌ 顺序不对，正确示例：${item.parts.join(' + ')}`;
     return;
   }
@@ -983,11 +1025,15 @@ function pickMorphBlock(part, btn){
 function startMorph(){
   buildMorphList();
   morphIdx = 0;
+  morphScore = 0;
+  morphCombo = 0;
   renderMorph();
+  updateMorphHud();
 }
 
 function nextMorph(){
   if(!morphList.length) return;
+  clearInterval(morphTimerId);
   morphIdx = (morphIdx + 1) % morphList.length;
   renderMorph();
 }
