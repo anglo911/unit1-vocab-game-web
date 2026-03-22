@@ -7,18 +7,18 @@
   <style>
     :root{--bg:#f7f4ee;--card:#fffdf9;--line:#ddd5c7;--text:#2f2a24;--muted:#6b6257;--ok:#2f855a;--bad:#c05648;--pri:#5a67d8;--warn:#d69e2e}
     *{box-sizing:border-box} body{margin:0;background:linear-gradient(120deg,#f7f4ee,#efe7dc);color:var(--text);font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.5}
-    .wrap{max-width:1240px;margin:20px auto;padding:0 14px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 10px 24px rgba(90,80,60,.08)}
-    h1,h2{margin:0 0 8px} h1{font-size:30px;letter-spacing:.5px} h2{font-size:21px}
+    .wrap{max-width:1120px;margin:14px auto;padding:0 12px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 8px 18px rgba(90,80,60,.08)}
+    h1,h2{margin:0 0 6px} h1{font-size:26px;letter-spacing:.3px} h2{font-size:19px}
     .muted{color:var(--muted)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .header-card{text-align:center;padding:22px 18px}
+    .header-card{text-align:center;padding:16px 14px}
     .settings-card{grid-column:1 / -1}
-    .settings-form{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:10px;align-items:center}
-    input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:10px;padding:10px;min-width:0}
-    input,select{height:42px;width:100%}
+    .settings-form{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;align-items:center}
+    input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:9px;padding:8px;min-width:0}
+    input,select{height:38px;width:100%}
     textarea{width:100%;min-height:120px}
-    button{border:1px solid transparent;border-radius:10px;padding:10px 14px;color:#fff;font-weight:700;cursor:pointer;transition:all .18s ease}
+    button{border:1px solid transparent;border-radius:9px;padding:8px 12px;color:#fff;font-weight:700;cursor:pointer;transition:all .18s ease}
     .pri{background:#7b6ed6;border-color:#6f63c9}
     .pri:hover{background:#6f63c9}
     .ok{background:#4a8f72;border-color:#3f7f64}
@@ -40,9 +40,9 @@
     .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
     .study-page{grid-column:1 / -1;text-align:center;padding:22px}
     .study-page .study-top{justify-content:center}
-    .study-page #studyWord{font-size:52px;font-weight:800;letter-spacing:.6px}
-    .study-page #studyIpa{font-size:22px}
-    .study-page #studyCn{font-size:20px}
+    .study-page #studyWord{font-size:46px;font-weight:800;letter-spacing:.5px}
+    .study-page #studyIpa{font-size:20px}
+    .study-page #studyCn{font-size:18px}
     .study-page .study-actions{justify-content:center;gap:12px;flex-wrap:wrap}
     @media (max-width:1100px){.settings-form{grid-template-columns:repeat(3,minmax(120px,1fr));}}
     @media (max-width:900px){.grid2{grid-template-columns:1fr}.settings-form{grid-template-columns:1fr;} h1{font-size:26px}}
@@ -119,7 +119,7 @@
           </optgroup>
         </select>
         <select id="difficulty"><option value="easy">简单</option><option value="normal" selected>标准</option><option value="hard">困难</option></select>
-        <button class="pri" id="startBtn" style="height:42px">开始闯关</button>
+        <button class="pri" id="startBtn" style="height:38px">开始闯关</button>
       </div>
       <div class="muted">建议：投屏时先录入班级和学生姓名，便于成绩榜统计。</div>
 
