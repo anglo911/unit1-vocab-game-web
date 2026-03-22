@@ -1080,6 +1080,23 @@ function pickMorphBlock(part, btn){
   morphFb.textContent = `已拼：${morphPicked.join(' + ')}`;
 }
 
+function resetMorphIdle(){
+  clearInterval(morphTimerId);
+  morphList = [];
+  morphPool = [];
+  morphWrongQueue = [];
+  morphIdx = 0;
+  morphScore = 0;
+  morphCombo = 0;
+  morphTimer = 25;
+  morphWord.textContent = '点击“开始拼图”';
+  morphMeaning.textContent = '-';
+  morphBlocks.innerHTML='';
+  morphFb.textContent='-';
+  morphMeta.textContent='把打乱的词根拼成正确单词（按所选题库）';
+  updateMorphHud();
+}
+
 function startMorph(){
   buildMorphList();
   morphIdx = 0;
@@ -1566,16 +1583,16 @@ dictSpeakBtn.onclick=speakDictWord;
 startMorphBtn.onclick=startMorph;
 nextMorphBtn.onclick=nextMorph;
 speakMorphBtn.onclick=speakMorph;
-morphBankMode.onchange=startMorph;
-morphCount.onchange=startMorph;
+morphBankMode.onchange=resetMorphIdle;
+morphCount.onchange=resetMorphIdle;
 dictInput.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   if(!dictChecked) submitDict();
   else nextDict();
 });
-gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); startMorph(); };
-termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); startMorph(); };
-unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); startMorph(); };
+gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
+termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
+unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); resetMorphIdle(); };
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
@@ -1583,7 +1600,7 @@ renderRank();
 renderUnitOptions();
 startStudy();
 startDict();
-startMorph();
+resetMorphIdle();
 </script>
 </body>
 </html>
