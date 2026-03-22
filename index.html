@@ -155,8 +155,22 @@
     </div>
   </div>
 
+  <div class="card" id="morphCard">
+    <h2>5) 词根词缀拆积木</h2>
+    <div class="muted" id="morphMeta">像拼图一样拆单词：un + happy → unhappy</div>
+    <div id="morphWord" class="q" style="font-size:38px">点击“开始拆词”</div>
+    <div id="morphMeaning" class="muted" style="font-size:20px;margin-top:6px">-</div>
+    <div id="morphBlocks" class="opts" style="margin-top:10px"></div>
+    <div id="morphFb" class="fb">-</div>
+    <div class="row" style="margin-top:10px">
+      <button class="pri" id="startMorphBtn">开始拆词</button>
+      <button class="ghost" id="nextMorphBtn">下一词</button>
+      <button class="ghost" id="speakMorphBtn">🔊 发音</button>
+    </div>
+  </div>
+
   <div class="card">
-    <h2>4) 成绩榜（本机 localStorage）</h2>
+    <h2>6) 成绩榜（本机 localStorage）</h2>
     <div class="row" style="margin-bottom:8px">
       <button class="ghost" id="refreshRankBtn">刷新</button>
       <button class="warn" id="clearRankBtn">清空成绩榜</button>
@@ -731,12 +745,16 @@ let dictList=[];
 let dictIdx=0;
 let dictScore=0;
 let dictChecked=false;
+let morphList=[];
+let morphIdx=0;
+let morphPicked=[];
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
+const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
@@ -889,6 +907,98 @@ function speakDictWord(){
   u.pitch = 1.1;
   const v = pickFemaleVoice('en-US');
   if(v) u.voice = v;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+function splitMorphWord(word){
+  const w = String(word||'').toLowerCase();
+  const prefixes = ['un','re','dis','im','in','pre','post'];
+  const suffixes = ['ing','ed','er','est','ly','ful','less','tion','sion','ment','able','ness'];
+  for(const p of prefixes){
+    if(w.startsWith(p) && w.length > p.length+2){
+      return [p, w.slice(p.length)];
+    }
+  }
+  for(const s of suffixes){
+    if(w.endsWith(s) && w.length > s.length+2){
+      return [w.slice(0,-s.length), s];
+    }
+  }
+  if(w.length>=6){
+    const mid=Math.floor(w.length/2);
+    return [w.slice(0,mid), w.slice(mid)];
+  }
+  return [w];
+}
+
+function buildMorphList(){
+  const src = getStudyWords($("unitSelect").value || selectedUnit || 'unit1').filter(x=>x && x[0] && /^[a-zA-Z-]+$/.test(x[0]));
+  morphList = src.slice(0, 20).map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
+}
+
+function renderMorph(){
+  if(!morphList.length){
+    morphWord.textContent = '当前题库暂无可拆词';
+    morphMeaning.textContent = '-';
+    morphBlocks.innerHTML='';
+    morphFb.textContent='-';
+    return;
+  }
+  const item = morphList[morphIdx];
+  morphPicked = [];
+  morphWord.textContent = item.en;
+  morphMeaning.textContent = `词义：${item.cn}`;
+  morphFb.textContent = '按顺序点击词块，拼出完整单词';
+  morphMeta.textContent = `拆词进度：${morphIdx+1}/${morphList.length}`;
+  const blocks = [...item.parts].sort(()=>Math.random()-0.5);
+  morphBlocks.innerHTML='';
+  blocks.forEach(b=>{
+    const btn=document.createElement('button');
+    btn.className='ghost';
+    btn.textContent=b;
+    btn.style.minWidth='120px';
+    btn.onclick=()=>pickMorphBlock(b,btn);
+    morphBlocks.appendChild(btn);
+  });
+}
+
+function pickMorphBlock(part, btn){
+  if(!morphList.length || btn.disabled) return;
+  btn.disabled=true;
+  morphPicked.push(part);
+  const item = morphList[morphIdx];
+  const cur = morphPicked.join('');
+  if(cur===item.en){
+    morphFb.textContent = `✅ 拆词成功：${item.parts.join(' + ')} = ${item.en}`;
+    return;
+  }
+  if(!item.en.startsWith(cur)){
+    morphFb.textContent = `❌ 顺序不对，正确示例：${item.parts.join(' + ')}`;
+    return;
+  }
+  morphFb.textContent = `已拼：${morphPicked.join(' + ')}`;
+}
+
+function startMorph(){
+  buildMorphList();
+  morphIdx = 0;
+  renderMorph();
+}
+
+function nextMorph(){
+  if(!morphList.length) return;
+  morphIdx = (morphIdx + 1) % morphList.length;
+  renderMorph();
+}
+
+function speakMorph(){
+  if(!morphList.length || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(morphList[morphIdx].en);
+  u.lang='en-US';
+  u.rate=0.85;
+  const v=pickFemaleVoice('en-US');
+  if(v) u.voice=v;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
 }
@@ -1331,14 +1441,17 @@ startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
 dictSpeakBtn.onclick=speakDictWord;
+startMorphBtn.onclick=startMorph;
+nextMorphBtn.onclick=nextMorph;
+speakMorphBtn.onclick=speakMorph;
 dictInput.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   if(!dictChecked) submitDict();
   else nextDict();
 });
-gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); };
-termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); };
-unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); };
+gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); startMorph(); };
+termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); startMorph(); };
+unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); startMorph(); };
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
@@ -1346,6 +1459,7 @@ renderRank();
 renderUnitOptions();
 startStudy();
 startDict();
+startMorph();
 </script>
 </body>
 </html>
