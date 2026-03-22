@@ -645,6 +645,11 @@ ALL_UNITS['g8s_u6'] = [
   ["energetic","精力充沛的；充满活力的"],["last but not least","最后但同等重要的"],["Jason","贾森"],["Tina","蒂娜"]
 ];
 
+ALL_UNITS['g8s_u5'] = [
+  ...(ALL_UNITS['g8s_u5'] || []),
+  ["Thanksgiving","感恩节"],["Guoqiao Rice Noodles","过桥米线"]
+];
+
 const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
