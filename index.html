@@ -281,6 +281,10 @@ const G4X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g4x_u${i+1}`, ma
 const G5S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g5s_u${i+1}`, makePlaceholderUnit(5, 's', i+1)]));
 const G5X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g5x_u${i+1}`, makePlaceholderUnit(5, 'x', i+1)]));
 const G6S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g6s_u${i+1}`, makePlaceholderUnit(6, 's', i+1)]));
+const G8S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g8s_u${i+1}`, makePlaceholderUnit(8, 's', i+1)]));
+const G8X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g8x_u${i+1}`, makePlaceholderUnit(8, 'x', i+1)]));
+const G9S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g9s_u${i+1}`, makePlaceholderUnit(9, 's', i+1)]));
+const G9X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g9x_u${i+1}`, makePlaceholderUnit(9, 'x', i+1)]));
 
 let ALL_UNITS = {
   unit1: UNIT1_WORDS,
@@ -306,6 +310,10 @@ let ALL_UNITS = {
   ...G5S,
   ...G5X,
   ...G6S,
+  ...G8S,
+  ...G8X,
+  ...G9S,
+  ...G9X,
   g6x_u1: G6X_U1_WORDS,
   g6x_u2: G6X_U2_WORDS,
   g6x_u3: G6X_U3_WORDS,
@@ -388,6 +396,12 @@ function renderUnitOptions(){
   }else if(grade==='g7'){
     if(term==='s') list = [['unit1','Unit 1'],['unit2','Unit 2'],['unit3','Unit 3'],['unit4','Unit 4'],['unit5','Unit 5'],['unit6','Unit 6']];
     else list = [['unit7','Unit 1'],['unit8','Unit 2'],['unit9','Unit 3'],['unit10','Unit 4'],['unit11','Unit 5'],['unit12','Unit 6'],['mix','Unit1~6 混合']];
+  }else if(/^g[89]$/.test(grade)){
+    const g = grade.slice(1);
+    list = Array.from({length:10}, (_,i)=>{
+      const u=i+1;
+      return [`g${g}${term}_u${u}`, `Unit ${u}`];
+    });
   }else{
     list = [['','（待添加）']];
   }
