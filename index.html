@@ -236,6 +236,20 @@ const UNIT12_WORDS = [
   ["surprise","惊奇"],["snake","蛇"],["jump","跳"],["forest","森林"],["ear","耳朵"]
 ];
 
+// 七年级（人教版）重新校对词表（上6单元 + 下6单元）
+const G7_UNIT1_WORDS = [["name","名字"],["nice","令人愉快的"],["meet","遇见"],["your","你的"],["his","他的"],["her","她的"],["and","和"],["phone","电话"],["number","号码"],["friend","朋友"]];
+const G7_UNIT2_WORDS = [["sister","姐妹"],["mother","母亲"],["father","父亲"],["parent","父(母)亲"],["brother","兄弟"],["grandmother","祖母"],["grandfather","祖父"],["family","家庭"],["these","这些"],["those","那些"]];
+const G7_UNIT3_WORDS = [["schoolbag","书包"],["pencil","铅笔"],["pen","钢笔"],["book","书"],["eraser","橡皮"],["ruler","尺子"],["dictionary","词典"],["pencil box","文具盒"],["mine","我的"],["hers","她的"]];
+const G7_UNIT4_WORDS = [["where","在哪里"],["table","桌子"],["bed","床"],["bookcase","书架"],["sofa","沙发"],["chair","椅子"],["on","在……上"],["under","在……下"],["desk","书桌"],["room","房间"]];
+const G7_UNIT5_WORDS = [["do","助动词"],["does","助动词（三单）"],["have","有"],["soccer ball","足球"],["tennis ball","网球"],["basketball","篮球"],["volleyball","排球"],["ping-pong bat","乒乓球拍"],["let us","让我们"],["great","太好了"]];
+const G7_UNIT6_WORDS = [["banana","香蕉"],["hamburger","汉堡"],["tomato","西红柿"],["ice-cream","冰淇淋"],["salad","沙拉"],["strawberry","草莓"],["pear","梨"],["milk","牛奶"],["bread","面包"],["chicken","鸡肉"]];
+const G7_UNIT7_WORDS = [["weather","天气"],["rainy","下雨的"],["windy","有风的"],["cloudy","多云的"],["sunny","晴朗的"],["snowing","下雪的"],["cook","做饭"],["message","信息"],["could","可以"],["problem","问题"]];
+const G7_UNIT8_WORDS = [["post office","邮局"],["police station","警察局"],["hotel","旅馆"],["restaurant","餐馆"],["bank","银行"],["hospital","医院"],["street","街道"],["across from","在……对面"],["between","在……之间"],["next to","紧挨着"]];
+const G7_UNIT9_WORDS = [["curly","卷曲的"],["straight","直的"],["tall","高的"],["medium","中等的"],["height","身高"],["thin","瘦的"],["heavy","重的"],["glasses","眼镜"],["actor","男演员"],["actress","女演员"]];
+const G7_UNIT10_WORDS = [["noodle","面条"],["beef","牛肉"],["mutton","羊肉"],["cabbage","卷心菜"],["potato","土豆"],["special","特色菜"],["would","愿意"],["order","点菜"],["size","尺寸"],["bowl","碗"]];
+const G7_UNIT11_WORDS = [["milk","牛奶"],["cow","奶牛"],["horse","马"],["feed","喂养"],["farmer","农民"],["quite","相当"],["anything","任何事物"],["grow","种植"],["pick","采摘"],["excellent","极好的"]];
+const G7_UNIT12_WORDS = [["camp","扎营"],["lake","湖"],["beach","海滩"],["sheep","羊"],["natural","自然的"],["butterfly","蝴蝶"],["visitor","游客"],["tired","疲倦的"],["stay","停留"],["surprise","惊奇"]];
+
 // 外研版（一起）六年级下册（按 Unit1~Unit10 菜单格式）
 const G6X_U1_WORDS = [
   ["hot dog","热狗"],["cashier","收银员"],["cola","可乐"],["soup","汤"],["dollar","美元"],
@@ -374,18 +388,18 @@ const G9S = buildRenjiaoBank(9, 's', RJ_G9S_TOPICS);
 const G9X = buildRenjiaoBank(9, 'x', RJ_G9X_TOPICS);
 
 let ALL_UNITS = {
-  unit1: UNIT1_WORDS,
-  unit2: UNIT2_WORDS,
-  unit3: UNIT3_WORDS,
-  unit4: UNIT4_WORDS,
-  unit5: UNIT5_WORDS,
-  unit6: UNIT6_WORDS,
-  unit7: UNIT7_WORDS,
-  unit8: UNIT8_WORDS,
-  unit9: UNIT9_WORDS,
-  unit10: UNIT10_WORDS,
-  unit11: UNIT11_WORDS,
-  unit12: UNIT12_WORDS,
+  unit1: G7_UNIT1_WORDS,
+  unit2: G7_UNIT2_WORDS,
+  unit3: G7_UNIT3_WORDS,
+  unit4: G7_UNIT4_WORDS,
+  unit5: G7_UNIT5_WORDS,
+  unit6: G7_UNIT6_WORDS,
+  unit7: G7_UNIT7_WORDS,
+  unit8: G7_UNIT8_WORDS,
+  unit9: G7_UNIT9_WORDS,
+  unit10: G7_UNIT10_WORDS,
+  unit11: G7_UNIT11_WORDS,
+  unit12: G7_UNIT12_WORDS,
   ...G1S,
   ...G1X,
   ...G2S,
