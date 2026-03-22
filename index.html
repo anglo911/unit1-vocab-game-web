@@ -661,6 +661,39 @@ ALL_UNITS['g8s_u3'] = [
   ["Diana","戴安娜"],["Edward","爱德华"],["Mark Twain","马克·吐温"],["Rose","罗丝"]
 ];
 
+// 八上补漏校对（按用户后续文本补齐）
+ALL_UNITS['g8s_u1'] = [
+  ...(ALL_UNITS['g8s_u1'] || []),
+  ["steamed chicken soup","汽锅鸡"],["hotel","旅馆；旅社"],["noon","正午；中午"],["sick","恶心的；生病的"],["accordion","手风琴"],
+  ["get together","聚会；相聚"],["in the sun","在阳光下"],["might","可能；可以"],["forgetful","健忘的"],["faraway","远方的；遥远的"],
+  ["regular","平常的；有规律的"],["Guest-Greeting Pine","迎客松"],["Sea of Clouds","云海"],["Seattle","西雅图"],["Red Square","红场"],
+  ["Alexander Garden","亚历山大花园"],["Vincent","文森特"],["Moscow","莫斯科"],["Russia","俄罗斯"],["the Victory Museum","胜利博物馆"],
+  ["Nazi","纳粹党人；纳粹分子"],["World War II","第二次世界大战"],["Moscow Metro","莫斯科地铁"],["Scotland","苏格兰"]
+];
+
+ALL_UNITS['g8s_u2'] = [
+  ...(ALL_UNITS['g8s_u2'] || []),
+  ["ah","啊（表示高兴、惊奇等）"],["mm","嗯（表示喜欢、同意等）"],["nod","点头"],["text","正文；文本；发短信"],
+  ["freshly","刚刚"],["block","大楼；街区；大块"],["cover","遮盖；包括；封皮"]
+];
+
+ALL_UNITS['g8s_u3'] = [
+  ...(ALL_UNITS['g8s_u3'] || []),
+  ["novel","小说"],["metre","米"],["prince","王子"],["character","人物；个性"],["pauper","贫民；乞丐"],
+  ["silver","银色的；银"],["lining","内衬"],["silver lining","一线光明"],["situation","情况；状况"],["reach","伸手；到达"]
+];
+
+ALL_UNITS['g8s_u4'] = [
+  ...(ALL_UNITS['g8s_u4'] || []),
+  ["yeah","是的；对"],["goodness","美德；营养"],["title","标题；题目；名称"],["ant","蚂蚁"],["happiness","幸福；快乐"],
+  ["disappoint","使失望；使破灭"],["ton","吨"],["pea","豌豆"]
+];
+
+ALL_UNITS['g8s_u5'] = [
+  ...(ALL_UNITS['g8s_u5'] || []),
+  ["steamed fish","清蒸鱼"],["Christmas","圣诞节"]
+];
+
 const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
