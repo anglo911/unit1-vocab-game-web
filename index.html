@@ -984,9 +984,9 @@ function renderMorph(){
   }
   const item = morphList[morphIdx];
   morphPicked = [];
-  morphWord.textContent = item.en;
+  morphWord.textContent = '🎧 请听读音，用词根拼出单词';
   morphMeaning.textContent = `词义：${item.cn}`;
-  morphFb.textContent = '从整组字根池里选块，按顺序拼出完整单词';
+  morphFb.textContent = '从整组词根池里选块，按顺序拼出完整单词';
   morphMeta.textContent = `拼图进度：${morphIdx+1}/${morphList.length} · 字根池 ${morphPool.length}`;
 
   const target = [...item.parts];
@@ -1003,6 +1003,7 @@ function renderMorph(){
     morphBlocks.appendChild(btn);
   });
   startMorphTimer();
+  setTimeout(speakMorph, 120);
 }
 
 function pickMorphBlock(part, btn){
@@ -1016,7 +1017,8 @@ function pickMorphBlock(part, btn){
     morphScore += 10;
     morphCombo += 1;
     updateMorphHud();
-    morphFb.textContent = `✅ 拼图成功：${item.parts.join(' + ')} = ${item.en}`;
+    morphFb.textContent = `✅ 正确，自动下一词`;
+    setTimeout(nextMorph, 350);
     return;
   }
   if(!item.en.startsWith(cur)){
