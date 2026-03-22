@@ -752,6 +752,7 @@ let dictIdx=0;
 let dictScore=0;
 let dictChecked=false;
 let morphList=[];
+let morphPool=[];
 let morphIdx=0;
 let morphPicked=[];
 let morphScore=0;
@@ -944,7 +945,8 @@ function splitMorphWord(word){
 
 function buildMorphList(){
   const src = getStudyWords($("unitSelect").value || selectedUnit || 'unit1').filter(x=>x && x[0] && /^[a-zA-Z-]+$/.test(x[0]));
-  morphList = src.slice(0, 20).map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
+  morphList = src.map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
+  morphPool = [...new Set(morphList.flatMap(x=>x.parts))];
 }
 
 function updateMorphHud(){
@@ -984,9 +986,13 @@ function renderMorph(){
   morphPicked = [];
   morphWord.textContent = item.en;
   morphMeaning.textContent = `词义：${item.cn}`;
-  morphFb.textContent = '按顺序点击字根块，拼出完整单词';
-  morphMeta.textContent = `拼图进度：${morphIdx+1}/${morphList.length}`;
-  const blocks = [...item.parts].sort(()=>Math.random()-0.5);
+  morphFb.textContent = '从整组字根池里选块，按顺序拼出完整单词';
+  morphMeta.textContent = `拼图进度：${morphIdx+1}/${morphList.length} · 字根池 ${morphPool.length}`;
+
+  const target = [...item.parts];
+  const distractors = morphPool.filter(x=>!target.includes(x)).sort(()=>Math.random()-0.5).slice(0, Math.max(4, 12-target.length));
+  const blocks = [...target, ...distractors].sort(()=>Math.random()-0.5);
+
   morphBlocks.innerHTML='';
   blocks.forEach(b=>{
     const btn=document.createElement('button');
