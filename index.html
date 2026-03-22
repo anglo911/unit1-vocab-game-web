@@ -650,6 +650,11 @@ ALL_UNITS['g8s_u5'] = [
   ["Thanksgiving","感恩节"],["Guoqiao Rice Noodles","过桥米线"]
 ];
 
+ALL_UNITS['g8s_u4'] = [
+  ...(ALL_UNITS['g8s_u4'] || []),
+  ["the Arctic Ocean","北冰洋"],["Billy","比利"]
+];
+
 const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
