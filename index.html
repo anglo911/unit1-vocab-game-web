@@ -172,6 +172,12 @@
         <option value="term">当前册别题库</option>
         <option value="grade">当前年级题库</option>
       </select>
+      <select id="morphCount" style="max-width:160px">
+        <option value="5">5词</option>
+        <option value="10" selected>10词</option>
+        <option value="20">20词</option>
+        <option value="all">全部</option>
+      </select>
     </div>
     <div id="morphBlocks" class="opts" style="margin-top:10px"></div>
     <div id="morphFb" class="fb">-</div>
@@ -760,6 +766,7 @@ let dictScore=0;
 let dictChecked=false;
 let morphList=[];
 let morphPool=[];
+let morphWrongQueue=[];
 let morphIdx=0;
 let morphPicked=[];
 let morphScore=0;
@@ -772,7 +779,7 @@ const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spel
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
-const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode");
+const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
@@ -976,6 +983,8 @@ function buildMorphList(){
   src = src.filter(x=>x && x[0] && /^[a-zA-Z-]+$/.test(x[0]));
   morphList = src.map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
   morphList = morphList.sort(()=>Math.random()-0.5); // 随机顺序
+  const c = (morphCount && morphCount.value) || '10';
+  if(c !== 'all') morphList = morphList.slice(0, Number(c)||10);
   morphPool = [...new Set(morphList.flatMap(x=>x.parts))];
 }
 
@@ -997,8 +1006,9 @@ function startMorphTimer(){
     if(morphTimer<=0){
       clearInterval(morphTimerId);
       morphCombo = 0;
-      morphFb.textContent = '⏰ 超时，自动下一词';
-      setTimeout(nextMorph, 500);
+      if(morphList[morphIdx]) morphWrongQueue.push(morphList[morphIdx]);
+      morphFb.textContent = '⏰ 超时，跳到下一词（错词稍后再练）';
+      setTimeout(nextMorph, 450);
     }
   },1000);
 }
@@ -1055,8 +1065,10 @@ function pickMorphBlock(part, btn){
   }
   if(!item.en.startsWith(cur)){
     morphCombo = 0;
+    if(morphList[morphIdx]) morphWrongQueue.push(morphList[morphIdx]);
     updateMorphHud();
-    morphFb.textContent = `❌ 顺序不对，正确示例：${item.parts.join(' + ')}`;
+    morphFb.textContent = `❌ 答错，先跳下一词（错词稍后再练）`;
+    setTimeout(nextMorph, 350);
     return;
   }
   morphFb.textContent = `已拼：${morphPicked.join(' + ')}`;
@@ -1065,6 +1077,7 @@ function pickMorphBlock(part, btn){
 function startMorph(){
   buildMorphList();
   morphIdx = 0;
+  morphWrongQueue = [];
   morphScore = 0;
   morphCombo = 0;
   renderMorph();
@@ -1076,7 +1089,14 @@ function nextMorph(){
   clearInterval(morphTimerId);
   morphIdx += 1;
   if(morphIdx >= morphList.length){
-    morphWord.textContent = '🎉 本轮已完成（本 Unit 不重复）';
+    if(morphWrongQueue.length){
+      morphList.push(...morphWrongQueue);
+      morphWrongQueue = [];
+      morphMeta.textContent = '进入错词复练…';
+      renderMorph();
+      return;
+    }
+    morphWord.textContent = '🎉 本轮已完成（本轮不重复）';
     morphMeaning.textContent = '-';
     morphBlocks.innerHTML='';
     morphFb.textContent = `完成：${morphList.length}词 · 得分 ${morphScore}`;
@@ -1541,6 +1561,7 @@ startMorphBtn.onclick=startMorph;
 nextMorphBtn.onclick=nextMorph;
 speakMorphBtn.onclick=speakMorph;
 morphBankMode.onchange=startMorph;
+morphCount.onchange=startMorph;
 dictInput.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   if(!dictChecked) submitDict();
