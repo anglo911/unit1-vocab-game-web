@@ -655,6 +655,12 @@ ALL_UNITS['g8s_u4'] = [
   ["the Arctic Ocean","北冰洋"],["Billy","比利"]
 ];
 
+ALL_UNITS['g8s_u3'] = [
+  ...(ALL_UNITS['g8s_u3'] || []),
+  ["Julie","朱莉"],["Vancouver","温哥华（加拿大城市）"],["Matt","马特"],["Stephen","斯蒂芬"],
+  ["Diana","戴安娜"],["Edward","爱德华"],["Mark Twain","马克·吐温"],["Rose","罗丝"]
+];
+
 const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
