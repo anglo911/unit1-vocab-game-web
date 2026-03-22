@@ -47,6 +47,7 @@
     .study-page #studyApprox{font-size:19px}
     .study-meta-wrap{max-width:980px;margin:8px auto 0}
     .study-meta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;justify-items:center;align-items:center}
+    .study-meta-row.single{grid-template-columns:1fr}
     .study-meta-row + .study-meta-row{margin-top:6px}
     .study-meta-row > div{white-space:nowrap}
     #dictCard{text-align:center}
@@ -105,10 +106,10 @@
           <div id="studyCn" class="muted">词义 : -</div>
           <div id="studyIpa" class="muted">音标 : -</div>
         </div>
-        <div class="study-meta-row">
-          <div id="studySplit" class="muted">拆分发音 : -</div>
+        <div class="study-meta-row single">
           <div id="studyApprox" class="muted">近似读法 : -</div>
         </div>
+        <div id="studySplit" style="display:none"></div>
       </div>
       <div class="row study-actions" style="margin-top:14px">
         <button class="ok" id="startStudyBtn">开始学习</button>
