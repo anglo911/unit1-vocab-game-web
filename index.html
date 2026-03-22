@@ -283,10 +283,66 @@ const G4X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g4x_u${i+1}`, ma
 const G5S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g5s_u${i+1}`, makePlaceholderUnit(5, 's', i+1)]));
 const G5X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g5x_u${i+1}`, makePlaceholderUnit(5, 'x', i+1)]));
 const G6S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g6s_u${i+1}`, makePlaceholderUnit(6, 's', i+1)]));
-const G8S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g8s_u${i+1}`, makePlaceholderUnit(8, 's', i+1)]));
-const G8X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g8x_u${i+1}`, makePlaceholderUnit(8, 'x', i+1)]));
-const G9S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g9s_u${i+1}`, makePlaceholderUnit(9, 's', i+1)]));
-const G9X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g9x_u${i+1}`, makePlaceholderUnit(9, 'x', i+1)]));
+const RJ_G8S_TOPICS = [
+  [["anyone","任何人"],["anywhere","任何地方"],["wonderful","精彩的"],["few","很少"],["most","大多数"],["diary","日记"],["activity","活动"],["seem","似乎"]],
+  [["housework","家务劳动"],["hardly","几乎不"],["once","一次"],["twice","两次"],["internet","互联网"],["program","节目"],["full","满的"],["health","健康"]],
+  [["outgoing","外向的"],["both","两个都"],["better","更好的"],["loudly","大声地"],["quietly","安静地"],["competition","比赛"],["talented","有天赋的"],["similar","相像的"]],
+  [["theater","剧院"],["screen","屏幕"],["seat","座位"],["ticket","票"],["service","服务"],["menu","菜单"],["fresh","新鲜的"],["comfortable","舒适的"]],
+  [["sitcom","情景喜剧"],["news","新闻"],["mind","介意"],["stand","忍受"],["happen","发生"],["expect","期待"],["joke","笑话"],["action movie","动作片"]],
+  [["engineer","工程师"],["pilot","飞行员"],["college","大学"],["education","教育"],["article","文章"],["send","发送"],["resolution","决心"],["foreign","外国的"]],
+  [["future","未来"],["pollution","污染"],["environment","环境"],["planet","行星"],["paper","纸"],["machine","机器"],["apartment","公寓"],["probably","可能"]],
+  [["shake","摇动"],["peel","剥皮"],["pour","倒"],["yogurt","酸奶"],["honey","蜂蜜"],["sandwich","三明治"],["butter","黄油"],["piece","片；块"]],
+  [["invite","邀请"],["prepare","准备"],["exam","考试"],["flu","流感"],["available","有空的"],["until","直到"],["hang out","闲逛"],["accept","接受"]],
+  [["advice","建议"],["solve","解决"],["trust","信任"],["experience","经验"],["careless","粗心的"],["understanding","理解"],["teenager","青少年"],["normal","正常的"]]
+];
+
+const RJ_G8X_TOPICS = [
+  [["matter","问题；事情"],["sore","疼痛的"],["stomachache","胃痛"],["rest","休息"],["lie down","躺下"],["cough","咳嗽"],["fever","发烧"],["passenger","乘客"]],
+  [["volunteer","志愿者"],["sign","标志"],["notice","通知"],["lonely","孤独的"],["cheer","欢呼"],["raise","筹集"],["disabled","残疾的"],["imagine","想象"]],
+  [["chore","杂务"],["sweep","打扫"],["fold","折叠"],["mess","杂乱"],["stress","压力"],["fairness","公平"],["provide","提供"],["depend","依靠"]],
+  [["relation","关系"],["communicate","交流"],["argue","争吵"],["elder","年长者"],["instead","代替"],["pressure","压力"],["compare","比较"],["proper","恰当的"]],
+  [["rainstorm","暴风雨"],["alarm","闹钟"],["begin","开始"],["heavily","大量地"],["suddenly","突然"],["strange","奇怪的"],["realize","意识到"],["truth","真相"]],
+  [["shoot","射击"],["stone","石头"],["weak","虚弱的"],["remind","提醒"],["bit","一点"],["object","物体"],["hide","隐藏"],["tail","尾巴"]],
+  [["ancient","古代的"],["protect","保护"],["include","包括"],["condition","条件"],["succeed","成功"],["challenge","挑战"],["force","力量"],["nature","自然"]],
+  [["treasure","财富"],["island","岛屿"],["page","页"],["hurry","赶快"],["tool","工具"],["mark","标记"],["toward","朝向"],["forever","永远"]],
+  [["camera","照相机"],["invention","发明"],["progress","进步"],["rapid","快速的"],["unusual","不寻常的"],["toilet","厕所"],["social","社会的"],["peaceful","和平的"]],
+  [["fox","狐狸"],["husband","丈夫"],["wife","妻子"],["gold","金子"],["emperor","皇帝"],["nobody","没有人"],["silly","愚蠢的"],["cheat","欺骗"]]
+];
+
+const RJ_G9S_TOPICS = [
+  [["textbook","教科书"],["conversation","对话"],["aloud","大声地"],["pronunciation","发音"],["sentence","句子"],["patient","有耐心的"],["grammar","语法"],["expression","表达方式"]],
+  [["stranger","陌生人"],["relative","亲属"],["pound","磅"],["steal","偷"],["dessert","甜点"],["garden","花园"],["tradition","传统"],["admire","欣赏"]],
+  [["restroom","洗手间"],["stamp","邮票"],["beside","在旁边"],["postcard","明信片"],["pardon","请再说一遍"],["direct","直接的"],["request","请求"],["correct","正确的"]],
+  [["humorous","幽默的"],["silent","沉默的"],["helpful","有帮助的"],["score","得分"],["interview","采访"],["private","私人的"],["influence","影响"],["absent","缺席的"]],
+  [["cotton","棉花"],["silver","银"],["glass","玻璃"],["produce","生产"],["widely","广泛地"],["process","过程"],["local","当地的"],["avoid","避免"]],
+  [["zipper","拉链"],["daily","每日的"],["mention","提到"],["accidental","意外的"],["remain","保持"],["smell","气味"],["doubt","怀疑"],["translate","翻译"]],
+  [["smoke","吸烟"],["safety","安全"],["license","许可证"],["chance","机会"],["community","社区"],["educate","教育"],["support","支持"],["enter","进入"]],
+  [["whose","谁的"],["truck","卡车"],["rabbit","兔子"],["valuable","有价值的"],["pink","粉色"],["picnic","野餐"],["noise","噪音"],["police","警察"]],
+  [["prefer","更喜欢"],["lyrics","歌词"],["electronic","电子的"],["smooth","平滑的"],["spare","抽出"],["director","导演"],["painful","令人痛苦的"],["Australian","澳大利亚的"]],
+  [["by the time","在……以前"],["unexpected","出乎意料的"],["backpack","背包"],["oversleep","睡过头"],["burn","燃烧"],["alive","活着的"],["airport","机场"],["cancel","取消"]]
+];
+
+const RJ_G9X_TOPICS = [
+  [["survey","调查"],["standard","标准"],["instruction","说明"],["row","一排"],["keyboard","键盘"],["method","方法"],["text","文本"],["level","水平"]],
+  [["agreement","同意"],["disappoint","使失望"],["gentleman","先生"],["congratulate","祝贺"],["ceremony","典礼"],["thirsty","口渴的"],["thankful","感激的"],["task","任务"]],
+  [["leading","领先的"],["courage","勇气"],["separate","分开"],["wing","翅膀"],["attend","参加"],["overcome","克服"],["graduate","毕业"],["responsible","负责的"]],
+  [["custom","习俗"],["bow","鞠躬"],["kiss","亲吻"],["greet","问候"],["passport","护照"],["chalk","粉笔"],["blackboard","黑板"],["season","季节"]],
+  [["capital","首都"],["noon","中午"],["eastern","东方的"],["coast","海岸"],["manner","方式"],["except","除……之外"],["effort","努力"],["suggest","建议"]],
+  [["lock","锁"],["ring","戒指"],["earthquake","地震"],["sudden","突然的"],["safe","安全的"],["panic","惊慌"],["medical","医疗的"],["rescue","救援"]],
+  [["weigh","称重"],["birth","出生"],["adult","成人"],["manage","设法"],["tiny","极小的"],["huge","巨大的"],["spirit","精神"],["success","成功"]],
+  [["astronaut","宇航员"],["discovery","发现"],["technology","科技"],["recycle","回收"],["metal","金属"],["creative","有创造力的"],["imagine","想象"],["project","项目"]],
+  [["poem","诗"],["poet","诗人"],["rhyme","押韵"],["sadness","悲伤"],["friendship","友谊"],["memory","回忆"],["gentle","温柔的"],["treasure","珍惜"]],
+  [["review","复习"],["summary","总结"],["achievement","成就"],["challenge","挑战"],["future","未来"],["confidence","信心"],["dream","梦想"],["progress","进步"]]
+];
+
+function buildRenjiaoBank(grade, term, topics){
+  return Object.fromEntries(topics.map((arr, i)=>[`g${grade}${term}_u${i+1}`, arr]));
+}
+
+const G8S = buildRenjiaoBank(8, 's', RJ_G8S_TOPICS);
+const G8X = buildRenjiaoBank(8, 'x', RJ_G8X_TOPICS);
+const G9S = buildRenjiaoBank(9, 's', RJ_G9S_TOPICS);
+const G9X = buildRenjiaoBank(9, 'x', RJ_G9X_TOPICS);
 
 let ALL_UNITS = {
   unit1: UNIT1_WORDS,
