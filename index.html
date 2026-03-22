@@ -946,6 +946,7 @@ function splitMorphWord(word){
 function buildMorphList(){
   const src = getStudyWords($("unitSelect").value || selectedUnit || 'unit1').filter(x=>x && x[0] && /^[a-zA-Z-]+$/.test(x[0]));
   morphList = src.map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
+  morphList = morphList.sort(()=>Math.random()-0.5); // 随机顺序
   morphPool = [...new Set(morphList.flatMap(x=>x.parts))];
 }
 
@@ -1042,7 +1043,17 @@ function startMorph(){
 function nextMorph(){
   if(!morphList.length) return;
   clearInterval(morphTimerId);
-  morphIdx = (morphIdx + 1) % morphList.length;
+  morphIdx += 1;
+  if(morphIdx >= morphList.length){
+    morphWord.textContent = '🎉 本轮已完成（本 Unit 不重复）';
+    morphMeaning.textContent = '-';
+    morphBlocks.innerHTML='';
+    morphFb.textContent = `完成：${morphList.length}词 · 得分 ${morphScore}`;
+    morphMeta.textContent = '点击“开始拼图”可重新随机一轮';
+    morphTimer = 0;
+    updateMorphHud();
+    return;
+  }
   renderMorph();
 }
 
