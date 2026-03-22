@@ -722,6 +722,7 @@ let studyIdx=0;
 let dictList=[];
 let dictIdx=0;
 let dictScore=0;
+let dictChecked=false;
 
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
@@ -837,6 +838,7 @@ function renderDict(){
   dictMeta.textContent = `听写进度：${dictIdx+1}/${dictList.length} · 得分 ${dictScore}`;
   dictCn.textContent = `中文释义：${cn}`;
   dictInput.value = '';
+  dictChecked = false;
   dictFeedback.textContent = '请输入对应英文';
 }
 
@@ -849,7 +851,7 @@ function startDict(){
 }
 
 function submitDict(){
-  if(!dictList.length) return;
+  if(!dictList.length || dictChecked) return;
   const [en] = dictList[dictIdx];
   const user = normalizeAns(dictInput.value);
   const std = normalizeAns(en);
@@ -859,6 +861,7 @@ function submitDict(){
   }else{
     dictFeedback.textContent = `❌ 正确答案：${en}`;
   }
+  dictChecked = true;
   dictMeta.textContent = `听写进度：${dictIdx+1}/${dictList.length} · 得分 ${dictScore}`;
 }
 
@@ -1305,7 +1308,11 @@ speakSplitBtn.onclick=speakSplitWord;
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
-dictInput.addEventListener('keydown',e=>{ if(e.key==='Enter') submitDict(); });
+dictInput.addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  if(!dictChecked) submitDict();
+  else nextDict();
+});
 gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); };
 termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); };
 unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); };
