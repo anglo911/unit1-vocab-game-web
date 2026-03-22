@@ -98,6 +98,7 @@
         <button class="ghost" id="prevStudyBtn">上一个</button>
         <button class="ghost" id="nextStudyBtn">下一个</button>
         <button class="pri" id="speakStudyBtn">🔊 单词发音</button>
+        <button class="ghost" id="speakSplitBtn">🔊 拆分发音</button>
       </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
@@ -709,7 +710,7 @@ let studyIdx=0;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
@@ -909,6 +910,20 @@ function speakStudyWord(){
   u.lang = 'en-US';
   u.rate = 0.82; // 慢速便于跟读
   u.pitch = 1.1;
+  const v = pickFemaleVoice('en-US');
+  if(v) u.voice = v;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+function speakSplitWord(){
+  if(!studyList.length || !("speechSynthesis" in window)) return;
+  const [en] = studyList[studyIdx];
+  const split = toSplitPron(en).replace(/\s*\+\s*/g,' ').replace(/-/g,' ');
+  const u = new SpeechSynthesisUtterance(split || String(en||''));
+  u.lang = 'en-US';
+  u.rate = 0.72;
+  u.pitch = 1.08;
   const v = pickFemaleVoice('en-US');
   if(v) u.voice = v;
   window.speechSynthesis.cancel();
@@ -1223,6 +1238,7 @@ startStudyBtn.onclick=startStudy;
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=speakStudyWord;
+speakSplitBtn.onclick=speakSplitWord;
 gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); };
 termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); };
 unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); };
