@@ -603,6 +603,30 @@ let ALL_UNITS = {
   g6x_u10: G6X_U10_WORDS,
 };
 
+// 八上用户校对补丁：Unit 7 / Unit 8
+ALL_UNITS['g8s_u7'] = [
+  ["German","德语；德国人；德国的"],["valuable","很有用的；宝贵的"],["public","公共的；公众的"],["medical","医学的；医疗的"],["challenge","挑战；向…挑战"],
+  ["task","任务；工作"],["depend","取决于；依靠"],["depend on","取决于；依靠"],["come over","来访；拜访"],["as long as","只要"],
+  ["Jennifer","珍妮弗"],["Harry","哈里"],["Asimov","阿西莫夫"],["France","法国"],["Mandy","曼迪"]
+];
+
+ALL_UNITS['g8s_u8'] = [
+  ["communication","表达；交流"],["face to face","面对面"],["text message","短信"],["sign","手势；标志；签字"],["speaker","说话者；发言者"],
+  ["rehearsal","排演；排练"],["show sb around","领某人参观"],["local","当地的；本地人"],["face-to-face","面对面的"],["professor","教授"],
+  ["speech","演说；发言"],["argue","争论；争吵"],["make up (with sb)","与……言归于好"],["in person","亲自；亲身"],["prefer","较喜欢"],
+  ["calm","镇静的；使平静"],["worry about","为……担心"],["expression","表达方式；表达"],["chance","机会；可能性"],["meeting","会面；会议"],
+  ["difficulty","困难；难题"],["right away","立即；马上"],["line","字行；便条；线"],["drop sb a line","给……写信"],["detail","细节；详情"],
+  ["reunion","团聚；重逢；聚会"],["seriously","严肃地；认真地"],["training","训练；培训"],["nervous","担忧的；焦虑的"],["stranger","陌生人"],
+  ["tip","提示；小费；尖端"],["carefully","认真地；仔细地"],["show interest in sth","对……表现出兴趣"],["listener","听者"],["point","观点；重点；指向"],
+  ["surely","想必；必定"],["continue","持续；继续做"],["impolite","不礼貌的；粗鲁的"],["personal","个人的；私人的"],["argue with sb","与某人争论"],
+  ["move on (to sth)","换话题；开始做别的事"],["sincere","真诚的；诚实的"],["find out","查明；弄清"],["pay","付费；薪水"],["attention","注意；关注"],
+  ["pay attention (to ...)","注意；关注"],["be yourself","行为自然；不做作"],["offer","提供；主动提出"],["reasonable","公平的；合理的"],["social","社会的；社交的"],
+  ["medium","媒介；中等的"],["social media","社交媒体"],["trust","信任；相信"],["keep (...) away from ...","使远离"],["misunderstanding","误解；误会"],
+  ["event","公开活动；重要事情"],["take place","发生；进行"],["cost","费用；代价"],["opportunity","机会；时机"],["benefit","益处；使受益"],
+  ["benefit ... from ...","从……获益"],["reply","回答；回复"],["honour","荣幸；尊敬"],["sincerely","真诚地"],["opening","开篇的；开始"],
+  ["closing","结尾的；结束"],["sentence","句子"],["date","日期"],["clause","从句；分句"],["Susan","苏珊"],["Jones","琼斯"]
+];
+
 const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
