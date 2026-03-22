@@ -112,6 +112,7 @@
       <input id="dictInput" placeholder="请输入英文单词/短语" style="max-width:420px" />
       <button class="ok" id="dictSubmitBtn">提交</button>
       <button class="ghost" id="dictNextBtn">下一个</button>
+      <button class="ghost" id="dictSpeakBtn">🔊 发音</button>
       <button class="pri" id="startDictBtn">开始听写</button>
     </div>
     <div class="muted" id="dictFeedback" style="margin-top:8px">-</div>
@@ -728,7 +729,7 @@ const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
-const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
+const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
@@ -869,6 +870,19 @@ function nextDict(){
   if(!dictList.length) return;
   dictIdx = (dictIdx + 1) % dictList.length;
   renderDict();
+}
+
+function speakDictWord(){
+  if(!dictList.length || !("speechSynthesis" in window)) return;
+  const [en] = dictList[dictIdx];
+  const u = new SpeechSynthesisUtterance(String(en||''));
+  u.lang = 'en-US';
+  u.rate = 0.82;
+  u.pitch = 1.1;
+  const v = pickFemaleVoice('en-US');
+  if(v) u.voice = v;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
 }
 
 function phonicsBreak(word){
@@ -1308,6 +1322,7 @@ speakSplitBtn.onclick=speakSplitWord;
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
+dictSpeakBtn.onclick=speakDictWord;
 dictInput.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   if(!dictChecked) submitDict();
