@@ -113,7 +113,7 @@
     <div class="hud">
       <span class="pill" id="stagePill">关卡 Lv.1</span>
       <span class="pill" id="comboPill">连击 x0</span>
-      <span class="pill" id="timerPill">⏱️ 15s</span>
+      <span class="pill" id="timerPill">⏱️ 30s</span>
       <div class="bar"><span id="progressBar"></span></div>
     </div>
     <div class="row muted" id="meta">第 0/0 题 · 得分 0 · 错题 0</div>
@@ -333,7 +333,7 @@ let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
 let className="", studentName="", total=20;
 let combo=0, bestCombo=0, stage=1;
-let timer=15, timerId=null;
+let timer=30, timerId=null;
 let difficulty='normal';
 let selectedUnit='unit1';
 let isRedoMode=false;
@@ -623,7 +623,7 @@ function showQ(){
     q.innerHTML = `${isBoss ? '👑【Boss关·拼写题】' : '【拼写题（进阶）】'}请根据中文写出英文：<br><b>${cn}</b>`;
     spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }
-  const baseTimer = difficulty==='easy' ? 20 : (difficulty==='hard' ? 12 : 15);
+  const baseTimer = difficulty==='easy' ? 35 : (difficulty==='hard' ? 27 : 30);
   const stagePenalty = mode==='spell' ? Math.max(0, stage-1) : 0;
   timer = Math.max(7, baseTimer - stagePenalty - (isBoss ? 2 : 0));
   startTimer();
