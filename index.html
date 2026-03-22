@@ -156,14 +156,14 @@
   </div>
 
   <div class="card" id="morphCard">
-    <h2>5) 词根词缀拆积木</h2>
-    <div class="muted" id="morphMeta">像拼图一样拆单词：un + happy → unhappy</div>
-    <div id="morphWord" class="q" style="font-size:38px">点击“开始拆词”</div>
+    <h2>5) 字根拼图</h2>
+    <div class="muted" id="morphMeta">把打乱的字根拼成正确单词（按所选 Unit）</div>
+    <div id="morphWord" class="q" style="font-size:38px">点击“开始拼图”</div>
     <div id="morphMeaning" class="muted" style="font-size:20px;margin-top:6px">-</div>
     <div id="morphBlocks" class="opts" style="margin-top:10px"></div>
     <div id="morphFb" class="fb">-</div>
     <div class="row" style="margin-top:10px">
-      <button class="pri" id="startMorphBtn">开始拆词</button>
+      <button class="pri" id="startMorphBtn">开始拼图</button>
       <button class="ghost" id="nextMorphBtn">下一词</button>
       <button class="ghost" id="speakMorphBtn">🔊 发音</button>
     </div>
@@ -939,7 +939,7 @@ function buildMorphList(){
 
 function renderMorph(){
   if(!morphList.length){
-    morphWord.textContent = '当前题库暂无可拆词';
+    morphWord.textContent = '当前题库暂无可拼词';
     morphMeaning.textContent = '-';
     morphBlocks.innerHTML='';
     morphFb.textContent='-';
@@ -949,8 +949,8 @@ function renderMorph(){
   morphPicked = [];
   morphWord.textContent = item.en;
   morphMeaning.textContent = `词义：${item.cn}`;
-  morphFb.textContent = '按顺序点击词块，拼出完整单词';
-  morphMeta.textContent = `拆词进度：${morphIdx+1}/${morphList.length}`;
+  morphFb.textContent = '按顺序点击字根块，拼出完整单词';
+  morphMeta.textContent = `拼图进度：${morphIdx+1}/${morphList.length}`;
   const blocks = [...item.parts].sort(()=>Math.random()-0.5);
   morphBlocks.innerHTML='';
   blocks.forEach(b=>{
@@ -970,7 +970,7 @@ function pickMorphBlock(part, btn){
   const item = morphList[morphIdx];
   const cur = morphPicked.join('');
   if(cur===item.en){
-    morphFb.textContent = `✅ 拆词成功：${item.parts.join(' + ')} = ${item.en}`;
+    morphFb.textContent = `✅ 拼图成功：${item.parts.join(' + ')} = ${item.en}`;
     return;
   }
   if(!item.en.startsWith(cur)){
