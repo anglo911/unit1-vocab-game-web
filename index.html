@@ -999,7 +999,9 @@ function renderMorph(){
     const btn=document.createElement('button');
     btn.className='ghost';
     btn.textContent=b;
-    btn.style.minWidth='120px';
+    btn.style.minWidth='150px';
+    btn.style.fontSize='30px';
+    btn.style.padding='14px 18px';
     btn.onclick=()=>pickMorphBlock(b,btn);
     morphBlocks.appendChild(btn);
   });
