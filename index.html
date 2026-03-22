@@ -102,12 +102,12 @@
       <div id="studyWord" style="font-size:48px;font-weight:900;letter-spacing:.5px;margin-top:6px">-</div>
       <div class="study-meta-wrap" style="margin-top:8px">
         <div class="study-meta-row">
-          <div id="studyCn" class="muted">词义：-</div>
-          <div id="studyIpa" class="muted">音标：-</div>
+          <div id="studyCn" class="muted">词义 : -</div>
+          <div id="studyIpa" class="muted">音标 : -</div>
         </div>
         <div class="study-meta-row">
-          <div id="studySplit" class="muted">拆分发音：-</div>
-          <div id="studyApprox" class="muted">近似读法：-</div>
+          <div id="studySplit" class="muted">拆分发音 : -</div>
+          <div id="studyApprox" class="muted">近似读法 : -</div>
         </div>
       </div>
       <div class="row study-actions" style="margin-top:14px">
@@ -1203,10 +1203,10 @@ function renderStudyCard(){
     studyProgress.textContent = '学习进度：当前题库暂无词';
     studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
-    studyCn.textContent = '词义：-';
-    studyIpa.textContent = '音标：-';
-    studySplit.textContent = '拆分发音：-';
-    studyApprox.textContent = '近似读法：-';
+    studyCn.textContent = '词义 : -';
+    studyIpa.textContent = '音标 : -';
+    studySplit.textContent = '拆分发音 : -';
+    studyApprox.textContent = '近似读法 : -';
     return;
   }
   const [en, cn] = studyList[studyIdx];
@@ -1214,10 +1214,10 @@ function renderStudyCard(){
   studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
   studyProgressBar.style.width = `${pct}%`;
   studyWord.textContent = en;
-  studyCn.textContent = `词义：${cn}`;
-  studyIpa.textContent = `音标：${toIpaLike(en)}`;
-  studySplit.textContent = `拆分发音：${toSplitPron(en)}`;
-  studyApprox.textContent = `近似读法：${toApproxCn(en)}`;
+  studyCn.textContent = `词义 : ${cn}`;
+  studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
+  studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
+  studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
 }
 
 function pickFemaleVoice(lang='en-US'){
