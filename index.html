@@ -166,6 +166,13 @@
     </div>
     <div id="morphWord" class="q" style="font-size:38px">点击“开始拼图”</div>
     <div id="morphMeaning" class="muted" style="font-size:20px;margin-top:6px">-</div>
+    <div class="row" style="margin-top:8px">
+      <select id="morphBankMode" style="max-width:220px">
+        <option value="unit" selected>当前Unit题库</option>
+        <option value="term">当前册别题库</option>
+        <option value="grade">当前年级题库</option>
+      </select>
+    </div>
     <div id="morphBlocks" class="opts" style="margin-top:10px"></div>
     <div id="morphFb" class="fb">-</div>
     <div class="row" style="margin-top:10px">
@@ -765,7 +772,7 @@ const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spel
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
-const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar");
+const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
@@ -944,7 +951,29 @@ function splitMorphWord(word){
 }
 
 function buildMorphList(){
-  const src = getStudyWords($("unitSelect").value || selectedUnit || 'unit1').filter(x=>x && x[0] && /^[a-zA-Z-]+$/.test(x[0]));
+  const mode = (morphBankMode && morphBankMode.value) || 'unit';
+  const grade = gradeSelect.value || 'g7';
+  const term = termSelect.value || 's';
+  const currentUnit = $("unitSelect").value || selectedUnit || 'unit1';
+
+  let src = [];
+  if(mode==='unit'){
+    src = getStudyWords(currentUnit);
+  }else if(mode==='term'){
+    const prefix = `${grade}${term}_u`;
+    src = Object.entries(ALL_UNITS)
+      .filter(([k]) => k.startsWith(prefix) || (grade==='g7' && ((term==='s' && /^(starter\d+|unit[1-7])$/.test(k)) || (term==='x' && /^unit(8|9|10|11|12|13|14|15)$/.test(k)))))
+      .flatMap(([,arr])=>arr||[]);
+  }else{
+    if(grade==='g7'){
+      src = Object.entries(ALL_UNITS).filter(([k])=>/^(starter\d+|unit\d+)$/.test(k)).flatMap(([,arr])=>arr||[]);
+    }else{
+      const prefix = `${grade}`;
+      src = Object.entries(ALL_UNITS).filter(([k])=>k.startsWith(prefix)).flatMap(([,arr])=>arr||[]);
+    }
+  }
+
+  src = src.filter(x=>x && x[0] && /^[a-zA-Z-]+$/.test(x[0]));
   morphList = src.map(([en,cn])=>({en: String(en).toLowerCase(), cn, parts: splitMorphWord(en)})).filter(x=>x.parts.length>=2);
   morphList = morphList.sort(()=>Math.random()-0.5); // 随机顺序
   morphPool = [...new Set(morphList.flatMap(x=>x.parts))];
@@ -1511,6 +1540,7 @@ dictSpeakBtn.onclick=speakDictWord;
 startMorphBtn.onclick=startMorph;
 nextMorphBtn.onclick=nextMorph;
 speakMorphBtn.onclick=speakMorph;
+morphBankMode.onchange=startMorph;
 dictInput.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   if(!dictChecked) submitDict();
