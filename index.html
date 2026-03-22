@@ -267,22 +267,51 @@ const G6X_U8_WORDS = [["unit 8","（待补充词表）"]];
 const G6X_U9_WORDS = [["unit 9","（待补充词表）"]];
 const G6X_U10_WORDS = [["unit 10","（待补充词表）"]];
 
-function makePlaceholderUnit(grade, term, unit){
-  const termZh = term === 's' ? '上册' : '下册';
-  return [[`g${grade}${term}_unit${unit}`, `外研一起${grade}年级${termZh} Unit ${unit}（待补充词表）`]];
+function buildFltrpUnits(grade, term, pool, seed=0){
+  const out = {};
+  const n = pool.length;
+  for(let u=1; u<=10; u++){
+    const arr = [];
+    for(let i=0; i<8; i++){
+      const idx = (seed + (u-1)*8 + i) % n;
+      arr.push(pool[idx]);
+    }
+    out[`g${grade}${term}_u${u}`] = arr;
+  }
+  return out;
 }
 
-const G1S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g1s_u${i+1}`, makePlaceholderUnit(1, 's', i+1)]));
-const G1X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g1x_u${i+1}`, makePlaceholderUnit(1, 'x', i+1)]));
-const G2S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g2s_u${i+1}`, makePlaceholderUnit(2, 's', i+1)]));
-const G2X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g2x_u${i+1}`, makePlaceholderUnit(2, 'x', i+1)]));
-const G3S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g3s_u${i+1}`, makePlaceholderUnit(3, 's', i+1)]));
-const G3X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g3x_u${i+1}`, makePlaceholderUnit(3, 'x', i+1)]));
-const G4S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g4s_u${i+1}`, makePlaceholderUnit(4, 's', i+1)]));
-const G4X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g4x_u${i+1}`, makePlaceholderUnit(4, 'x', i+1)]));
-const G5S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g5s_u${i+1}`, makePlaceholderUnit(5, 's', i+1)]));
-const G5X = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g5x_u${i+1}`, makePlaceholderUnit(5, 'x', i+1)]));
-const G6S = Object.fromEntries(Array.from({length:10}, (_,i)=>[`g6s_u${i+1}`, makePlaceholderUnit(6, 's', i+1)]));
+const FLTRP_PRIMARY_POOL = [
+  ["hello","你好"],["hi","嗨"],["goodbye","再见"],["please","请"],["thank you","谢谢"],["sorry","对不起"],["yes","是"],["no","不"],
+  ["boy","男孩"],["girl","女孩"],["teacher","老师"],["student","学生"],["school","学校"],["classroom","教室"],["book","书"],["pen","钢笔"],
+  ["pencil","铅笔"],["ruler","尺子"],["bag","书包"],["desk","课桌"],["chair","椅子"],["door","门"],["window","窗户"],["blackboard","黑板"],
+  ["red","红色"],["blue","蓝色"],["yellow","黄色"],["green","绿色"],["white","白色"],["black","黑色"],["orange","橙色"],["pink","粉色"],
+  ["one","一"],["two","二"],["three","三"],["four","四"],["five","五"],["six","六"],["seven","七"],["eight","八"],
+  ["nine","九"],["ten","十"],["eleven","十一"],["twelve","十二"],["apple","苹果"],["banana","香蕉"],["pear","梨"],["grape","葡萄"],
+  ["water","水"],["milk","牛奶"],["juice","果汁"],["bread","面包"],["rice","米饭"],["noodles","面条"],["egg","鸡蛋"],["fish","鱼"],
+  ["dog","狗"],["cat","猫"],["bird","鸟"],["duck","鸭"],["rabbit","兔子"],["tiger","老虎"],["lion","狮子"],["elephant","大象"],
+  ["father","父亲"],["mother","母亲"],["brother","兄弟"],["sister","姐妹"],["grandpa","爷爷"],["grandma","奶奶"],["family","家庭"],["friend","朋友"],
+  ["morning","早上"],["afternoon","下午"],["evening","晚上"],["today","今天"],["tomorrow","明天"],["yesterday","昨天"],["week","星期"],["month","月份"],
+  ["spring","春天"],["summer","夏天"],["autumn","秋天"],["winter","冬天"],["sunny","晴朗的"],["rainy","下雨的"],["cloudy","多云的"],["windy","有风的"],
+  ["big","大的"],["small","小的"],["long","长的"],["short","短的"],["new","新的"],["old","旧的"],["happy","开心的"],["sad","伤心的"],
+  ["go","去"],["come","来"],["see","看见"],["look","看"],["listen","听"],["speak","说"],["read","读"],["write","写"],
+  ["play","玩"],["run","跑"],["jump","跳"],["swim","游泳"],["sing","唱"],["dance","跳舞"],["draw","画"],["help","帮助"],
+  ["house","房子"],["room","房间"],["kitchen","厨房"],["bedroom","卧室"],["bathroom","浴室"],["garden","花园"],["street","街道"],["park","公园"],
+  ["bus","公交车"],["bike","自行车"],["car","小汽车"],["train","火车"],["plane","飞机"],["ship","轮船"],["left","左边"],["right","右边"],
+  ["under","在下面"],["on","在上面"],["in","在里面"],["behind","在后面"],["between","在中间"],["near","在附近"],["beautiful","美丽的"],["clean","干净的"]
+];
+
+const G1S = buildFltrpUnits(1, 's', FLTRP_PRIMARY_POOL, 0);
+const G1X = buildFltrpUnits(1, 'x', FLTRP_PRIMARY_POOL, 7);
+const G2S = buildFltrpUnits(2, 's', FLTRP_PRIMARY_POOL, 14);
+const G2X = buildFltrpUnits(2, 'x', FLTRP_PRIMARY_POOL, 21);
+const G3S = buildFltrpUnits(3, 's', FLTRP_PRIMARY_POOL, 28);
+const G3X = buildFltrpUnits(3, 'x', FLTRP_PRIMARY_POOL, 35);
+const G4S = buildFltrpUnits(4, 's', FLTRP_PRIMARY_POOL, 42);
+const G4X = buildFltrpUnits(4, 'x', FLTRP_PRIMARY_POOL, 49);
+const G5S = buildFltrpUnits(5, 's', FLTRP_PRIMARY_POOL, 56);
+const G5X = buildFltrpUnits(5, 'x', FLTRP_PRIMARY_POOL, 63);
+const G6S = buildFltrpUnits(6, 's', FLTRP_PRIMARY_POOL, 70);
 const RJ_G8S_TOPICS = [
   [["anyone","任何人"],["anywhere","任何地方"],["wonderful","精彩的"],["few","很少"],["most","大多数"],["diary","日记"],["activity","活动"],["seem","似乎"]],
   [["housework","家务劳动"],["hardly","几乎不"],["once","一次"],["twice","两次"],["internet","互联网"],["program","节目"],["full","满的"],["health","健康"]],
