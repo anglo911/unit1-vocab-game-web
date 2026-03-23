@@ -1635,14 +1635,18 @@ function renderStudyCard(){
   if(mode==='en2cn'){
     studyWord.textContent = en;
     studyCn.textContent = `词义 : ${cn}`;
+    studyCn.style.textAlign = 'left';
+    studyCn.style.fontSize = '';
     studyQuizWrap.style.display='none';
     studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
     studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
     studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
   }else if(mode==='cn2en'){
-    // 看义回词：只显示中文意思
+    // 看义回词：只显示中文意思（中间对齐）
     studyWord.textContent = '';
-    studyCn.textContent = `词义 : ${cn}`;
+    studyCn.textContent = `${cn}`;
+    studyCn.style.textAlign = 'center';
+    studyCn.style.fontSize = '32px';
     studyQuizWrap.style.display='block';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
@@ -1652,6 +1656,8 @@ function renderStudyCard(){
   }else{
     studyWord.textContent = '🎧 听音写词';
     studyCn.textContent = `词义 : ${cn}`;
+    studyCn.style.textAlign = 'left';
+    studyCn.style.fontSize = '';
     studyQuizWrap.style.display='block';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
