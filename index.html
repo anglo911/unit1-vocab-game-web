@@ -1277,7 +1277,7 @@ function pickFemaleVoice(lang='en-US'){
   return pool.find(v=>femaleHints.test(v.name||'')) || pool[0] || null;
 }
 
-function speakStudyWord(rate=0.70){
+function speakStudyWord(rate=0.90){
   if(!studyList.length || !("speechSynthesis" in window)) return;
   const [en] = studyList[studyIdx];
   const u = new SpeechSynthesisUtterance(String(en||''));
@@ -1291,7 +1291,7 @@ function speakStudyWord(rate=0.70){
 }
 
 function speakStudySlow(){
-  speakStudyWord(0.62);
+  speakStudyWord(0.45);
 }
 
 function speakSplitWord(){
