@@ -104,12 +104,29 @@
         <div id="studySplit" class="muted">拆分发音 : -</div>
         <div id="studyApprox" class="muted">近似读法 : -</div>
       </div>
+      <div id="studyQuizWrap" style="margin-top:10px;display:none">
+        <input id="studyQuizInput" placeholder="输入你想到的英文单词" style="max-width:620px;width:min(90vw,620px);font-size:30px;padding:12px 14px;border-radius:10px" />
+        <div class="row" style="margin-top:8px">
+          <button class="pri" id="studyCheckBtn">提交答案</button>
+        </div>
+        <div class="fb" id="studyCheckFb">-</div>
+      </div>
       <div id="studyStatus" class="muted" style="margin-top:6px">状态：未开始</div>
+      <div class="hud" style="margin-top:8px">
+        <span class="pill" id="studyTargetPill">目标 0</span>
+        <span class="pill" id="studyDonePill">完成 0</span>
+        <span class="pill" id="studyMasterPill">掌握率 0%</span>
+      </div>
       <div class="row" style="margin-top:6px">
         <select id="studyPlan" style="max-width:220px">
           <option value="all" selected>学习计划：全量</option>
           <option value="weak">学习计划：薄弱优先</option>
           <option value="new">学习计划：新词优先</option>
+        </select>
+        <select id="studyMode" style="max-width:220px">
+          <option value="en2cn" selected>模式：看词识义</option>
+          <option value="cn2en">模式：看义回词</option>
+          <option value="audio2word">模式：听音回词</option>
         </select>
       </div>
       <div class="row study-actions" style="margin-top:14px">
@@ -820,6 +837,7 @@ let studyFuzzyQueue=[];
 let studyRound=1;
 let studyRoundName='首轮';
 let studyStats={know:0,fuzzy:0,hard:0};
+let studyTotalTarget=0;
 let pronList=[];
 let pronIdx=0;
 let pronScore=0;
@@ -842,10 +860,10 @@ let morphTimerId=null;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn"), studyCheckBtn=$("studyCheckBtn"), studyQuizInput=$("studyQuizInput");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
-const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan");
+const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan"), studyMode=$("studyMode"), studyQuizWrap=$("studyQuizWrap"), studyCheckFb=$("studyCheckFb"), studyTargetPill=$("studyTargetPill"), studyDonePill=$("studyDonePill"), studyMasterPill=$("studyMasterPill");
 const startPronBtn=$("startPronBtn"), replayPronBtn=$("replayPronBtn"), nextPronBtn=$("nextPronBtn"), pronMeta=$("pronMeta"), pronPrompt=$("pronPrompt"), pronOptions=$("pronOptions"), pronFb=$("pronFb");
 const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), saveSpeakEvalBtn=$("saveSpeakEvalBtn"), manualSpeakGoodBtn=$("manualSpeakGoodBtn"), manualSpeakMidBtn=$("manualSpeakMidBtn"), manualSpeakBadBtn=$("manualSpeakBadBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore"), speakEvalBreakdown=$("speakEvalBreakdown"), speakEvalStars=$("speakEvalStars"), speakEvalHistory=$("speakEvalHistory");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
@@ -1272,7 +1290,12 @@ function toApproxCn(word){
 
 function updateStudyStatus(){
   const pending = studyHardQueue.length + studyFuzzyQueue.length;
+  const done = studyStats.know + studyStats.fuzzy + studyStats.hard;
+  const master = done ? Math.round((studyStats.know/done)*100) : 0;
   studyStatus.textContent = `状态：${studyRoundName} · 会了${studyStats.know} 模糊${studyStats.fuzzy} 不会${studyStats.hard} · 待复习${pending}`;
+  studyTargetPill.textContent = `目标 ${studyTotalTarget}`;
+  studyDonePill.textContent = `完成 ${done}`;
+  studyMasterPill.textContent = `掌握率 ${master}%`;
 }
 
 function renderStudyCard(){
@@ -1284,6 +1307,7 @@ function renderStudyCard(){
     studyIpa.textContent = '音标 : -';
     studySplit.textContent = '拆分发音 : -';
     studyApprox.textContent = '近似读法 : -';
+    studyQuizWrap.style.display='none';
     updateStudyStatus();
     return;
   }
@@ -1291,8 +1315,27 @@ function renderStudyCard(){
   const pct = Math.round(((studyIdx+1)/studyList.length)*100);
   studyProgress.textContent = `${studyRoundName}：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
   studyProgressBar.style.width = `${pct}%`;
-  studyWord.textContent = en;
-  studyCn.textContent = `词义 : ${cn}`;
+
+  const mode = (studyMode && studyMode.value) || 'en2cn';
+  if(mode==='en2cn'){
+    studyWord.textContent = en;
+    studyCn.textContent = `词义 : ${cn}`;
+    studyQuizWrap.style.display='none';
+  }else if(mode==='cn2en'){
+    studyWord.textContent = '请根据词义写英文';
+    studyCn.textContent = `词义 : ${cn}`;
+    studyQuizWrap.style.display='block';
+    studyQuizInput.value='';
+    studyCheckFb.textContent='-';
+  }else{
+    studyWord.textContent = '🎧 听音写词';
+    studyCn.textContent = `词义 : ${cn}`;
+    studyQuizWrap.style.display='block';
+    studyQuizInput.value='';
+    studyCheckFb.textContent='-';
+    setTimeout(()=>speakStudyWord(), 120);
+  }
+
   studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
   studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
   studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
@@ -1339,6 +1382,23 @@ function speakSplitWord(){
   window.speechSynthesis.speak(u);
 }
 
+function checkStudyAnswer(){
+  if(!studyList.length) return;
+  const mode = (studyMode && studyMode.value) || 'en2cn';
+  if(mode==='en2cn') return;
+  const [en] = studyList[studyIdx];
+  const got = String(studyQuizInput.value||'').trim().toLowerCase();
+  const ans = String(en||'').trim().toLowerCase();
+  if(!got){ studyCheckFb.textContent='请先输入'; return; }
+  if(got===ans){
+    studyCheckFb.textContent='✅ 正确';
+    markStudyKnow();
+  }else{
+    studyCheckFb.textContent=`❌ 正确是：${en}`;
+    markStudyHard();
+  }
+}
+
 function startStudy(){
   selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
   updateStudyUnitTag();
@@ -1352,6 +1412,7 @@ function startStudy(){
   }else{
     studyList = raw;
   }
+  studyTotalTarget = studyList.length;
   studyHardQueue = [];
   studyFuzzyQueue = [];
   studyRound = 1;
@@ -1881,6 +1942,9 @@ redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
 startStudyBtn.onclick=startStudy;
 studyPlan.onchange=startStudy;
+studyMode.onchange=renderStudyCard;
+studyCheckBtn.onclick=checkStudyAnswer;
+studyQuizInput.addEventListener('keydown',e=>{ if(e.key==='Enter') checkStudyAnswer(); });
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=speakStudyWord;
