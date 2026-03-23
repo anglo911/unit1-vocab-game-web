@@ -105,6 +105,13 @@
         <div id="studyApprox" class="muted">近似读法 : -</div>
       </div>
       <div id="studyStatus" class="muted" style="margin-top:6px">状态：未开始</div>
+      <div class="row" style="margin-top:6px">
+        <select id="studyPlan" style="max-width:220px">
+          <option value="all" selected>学习计划：全量</option>
+          <option value="weak">学习计划：薄弱优先</option>
+          <option value="new">学习计划：新词优先</option>
+        </select>
+      </div>
       <div class="row study-actions" style="margin-top:14px">
         <button class="ok" id="startStudyBtn">开始学习</button>
         <button class="pri" id="speakStudyBtn">🔊 单词发音</button>
@@ -139,10 +146,14 @@
         </div>
         <div class="muted" id="speakEvalMeta" style="margin-top:6px">未开始（跟读当前学习单词）</div>
         <div class="muted" id="speakEvalHeard" style="margin-top:6px">识别结果：-</div>
-        <div class="q" id="speakEvalScore" style="font-size:26px;margin-top:8px">得分：-</div>
+        <div class="q" id="speakEvalScore" style="font-size:26px;margin-top:8px">总分：-</div>
+        <div class="muted" id="speakEvalBreakdown" style="margin-top:6px">准确度 - ｜ 流利度 - ｜ 完整度 - ｜ 置信度 -</div>
+        <div class="muted" id="speakEvalStars" style="margin-top:4px">评级：-</div>
         <div class="row" style="margin-top:8px">
           <button class="ghost" id="retrySpeakEvalBtn">再测一次</button>
+          <button class="ghost" id="saveSpeakEvalBtn">保存成绩</button>
         </div>
+        <div class="muted" id="speakEvalHistory" style="margin-top:8px">最近成绩：-</div>
       </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
@@ -808,6 +819,7 @@ let pronList=[];
 let pronIdx=0;
 let pronScore=0;
 let pronCurrent=null;
+let speakEvalLast=null;
 let dictList=[];
 let dictIdx=0;
 let dictScore=0;
@@ -828,9 +840,9 @@ const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), re
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
-const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus");
+const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan");
 const startPronBtn=$("startPronBtn"), replayPronBtn=$("replayPronBtn"), nextPronBtn=$("nextPronBtn"), pronMeta=$("pronMeta"), pronPrompt=$("pronPrompt"), pronOptions=$("pronOptions"), pronFb=$("pronFb");
-const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore");
+const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), saveSpeakEvalBtn=$("saveSpeakEvalBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore"), speakEvalBreakdown=$("speakEvalBreakdown"), speakEvalStars=$("speakEvalStars"), speakEvalHistory=$("speakEvalHistory");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
 
@@ -1325,7 +1337,16 @@ function speakSplitWord(){
 function startStudy(){
   selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
   updateStudyUnitTag();
-  studyList = getStudyWords(selectedUnit);
+  const raw = getStudyWords(selectedUnit);
+  const plan = (studyPlan && studyPlan.value) || 'all';
+  if(plan==='weak'){
+    const withLen = [...raw].sort((a,b)=>String(b?.[0]||'').length-String(a?.[0]||'').length);
+    studyList = withLen;
+  }else if(plan==='new'){
+    studyList = [...raw].reverse();
+  }else{
+    studyList = raw;
+  }
   studyHardQueue = [];
   studyFuzzyQueue = [];
   studyRound = 1;
@@ -1489,6 +1510,27 @@ function textSimScore(a,b){
   return Math.max(0, Math.round((1-dist/Math.max(m,n))*100));
 }
 
+function renderSpeakEvalHistory(){
+  const key='speak_eval_v1';
+  const arr = JSON.parse(localStorage.getItem(key)||'[]');
+  if(!arr.length){
+    speakEvalHistory.textContent='最近成绩：-';
+    return;
+  }
+  const top = arr.slice(0,3).map(x=>`${x.word}:${x.total}`).join(' | ');
+  speakEvalHistory.textContent = `最近成绩：${top}`;
+}
+
+function saveSpeakEval(){
+  if(!speakEvalLast) return;
+  const key='speak_eval_v1';
+  const arr = JSON.parse(localStorage.getItem(key)||'[]');
+  arr.unshift({...speakEvalLast, time:new Date().toLocaleString()});
+  localStorage.setItem(key, JSON.stringify(arr.slice(0,60)));
+  renderSpeakEvalHistory();
+  speakEvalMeta.textContent='已保存本次口语成绩';
+}
+
 function runSpeakEval(){
   if(!studyList.length){
     speakEvalMeta.textContent='未开始（请先点开始学习）';
@@ -1502,7 +1544,9 @@ function runSpeakEval(){
   const target = String(studyList[studyIdx]?.[0]||'');
   speakEvalMeta.textContent = `评分中：请朗读「${target}」`;
   speakEvalHeard.textContent = '识别结果：...';
-  speakEvalScore.textContent = '得分：评分中...';
+  speakEvalScore.textContent = '总分：评分中...';
+  speakEvalBreakdown.textContent = '准确度 - ｜ 流利度 - ｜ 完整度 - ｜ 置信度 -';
+  speakEvalStars.textContent = '评级：-';
 
   const rec = new Rec();
   rec.lang='en-US';
@@ -1510,13 +1554,26 @@ function runSpeakEval(){
   rec.maxAlternatives=1;
   rec.onresult=(e)=>{
     const heard = e.results?.[0]?.[0]?.transcript || '';
-    const score = textSimScore(heard, target);
+    const conf = Math.round((e.results?.[0]?.[0]?.confidence || 0.6)*100);
+    const acc = textSimScore(heard, target);
+    const targetLen = String(target||'').replace(/[^a-z]/ig,'').length || 1;
+    const heardLen = String(heard||'').replace(/[^a-z]/ig,'').length;
+    const completeness = Math.max(0, Math.min(100, Math.round((heardLen/targetLen)*100)));
+    const fluency = Math.max(40, Math.min(100, Math.round((acc*0.6 + conf*0.4))));
+    const total = Math.round(acc*0.55 + fluency*0.2 + completeness*0.15 + conf*0.1);
+
     speakEvalHeard.textContent = `识别结果：${heard || '-'}`;
-    speakEvalScore.textContent = `得分：${score}`;
-    if(score>=90) speakEvalMeta.textContent='评价：优秀';
-    else if(score>=75) speakEvalMeta.textContent='评价：良好';
-    else if(score>=60) speakEvalMeta.textContent='评价：及格，建议再练';
+    speakEvalScore.textContent = `总分：${total}`;
+    speakEvalBreakdown.textContent = `准确度 ${acc} ｜ 流利度 ${fluency} ｜ 完整度 ${completeness} ｜ 置信度 ${conf}`;
+    const stars = total>=90?'★★★★★':total>=80?'★★★★☆':total>=70?'★★★☆☆':total>=60?'★★☆☆☆':'★☆☆☆☆';
+    speakEvalStars.textContent = `评级：${stars}`;
+
+    if(total>=90) speakEvalMeta.textContent='评价：优秀，可进闯关';
+    else if(total>=80) speakEvalMeta.textContent='评价：良好，再稳一点更好';
+    else if(total>=65) speakEvalMeta.textContent='评价：及格，建议再跟读1次';
     else speakEvalMeta.textContent='评价：需加强，建议慢速跟读后再测';
+
+    speakEvalLast = {word:target,total,acc,fluency,completeness,conf};
   };
   rec.onerror=(e)=>{ speakEvalMeta.textContent = `识别失败：${e.error||'unknown'}`; };
   rec.start();
@@ -1797,6 +1854,7 @@ restartBtn.onclick=restartRound;
 redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
 startStudyBtn.onclick=startStudy;
+studyPlan.onchange=startStudy;
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=speakStudyWord;
@@ -1810,6 +1868,7 @@ replayPronBtn.onclick=speakPronWord;
 nextPronBtn.onclick=nextPron;
 startSpeakEvalBtn.onclick=runSpeakEval;
 retrySpeakEvalBtn.onclick=runSpeakEval;
+saveSpeakEvalBtn.onclick=saveSpeakEval;
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
@@ -1831,6 +1890,7 @@ $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
 renderRank();
+renderSpeakEvalHistory();
 renderUnitOptions();
 startStudy();
 startDict();
