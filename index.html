@@ -1637,6 +1637,10 @@ function renderStudyCard(){
     studyCn.textContent = `词义 : ${cn}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
+    studyCn.style.gridColumn = '';
+    studyIpa.style.display = '';
+    studySplit.style.display = '';
+    studyApprox.style.display = '';
     studyQuizWrap.style.display='none';
     studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
     studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
@@ -1647,6 +1651,10 @@ function renderStudyCard(){
     studyCn.textContent = `${cn}`;
     studyCn.style.textAlign = 'center';
     studyCn.style.fontSize = '32px';
+    studyCn.style.gridColumn = '1 / -1';
+    studyIpa.style.display = 'none';
+    studySplit.style.display = 'none';
+    studyApprox.style.display = 'none';
     studyQuizWrap.style.display='block';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
@@ -1658,6 +1666,10 @@ function renderStudyCard(){
     studyCn.textContent = `词义 : ${cn}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
+    studyCn.style.gridColumn = '';
+    studyIpa.style.display = '';
+    studySplit.style.display = '';
+    studyApprox.style.display = '';
     studyQuizWrap.style.display='block';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
