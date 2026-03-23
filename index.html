@@ -1636,24 +1636,31 @@ function renderStudyCard(){
     studyWord.textContent = en;
     studyCn.textContent = `词义 : ${cn}`;
     studyQuizWrap.style.display='none';
+    studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
+    studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
+    studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
   }else if(mode==='cn2en'){
-    studyWord.textContent = '请根据词义写英文';
+    // 看义回词：只显示中文意思
+    studyWord.textContent = '';
     studyCn.textContent = `词义 : ${cn}`;
     studyQuizWrap.style.display='block';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
+    studyIpa.textContent = '';
+    studySplit.textContent = '';
+    studyApprox.textContent = '';
   }else{
     studyWord.textContent = '🎧 听音写词';
     studyCn.textContent = `词义 : ${cn}`;
     studyQuizWrap.style.display='block';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
+    studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
+    studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
+    studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
     setTimeout(()=>speakStudyWord(), 120);
   }
 
-  studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
-  studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
-  studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
   updateStudyStatus();
 }
 
