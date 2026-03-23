@@ -108,12 +108,28 @@
       <div class="row study-actions" style="margin-top:14px">
         <button class="ok" id="startStudyBtn">开始学习</button>
         <button class="pri" id="speakStudyBtn">🔊 单词发音</button>
+        <button class="ghost" id="speakStudySlowBtn">🐢 慢速跟读</button>
         <button class="warn" id="studyHardBtn">❌ 不会</button>
         <button class="ghost" id="studyFuzzyBtn">🤔 模糊</button>
         <button class="ok" id="studyKnowBtn">✅ 会了</button>
         <button class="ghost" id="prevStudyBtn" style="display:none">上一个</button>
         <button class="ghost" id="nextStudyBtn" style="display:none">下一个</button>
         <button class="ghost" id="speakSplitBtn" style="display:none">🔊 拆分发音</button>
+      </div>
+
+      <div class="card" style="margin-top:12px;padding:12px">
+        <div class="row" style="justify-content:space-between">
+          <strong>🎧 读音测试</strong>
+          <button class="pri" id="startPronBtn">开始测试</button>
+        </div>
+        <div class="muted" id="pronMeta" style="margin-top:6px">未开始</div>
+        <div class="q" id="pronPrompt" style="font-size:24px;margin-top:8px">点击“开始测试”后播放读音，选择对应单词</div>
+        <div class="opts" id="pronOptions" style="margin-top:8px"></div>
+        <div class="fb" id="pronFb">-</div>
+        <div class="row" style="margin-top:8px">
+          <button class="ghost" id="replayPronBtn">🔊 重播</button>
+          <button class="ghost" id="nextPronBtn">下一题</button>
+        </div>
       </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
@@ -775,6 +791,10 @@ let studyFuzzyQueue=[];
 let studyRound=1;
 let studyRoundName='首轮';
 let studyStats={know:0,fuzzy:0,hard:0};
+let pronList=[];
+let pronIdx=0;
+let pronScore=0;
+let pronCurrent=null;
 let dictList=[];
 let dictIdx=0;
 let dictScore=0;
@@ -792,10 +812,11 @@ let morphTimerId=null;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus");
+const startPronBtn=$("startPronBtn"), replayPronBtn=$("replayPronBtn"), nextPronBtn=$("nextPronBtn"), pronMeta=$("pronMeta"), pronPrompt=$("pronPrompt"), pronOptions=$("pronOptions"), pronFb=$("pronFb");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
 
@@ -1256,17 +1277,21 @@ function pickFemaleVoice(lang='en-US'){
   return pool.find(v=>femaleHints.test(v.name||'')) || pool[0] || null;
 }
 
-function speakStudyWord(){
+function speakStudyWord(rate=0.82){
   if(!studyList.length || !("speechSynthesis" in window)) return;
   const [en] = studyList[studyIdx];
   const u = new SpeechSynthesisUtterance(String(en||''));
   u.lang = 'en-US';
-  u.rate = 0.82; // 慢速便于跟读
+  u.rate = rate;
   u.pitch = 1.1;
   const v = pickFemaleVoice('en-US');
   if(v) u.voice = v;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
+}
+
+function speakStudySlow(){
+  speakStudyWord(0.62);
 }
 
 function speakSplitWord(){
@@ -1361,6 +1386,74 @@ function markStudyHard(){
   const cur = studyList[studyIdx];
   if(cur) studyHardQueue.push(cur);
   goNextStudyWord();
+}
+
+function speakPronWord(){
+  if(!pronCurrent || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(String(pronCurrent[0]||''));
+  u.lang='en-US';
+  u.rate=0.8;
+  u.pitch=1.1;
+  const v = pickFemaleVoice('en-US');
+  if(v) u.voice=v;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+function renderPron(){
+  if(!pronList.length){
+    pronMeta.textContent='当前题库暂无可测试词';
+    pronPrompt.textContent='-';
+    pronOptions.innerHTML='';
+    pronFb.textContent='-';
+    return;
+  }
+  pronCurrent = pronList[pronIdx];
+  pronMeta.textContent = `读音测试：${pronIdx+1}/${pronList.length} · 得分${pronScore}`;
+  pronPrompt.textContent = '听读音，选对应单词';
+  pronFb.textContent = '-';
+  const [en] = pronCurrent;
+  const pool = getStudyWords($('unitSelect').value || selectedUnit || 'unit1').map(x=>x[0]).filter(Boolean);
+  const distractors = [...new Set(pool.filter(w=>String(w).toLowerCase()!==String(en).toLowerCase()))].sort(()=>Math.random()-0.5).slice(0,3);
+  const options = shuffle([en, ...distractors]);
+  pronOptions.innerHTML='';
+  options.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='ghost';
+    b.textContent=opt;
+    b.onclick=()=>{
+      if(String(opt).toLowerCase()===String(en).toLowerCase()){
+        pronScore += 10;
+        pronFb.textContent='✅ 正确';
+      }else{
+        pronFb.textContent=`❌ 错了，答案：${en}`;
+      }
+      setTimeout(nextPron, 350);
+    };
+    pronOptions.appendChild(b);
+  });
+  setTimeout(speakPronWord, 120);
+}
+
+function startPron(){
+  pronList = getStudyWords($('unitSelect').value || selectedUnit || 'unit1').filter(x=>x&&x[0]);
+  pronList = shuffle([...pronList]).slice(0, 15);
+  pronIdx = 0;
+  pronScore = 0;
+  renderPron();
+}
+
+function nextPron(){
+  if(!pronList.length) return;
+  pronIdx += 1;
+  if(pronIdx >= pronList.length){
+    pronMeta.textContent = `测试完成：${pronList.length}题 · 得分${pronScore}`;
+    pronPrompt.textContent='🎉 完成';
+    pronOptions.innerHTML='';
+    pronFb.textContent='点击“开始测试”再来一轮';
+    return;
+  }
+  renderPron();
 }
 
 renderStudyCard();
@@ -1641,10 +1734,14 @@ startStudyBtn.onclick=startStudy;
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=speakStudyWord;
+speakStudySlowBtn.onclick=speakStudySlow;
 studyKnowBtn.onclick=markStudyKnow;
 studyFuzzyBtn.onclick=markStudyFuzzy;
 studyHardBtn.onclick=markStudyHard;
 speakSplitBtn.onclick=speakSplitWord;
+startPronBtn.onclick=startPron;
+replayPronBtn.onclick=speakPronWord;
+nextPronBtn.onclick=nextPron;
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
