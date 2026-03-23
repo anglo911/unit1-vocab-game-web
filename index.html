@@ -131,6 +131,19 @@
           <button class="ghost" id="nextPronBtn">下一题</button>
         </div>
       </div>
+
+      <div class="card" style="margin-top:12px;padding:12px">
+        <div class="row" style="justify-content:space-between">
+          <strong>🎤 单词口语评分</strong>
+          <button class="pri" id="startSpeakEvalBtn">开始评分</button>
+        </div>
+        <div class="muted" id="speakEvalMeta" style="margin-top:6px">未开始（跟读当前学习单词）</div>
+        <div class="muted" id="speakEvalHeard" style="margin-top:6px">识别结果：-</div>
+        <div class="q" id="speakEvalScore" style="font-size:26px;margin-top:8px">得分：-</div>
+        <div class="row" style="margin-top:8px">
+          <button class="ghost" id="retrySpeakEvalBtn">再测一次</button>
+        </div>
+      </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
     </div>
   </div>
@@ -817,6 +830,7 @@ const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNext
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus");
 const startPronBtn=$("startPronBtn"), replayPronBtn=$("replayPronBtn"), nextPronBtn=$("nextPronBtn"), pronMeta=$("pronMeta"), pronPrompt=$("pronPrompt"), pronOptions=$("pronOptions"), pronFb=$("pronFb");
+const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
 
@@ -1456,6 +1470,58 @@ function nextPron(){
   renderPron();
 }
 
+function textSimScore(a,b){
+  const s1=String(a||'').toLowerCase().replace(/[^a-z]/g,'');
+  const s2=String(b||'').toLowerCase().replace(/[^a-z]/g,'');
+  if(!s1 || !s2) return 0;
+  if(s1===s2) return 100;
+  const m=s1.length, n=s2.length;
+  const dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=0;i<=m;i++) dp[i][0]=i;
+  for(let j=0;j<=n;j++) dp[0][j]=j;
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      const c=s1[i-1]===s2[j-1]?0:1;
+      dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+c);
+    }
+  }
+  const dist=dp[m][n];
+  return Math.max(0, Math.round((1-dist/Math.max(m,n))*100));
+}
+
+function runSpeakEval(){
+  if(!studyList.length){
+    speakEvalMeta.textContent='未开始（请先点开始学习）';
+    return;
+  }
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!Rec){
+    speakEvalMeta.textContent='当前浏览器不支持语音识别';
+    return;
+  }
+  const target = String(studyList[studyIdx]?.[0]||'');
+  speakEvalMeta.textContent = `评分中：请朗读「${target}」`;
+  speakEvalHeard.textContent = '识别结果：...';
+  speakEvalScore.textContent = '得分：评分中...';
+
+  const rec = new Rec();
+  rec.lang='en-US';
+  rec.interimResults=false;
+  rec.maxAlternatives=1;
+  rec.onresult=(e)=>{
+    const heard = e.results?.[0]?.[0]?.transcript || '';
+    const score = textSimScore(heard, target);
+    speakEvalHeard.textContent = `识别结果：${heard || '-'}`;
+    speakEvalScore.textContent = `得分：${score}`;
+    if(score>=90) speakEvalMeta.textContent='评价：优秀';
+    else if(score>=75) speakEvalMeta.textContent='评价：良好';
+    else if(score>=60) speakEvalMeta.textContent='评价：及格，建议再练';
+    else speakEvalMeta.textContent='评价：需加强，建议慢速跟读后再测';
+  };
+  rec.onerror=(e)=>{ speakEvalMeta.textContent = `识别失败：${e.error||'unknown'}`; };
+  rec.start();
+}
+
 renderStudyCard();
 
 function applyUnitBank(){
@@ -1742,6 +1808,8 @@ speakSplitBtn.onclick=speakSplitWord;
 startPronBtn.onclick=startPron;
 replayPronBtn.onclick=speakPronWord;
 nextPronBtn.onclick=nextPron;
+startSpeakEvalBtn.onclick=runSpeakEval;
+retrySpeakEvalBtn.onclick=runSpeakEval;
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
