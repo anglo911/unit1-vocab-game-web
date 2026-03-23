@@ -108,6 +108,8 @@
         <input id="studyQuizInput" placeholder="输入你想到的英文单词" style="max-width:620px;width:min(90vw,620px);font-size:30px;padding:12px 14px;border-radius:10px" />
         <div class="row" style="margin-top:8px">
           <button class="pri" id="studyCheckBtn">提交答案</button>
+          <button class="ghost" id="studyHintBtn">提示首字母</button>
+          <button class="ghost" id="studyRevealBtn">显示答案</button>
         </div>
         <div class="fb" id="studyCheckFb">-</div>
       </div>
@@ -838,6 +840,7 @@ let studyRound=1;
 let studyRoundName='首轮';
 let studyStats={know:0,fuzzy:0,hard:0};
 let studyTotalTarget=0;
+let studyStreak=0;
 let pronList=[];
 let pronIdx=0;
 let pronScore=0;
@@ -860,7 +863,7 @@ let morphTimerId=null;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn"), studyCheckBtn=$("studyCheckBtn"), studyQuizInput=$("studyQuizInput");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn"), studyCheckBtn=$("studyCheckBtn"), studyHintBtn=$("studyHintBtn"), studyRevealBtn=$("studyRevealBtn"), studyQuizInput=$("studyQuizInput");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan"), studyMode=$("studyMode"), studyQuizWrap=$("studyQuizWrap"), studyCheckFb=$("studyCheckFb"), studyTargetPill=$("studyTargetPill"), studyDonePill=$("studyDonePill"), studyMasterPill=$("studyMasterPill");
@@ -1291,8 +1294,8 @@ function toApproxCn(word){
 function updateStudyStatus(){
   const pending = studyHardQueue.length + studyFuzzyQueue.length;
   const done = studyStats.know + studyStats.fuzzy + studyStats.hard;
-  const master = done ? Math.round((studyStats.know/done)*100) : 0;
-  studyStatus.textContent = `状态：${studyRoundName} · 会了${studyStats.know} 模糊${studyStats.fuzzy} 不会${studyStats.hard} · 待复习${pending}`;
+  const master = done ? Math.round(((studyStats.know + studyStats.fuzzy*0.5)/done)*100) : 0;
+  studyStatus.textContent = `状态：${studyRoundName} · 会了${studyStats.know} 模糊${studyStats.fuzzy} 不会${studyStats.hard} · 待复习${pending} · 连对${studyStreak}`;
   studyTargetPill.textContent = `目标 ${studyTotalTarget}`;
   studyDonePill.textContent = `完成 ${done}`;
   studyMasterPill.textContent = `掌握率 ${master}%`;
@@ -1382,6 +1385,20 @@ function speakSplitWord(){
   window.speechSynthesis.speak(u);
 }
 
+function studyHint(){
+  if(!studyList.length) return;
+  const [en] = studyList[studyIdx];
+  const w=String(en||'');
+  studyCheckFb.textContent = `提示：${w[0]||''}${'*'.repeat(Math.max(0,w.length-2))}${w[w.length-1]||''}`;
+}
+
+function studyReveal(){
+  if(!studyList.length) return;
+  const [en] = studyList[studyIdx];
+  studyCheckFb.textContent = `答案：${en}`;
+  markStudyFuzzy();
+}
+
 function checkStudyAnswer(){
   if(!studyList.length) return;
   const mode = (studyMode && studyMode.value) || 'en2cn';
@@ -1391,9 +1408,11 @@ function checkStudyAnswer(){
   const ans = String(en||'').trim().toLowerCase();
   if(!got){ studyCheckFb.textContent='请先输入'; return; }
   if(got===ans){
-    studyCheckFb.textContent='✅ 正确';
+    studyStreak += 1;
+    studyCheckFb.textContent = studyStreak>=3 ? `✅ 正确（连对x${studyStreak}）` : '✅ 正确';
     markStudyKnow();
   }else{
+    studyStreak = 0;
     studyCheckFb.textContent=`❌ 正确是：${en}`;
     markStudyHard();
   }
@@ -1418,6 +1437,7 @@ function startStudy(){
   studyRound = 1;
   studyRoundName = '首轮';
   studyStats = {know:0,fuzzy:0,hard:0};
+  studyStreak = 0;
   studyIdx = 0;
   renderStudyCard();
   speakStudyWord();
@@ -1475,6 +1495,7 @@ function markStudyKnow(){
 
 function markStudyFuzzy(){
   if(!studyList.length) return;
+  studyStreak = 0;
   studyStats.fuzzy += 1;
   const cur = studyList[studyIdx];
   if(cur) studyFuzzyQueue.push(cur);
@@ -1483,6 +1504,7 @@ function markStudyFuzzy(){
 
 function markStudyHard(){
   if(!studyList.length) return;
+  studyStreak = 0;
   studyStats.hard += 1;
   const cur = studyList[studyIdx];
   if(cur) studyHardQueue.push(cur);
@@ -1944,6 +1966,8 @@ startStudyBtn.onclick=startStudy;
 studyPlan.onchange=startStudy;
 studyMode.onchange=renderStudyCard;
 studyCheckBtn.onclick=checkStudyAnswer;
+studyHintBtn.onclick=studyHint;
+studyRevealBtn.onclick=studyReveal;
 studyQuizInput.addEventListener('keydown',e=>{ if(e.key==='Enter') checkStudyAnswer(); });
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
