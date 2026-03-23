@@ -109,6 +109,8 @@
         <button class="ghost" id="prevStudyBtn">上一个</button>
         <button class="ghost" id="nextStudyBtn">下一个</button>
         <button class="pri" id="speakStudyBtn">🔊 单词发音</button>
+        <button class="ghost" id="studyKnowBtn">✅ 记住了</button>
+        <button class="warn" id="studyHardBtn">🔁 再练一次</button>
         <button class="ghost" id="speakSplitBtn" style="display:none">🔊 拆分发音</button>
       </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
@@ -766,6 +768,8 @@ let selectedUnit='unit1';
 let isRedoMode=false;
 let studyList=[];
 let studyIdx=0;
+let studyHardQueue=[];
+let studyRoundDone=false;
 let dictList=[];
 let dictIdx=0;
 let dictScore=0;
@@ -783,7 +787,7 @@ let morphTimerId=null;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakSplitBtn=$("speakSplitBtn");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), studyKnowBtn=$("studyKnowBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox");
@@ -1222,7 +1226,7 @@ function renderStudyCard(){
   }
   const [en, cn] = studyList[studyIdx];
   const pct = Math.round(((studyIdx+1)/studyList.length)*100);
-  studyProgress.textContent = `学习进度：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
+  studyProgress.textContent = `${studyRoundDone?'复习轮':'学习进度'}：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
   studyProgressBar.style.width = `${pct}%`;
   studyWord.textContent = en;
   studyCn.textContent = `词义 : ${cn}`;
@@ -1271,10 +1275,12 @@ function startStudy(){
   selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
   updateStudyUnitTag();
   studyList = getStudyWords(selectedUnit);
+  studyHardQueue = [];
+  studyRoundDone = false;
   studyIdx = 0;
   renderStudyCard();
   speakStudyWord();
-  startStudyBtn.textContent = '从第一个重学';
+  startStudyBtn.textContent = '重开学习';
 }
 
 function prevStudy(){
@@ -1283,18 +1289,42 @@ function prevStudy(){
   renderStudyCard();
 }
 
-function nextStudy(){
+function goNextStudyWord(){
   if(!studyList.length) return;
-  if(studyIdx >= studyList.length - 1){
-    // 学完后自动切到闯关（按课堂设置题库）
-    className = $("className").value.trim() || "未命名班级";
-    studentName = $("studentName").value.trim() || "匿名学生";
-    startGame();
+  if(studyIdx < studyList.length - 1){
+    studyIdx += 1;
+    renderStudyCard();
+    speakStudyWord();
     return;
   }
-  studyIdx += 1;
-  renderStudyCard();
-  speakStudyWord();
+  if(studyHardQueue.length){
+    studyList = [...studyHardQueue];
+    studyHardQueue = [];
+    studyIdx = 0;
+    studyRoundDone = true;
+    renderStudyCard();
+    studyProgress.textContent = `复习轮：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
+    speakStudyWord();
+    return;
+  }
+  className = $("className").value.trim() || "未命名班级";
+  studentName = $("studentName").value.trim() || "匿名学生";
+  startGame();
+}
+
+function nextStudy(){
+  goNextStudyWord();
+}
+
+function markStudyKnow(){
+  goNextStudyWord();
+}
+
+function markStudyHard(){
+  if(!studyList.length) return;
+  const cur = studyList[studyIdx];
+  if(cur) studyHardQueue.push(cur);
+  goNextStudyWord();
 }
 
 renderStudyCard();
@@ -1575,6 +1605,8 @@ startStudyBtn.onclick=startStudy;
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=speakStudyWord;
+studyKnowBtn.onclick=markStudyKnow;
+studyHardBtn.onclick=markStudyHard;
 speakSplitBtn.onclick=speakSplitWord;
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
