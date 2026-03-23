@@ -2283,7 +2283,7 @@ studyRevealBtn.onclick=studyReveal;
 studyQuizInput.addEventListener('keydown',e=>{ if(e.key==='Enter') checkStudyAnswer(); });
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
-speakStudyBtn.onclick=speakStudyWord;
+speakStudyBtn.onclick=()=>speakStudyWord();
 speakStudySlowBtn.onclick=speakStudySlow;
 studyKnowBtn.onclick=markStudyKnow;
 studyFuzzyBtn.onclick=markStudyFuzzy;
