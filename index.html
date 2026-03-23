@@ -153,6 +153,11 @@
           <button class="ghost" id="retrySpeakEvalBtn">再测一次</button>
           <button class="ghost" id="saveSpeakEvalBtn">保存成绩</button>
         </div>
+        <div class="row" style="margin-top:8px">
+          <button class="ok" id="manualSpeakGoodBtn">手动评：好</button>
+          <button class="ghost" id="manualSpeakMidBtn">手动评：一般</button>
+          <button class="warn" id="manualSpeakBadBtn">手动评：需加强</button>
+        </div>
         <div class="muted" id="speakEvalHistory" style="margin-top:8px">最近成绩：-</div>
       </div>
       <div class="muted" id="bankStat" style="margin-top:8px"></div>
@@ -842,7 +847,7 @@ const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNext
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan");
 const startPronBtn=$("startPronBtn"), replayPronBtn=$("replayPronBtn"), nextPronBtn=$("nextPronBtn"), pronMeta=$("pronMeta"), pronPrompt=$("pronPrompt"), pronOptions=$("pronOptions"), pronFb=$("pronFb");
-const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), saveSpeakEvalBtn=$("saveSpeakEvalBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore"), speakEvalBreakdown=$("speakEvalBreakdown"), speakEvalStars=$("speakEvalStars"), speakEvalHistory=$("speakEvalHistory");
+const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), saveSpeakEvalBtn=$("saveSpeakEvalBtn"), manualSpeakGoodBtn=$("manualSpeakGoodBtn"), manualSpeakMidBtn=$("manualSpeakMidBtn"), manualSpeakBadBtn=$("manualSpeakBadBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore"), speakEvalBreakdown=$("speakEvalBreakdown"), speakEvalStars=$("speakEvalStars"), speakEvalHistory=$("speakEvalHistory");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
 const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
 
@@ -1531,6 +1536,23 @@ function saveSpeakEval(){
   speakEvalMeta.textContent='已保存本次口语成绩';
 }
 
+function applyManualSpeakEval(level='mid'){
+  if(!studyList.length) return;
+  const target = String(studyList[studyIdx]?.[0]||'');
+  const map = {
+    good:{total:92,acc:92,fluency:90,completeness:95,conf:90,stars:'★★★★★',meta:'手动评价：优秀'},
+    mid:{total:76,acc:75,fluency:78,completeness:80,conf:72,stars:'★★★☆☆',meta:'手动评价：一般'},
+    bad:{total:58,acc:56,fluency:60,completeness:62,conf:55,stars:'★★☆☆☆',meta:'手动评价：需加强'}
+  };
+  const r = map[level] || map.mid;
+  speakEvalHeard.textContent = `识别结果：手动评分`;
+  speakEvalScore.textContent = `总分：${r.total}`;
+  speakEvalBreakdown.textContent = `准确度 ${r.acc} ｜ 流利度 ${r.fluency} ｜ 完整度 ${r.completeness} ｜ 置信度 ${r.conf}`;
+  speakEvalStars.textContent = `评级：${r.stars}`;
+  speakEvalMeta.textContent = r.meta;
+  speakEvalLast = {word:target,total:r.total,acc:r.acc,fluency:r.fluency,completeness:r.completeness,conf:r.conf};
+}
+
 function runSpeakEval(){
   if(!studyList.length){
     speakEvalMeta.textContent='未开始（请先点开始学习）';
@@ -1538,7 +1560,7 @@ function runSpeakEval(){
   }
   const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!Rec){
-    speakEvalMeta.textContent='当前浏览器不支持语音识别';
+    speakEvalMeta.textContent='浏览器不支持自动识别，请用“手动评”';
     return;
   }
   const target = String(studyList[studyIdx]?.[0]||'');
@@ -1552,7 +1574,11 @@ function runSpeakEval(){
   rec.lang='en-US';
   rec.interimResults=false;
   rec.maxAlternatives=1;
+  let done=false;
+  const timer=setTimeout(()=>{ if(!done){ try{rec.stop();}catch{} speakEvalMeta.textContent='识别超时，请重试或用“手动评”'; } }, 7000);
+
   rec.onresult=(e)=>{
+    done=true; clearTimeout(timer);
     const heard = e.results?.[0]?.[0]?.transcript || '';
     const conf = Math.round((e.results?.[0]?.[0]?.confidence || 0.6)*100);
     const acc = textSimScore(heard, target);
@@ -1575,7 +1601,7 @@ function runSpeakEval(){
 
     speakEvalLast = {word:target,total,acc,fluency,completeness,conf};
   };
-  rec.onerror=(e)=>{ speakEvalMeta.textContent = `识别失败：${e.error||'unknown'}`; };
+  rec.onerror=(e)=>{ done=true; clearTimeout(timer); speakEvalMeta.textContent = `识别失败：${e.error||'unknown'}，可用“手动评”`; };
   rec.start();
 }
 
@@ -1869,6 +1895,9 @@ nextPronBtn.onclick=nextPron;
 startSpeakEvalBtn.onclick=runSpeakEval;
 retrySpeakEvalBtn.onclick=runSpeakEval;
 saveSpeakEvalBtn.onclick=saveSpeakEval;
+manualSpeakGoodBtn.onclick=()=>applyManualSpeakEval('good');
+manualSpeakMidBtn.onclick=()=>applyManualSpeakEval('mid');
+manualSpeakBadBtn.onclick=()=>applyManualSpeakEval('bad');
 startDictBtn.onclick=startDict;
 dictSubmitBtn.onclick=submitDict;
 dictNextBtn.onclick=nextDict;
