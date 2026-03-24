@@ -76,6 +76,7 @@
       <div class="settings-form" style="margin-bottom:8px">
         <input id="className" placeholder="班级名（如：七1班）" />
         <input id="studentName" placeholder="学生姓名" />
+        <select id="bookSelect"></select>
         <select id="gradeSelect">
           <option value="g1">1年级</option>
           <option value="g2">2年级</option>
@@ -92,6 +93,23 @@
           <option value="x" selected>下册</option>
         </select>
         <select id="unitSelect"></select>
+      </div>
+      <div class="card" style="margin-top:8px;background:#fffaf6">
+        <div class="row" style="margin-bottom:8px">
+          <strong>📥 自助导入题库 / 书本菜单</strong>
+          <span class="muted" id="importHint">支持新增书本分类，并把单词导入当前单元</span>
+        </div>
+        <div class="row" style="margin-bottom:8px">
+          <input id="newBookName" placeholder="新书本名称（如：外研一起 2年级拓展）" style="flex:1;min-width:220px" />
+          <button class="ghost" id="addBookBtn">新增书本分类</button>
+          <button class="warn" id="deleteBookBtn">删除当前自定义书本</button>
+        </div>
+        <textarea id="importWordsInput" placeholder="每行一条，格式：英文,中文\n例如：apple,苹果\n也支持：英文 中文"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="pri" id="importWordsBtn">导入到当前单元</button>
+          <button class="ghost" id="exportWordsBtn">导出当前单元</button>
+          <span class="muted" id="importStatus">未导入</span>
+        </div>
       </div>
       <div class="muted">建议：投屏时先录入班级和学生姓名，便于成绩榜统计。</div>
 
@@ -1182,7 +1200,7 @@ const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), 
 const startPronBtn=$("startPronBtn"), replayPronBtn=$("replayPronBtn"), nextPronBtn=$("nextPronBtn"), pronMeta=$("pronMeta"), pronPrompt=$("pronPrompt"), pronOptions=$("pronOptions"), pronFb=$("pronFb");
 const startSpeakEvalBtn=$("startSpeakEvalBtn"), retrySpeakEvalBtn=$("retrySpeakEvalBtn"), saveSpeakEvalBtn=$("saveSpeakEvalBtn"), manualSpeakGoodBtn=$("manualSpeakGoodBtn"), manualSpeakMidBtn=$("manualSpeakMidBtn"), manualSpeakBadBtn=$("manualSpeakBadBtn"), speakEvalMeta=$("speakEvalMeta"), speakEvalHeard=$("speakEvalHeard"), speakEvalScore=$("speakEvalScore"), speakEvalBreakdown=$("speakEvalBreakdown"), speakEvalStars=$("speakEvalStars"), speakEvalHistory=$("speakEvalHistory");
 const stagePill=$("stagePill"), comboPill=$("comboPill"), timerPill=$("timerPill"), progressBar=$("progressBar");
-const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect");
+const gradeSelect=$("gradeSelect"), termSelect=$("termSelect"), unitSelect=$("unitSelect"), bookSelect=$("bookSelect"), newBookName=$("newBookName"), addBookBtn=$("addBookBtn"), deleteBookBtn=$("deleteBookBtn"), importWordsInput=$("importWordsInput"), importWordsBtn=$("importWordsBtn"), exportWordsBtn=$("exportWordsBtn"), importStatus=$("importStatus");
 
 function shuffle(a){return a.sort(()=>Math.random()-0.5)}
 function pick(a,n){return shuffle([...a]).slice(0,n)}
@@ -1220,12 +1238,71 @@ const GRADE_UNIT_OPTIONS = {
   g9:[['', '（待添加）']],
 };
 
+const CUSTOM_BOOKS_KEY = 'custom_books_menu_v1';
+const CUSTOM_OVERRIDES_KEY = 'custom_unit_overrides_v1';
+let CUSTOM_BOOKS = loadCustomBooks();
+let CUSTOM_OVERRIDES = loadCustomOverrides();
+
+function loadCustomBooks(){
+  try{ return JSON.parse(localStorage.getItem(CUSTOM_BOOKS_KEY) || '{}') || {}; }catch{ return {}; }
+}
+function saveCustomBooks(){ localStorage.setItem(CUSTOM_BOOKS_KEY, JSON.stringify(CUSTOM_BOOKS)); }
+function loadCustomOverrides(){
+  try{ return JSON.parse(localStorage.getItem(CUSTOM_OVERRIDES_KEY) || '{}') || {}; }catch{ return {}; }
+}
+function saveCustomOverrides(){ localStorage.setItem(CUSTOM_OVERRIDES_KEY, JSON.stringify(CUSTOM_OVERRIDES)); }
+function isCustomBookValue(v){ return String(v||'').startsWith('custom:'); }
+function getSelectedCustomBook(){
+  const v = bookSelect?.value || '';
+  if(!isCustomBookValue(v)) return null;
+  return CUSTOM_BOOKS[v.replace(/^custom:/,'')] || null;
+}
+function renderBookOptions(){
+  if(!bookSelect) return;
+  const prev = bookSelect.value || 'builtin';
+  bookSelect.innerHTML = '';
+  [['builtin','内置题库']].concat(Object.values(CUSTOM_BOOKS).map(b=>[`custom:${b.id}`, b.name])).forEach(([val,label])=>{
+    const op = document.createElement('option');
+    op.value = val;
+    op.textContent = label;
+    bookSelect.appendChild(op);
+  });
+  bookSelect.value = [...bookSelect.options].some(op=>op.value===prev) ? prev : 'builtin';
+  gradeSelect.style.display = bookSelect.value==='builtin' ? '' : 'none';
+  deleteBookBtn.disabled = bookSelect.value==='builtin';
+}
+function normalizeImportLines(text){
+  return String(text||'').split(/\n+/).map(x=>x.trim()).filter(Boolean).map(line=>{
+    let parts = line.split(/\t|\s*[,，|｜]\s*|\s{2,}/).map(x=>x.trim()).filter(Boolean);
+    if(parts.length<2){
+      const m = line.match(/^(.+?)\s+([\u4e00-\u9fa5].+)$/);
+      if(m) parts=[m[1].trim(), m[2].trim()];
+    }
+    if(parts.length<2) return null;
+    const en = parts.shift().trim();
+    const cn = parts.join('；').trim();
+    if(!en || !cn) return null;
+    return [en, cn];
+  }).filter(Boolean);
+}
+function getCurrentTermUnitNumber(){
+  const raw = unitSelect.value || '';
+  const m = raw.match(/(?:_u|:u)(\d+)/i);
+  return m ? Number(m[1]) : 1;
+}
+function customUnitKey(bookId, term, u){ return `custom:${bookId}:${term}:u${u}`; }
+
 function renderUnitOptions(){
   const grade = gradeSelect.value || 'g7';
   const term = termSelect.value || 'x';
   let list = [];
 
-  if(/^g[1-6]$/.test(grade)){
+  if(bookSelect.value !== 'builtin'){
+    const book = getSelectedCustomBook();
+    const units = book?.terms?.[term] || {};
+    const nums = Object.keys(units).length ? Object.keys(units).map(k=>Number(String(k).replace(/^u/,''))).filter(Boolean).sort((a,b)=>a-b) : Array.from({length:10},(_,i)=>i+1);
+    list = nums.map(u=>[customUnitKey(book.id, term, u), `Unit ${u}`]);
+  }else if(/^g[1-6]$/.test(grade)){ 
     const g = grade.slice(1);
     list = Array.from({length:10}, (_,i)=>{
       const u=i+1;
@@ -1266,7 +1343,15 @@ function updateBankStat(){
 updateBankStat();
 
 function getStudyWords(unit){
-  if(unit==='mix') return Object.values(ALL_UNITS).flat();
+  if(unit==='mix') return Object.values({...ALL_UNITS, ...CUSTOM_OVERRIDES}).flat();
+  if(String(unit||'').startsWith('custom:')){
+    const m = String(unit).match(/^custom:([^:]+):(s|x):u(\d+)$/);
+    if(m){
+      const [,bookId,term,u] = m;
+      return [...(CUSTOM_BOOKS[bookId]?.terms?.[term]?.[`u${u}`] || [])];
+    }
+  }
+  if(CUSTOM_OVERRIDES[unit]) return [...CUSTOM_OVERRIDES[unit]];
   return [...(ALL_UNITS[unit] || UNIT1_WORDS)];
 }
 
@@ -2028,8 +2113,7 @@ function runSpeakEval(){
 renderStudyCard();
 
 function applyUnitBank(){
-  if(selectedUnit==='mix') WORDS = Object.values(ALL_UNITS).flat();
-  else WORDS = [...(ALL_UNITS[selectedUnit] || UNIT1_WORDS)];
+  WORDS = getStudyWords(selectedUnit);
   updateBankStat();
 }
 
@@ -2290,6 +2374,58 @@ function clearRank(){ if(confirm("确认清空成绩榜？")){ localStorage.remo
 
 function resetBank(){ selectedUnit = $("unitSelect").value || 'unit1'; applyUnitBank(); alert(`已按当前选择加载词表：${selectedUnit.toUpperCase()}`); }
 
+function addCustomBook(){
+  const name = String(newBookName.value||'').trim();
+  if(!name) return alert('先输入书本名称');
+  const id = `b${Date.now().toString(36)}`;
+  CUSTOM_BOOKS[id] = { id, name, terms:{ s:{}, x:{} } };
+  saveCustomBooks();
+  renderBookOptions();
+  bookSelect.value = `custom:${id}`;
+  renderUnitOptions();
+  importStatus.textContent = `已新增书本：${name}`;
+  newBookName.value = '';
+}
+function deleteCurrentBook(){
+  const book = getSelectedCustomBook();
+  if(!book) return alert('当前不是自定义书本');
+  if(!confirm(`确认删除书本：${book.name}？`)) return;
+  delete CUSTOM_BOOKS[book.id];
+  saveCustomBooks();
+  renderBookOptions();
+  renderUnitOptions();
+  importStatus.textContent = '已删除当前自定义书本';
+}
+function importCurrentUnit(){
+  const pairs = normalizeImportLines(importWordsInput.value);
+  if(!pairs.length) return alert('请先粘贴单词，格式：英文,中文');
+  const term = termSelect.value || 'x';
+  const u = getCurrentTermUnitNumber();
+  if(bookSelect.value !== 'builtin'){
+    const book = getSelectedCustomBook();
+    if(!book) return alert('请先选择或新增自定义书本');
+    if(!book.terms) book.terms = {s:{},x:{}};
+    if(!book.terms[term]) book.terms[term] = {};
+    book.terms[term][`u${u}`] = pairs;
+    CUSTOM_BOOKS[book.id] = book;
+    saveCustomBooks();
+    renderUnitOptions();
+    unitSelect.value = customUnitKey(book.id, term, u);
+  }else{
+    const key = unitSelect.value || selectedUnit || 'unit1';
+    CUSTOM_OVERRIDES[key] = pairs;
+    saveCustomOverrides();
+  }
+  selectedUnit = unitSelect.value || selectedUnit || 'unit1';
+  startStudy(); startDict(); applyUnitBank();
+  importStatus.textContent = `已导入 ${pairs.length} 条到当前单元`;
+}
+function exportCurrentUnit(){
+  const rows = getStudyWords(unitSelect.value || selectedUnit || 'unit1');
+  importWordsInput.value = rows.map(([en,cn])=>`${en},${cn}`).join('\n');
+  importStatus.textContent = `已导出 ${rows.length} 条`;
+}
+
 function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 $("startBtn").onclick=startGame;
@@ -2337,14 +2473,20 @@ dictInput.addEventListener('keydown',e=>{
   if(!dictChecked) submitDict();
   else nextDict();
 });
+bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
 gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
 termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
 unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); resetMorphIdle(); };
+addBookBtn.onclick=addCustomBook;
+deleteBookBtn.onclick=deleteCurrentBook;
+importWordsBtn.onclick=importCurrentUnit;
+exportWordsBtn.onclick=exportCurrentUnit;
 $("refreshRankBtn").onclick=renderRank;
 $("clearRankBtn").onclick=clearRank;
 spellInput.addEventListener('keydown',e=>{if(e.key==='Enter') submit();});
 renderRank();
 renderSpeakEvalHistory();
+renderBookOptions();
 renderUnitOptions();
 startStudy();
 startDict();
