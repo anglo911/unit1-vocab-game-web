@@ -1762,7 +1762,7 @@ function checkStudyAnswer(){
   }
 }
 
-function startStudy(){ alert('开始学习! unit=' + selectedUnit + ' list len=' + (getStudyWords(selectedUnit)||[]).length);
+function startStudy(){
   selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
   updateStudyUnitTag();
   const raw = getStudyWords(selectedUnit);
