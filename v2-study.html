@@ -34,8 +34,8 @@
     .settings-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
     /* Course bar - horizontal selectors */
-    .course-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
-    .course-bar select{flex:1;min-width:100px;max-width:200px}
+    .course-bar{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;justify-content:center}
+    .course-bar select{flex:1;min-width:0;max-width:260px;height:44px}
 
     /* Main word display */
     .word-display{text-align:center;padding:30px 20px}
@@ -72,7 +72,8 @@
     .mode-btn.active{background:#7b6ed6;color:#fff;border-color:#6f63c9}
 
     @media(max-width:500px){
-      .settings-row{grid-template-columns:1fr}
+      .course-bar{flex-wrap:wrap}
+      .course-bar select{max-width:100%;min-width:120px}
       .word-display .en{font-size:40px}
       .actions{gap:8px}
       .actions .primary-action{padding:12px 18px;font-size:15px}
