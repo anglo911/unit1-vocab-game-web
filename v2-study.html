@@ -1609,7 +1609,7 @@ function renderStudyCard(){
   const mode = (studyMode && studyMode.value) || 'en2cn';
   if(mode==='en2cn'){
     studyWord.textContent = en;
-    studyCn.textContent = `词义 : ${cn}`;
+    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -1623,7 +1623,7 @@ function renderStudyCard(){
   }else if(mode==='cn2en'){
     // 看义回词：只显示中文意思（中间对齐）
     studyWord.textContent = '';
-    studyCn.textContent = `${cn}`;
+    studyCn.textContent = `${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'center';
     studyCn.style.fontSize = '32px';
     studyCn.style.gridColumn = '1 / -1';
@@ -1638,7 +1638,7 @@ function renderStudyCard(){
     studyApprox.textContent = '';
   }else{
     studyWord.textContent = '🎧 听音写词';
-    studyCn.textContent = `词义 : ${cn}`;
+    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -1657,6 +1657,20 @@ function renderStudyCard(){
   updateStudyStatus();
 }
 
+
+// Extract part of speech from meaning and format as (n.), (v.), etc.
+function formatCnWithPos(cn) {
+  if (!cn) return '';
+  // Match patterns like "n.名词", "v.动词", "adj.形容词", "adv.副词", "int.感叹词", "pron.代词", "prep.介词", "conj.连词"
+  const posMatch = cn.match(/^([nva]|adj|adv|int|pron|prep|conj|det|num)\./i);
+  if (posMatch) {
+    const pos = posMatch[1].toLowerCase();
+    const shortPos = {'n':'n.', 'v':'v.', 'adj':'adj.', 'adv':'adv.', 'int':'int.', 'pron':'pron.', 'prep':'prep.', 'conj':'conj.', 'det':'det.', 'num':'num.'}[pos] || posMatch[0];
+    const meaning = cn.replace(/^([nva]|adj|adv|int|pron|prep|conj|det|num)\.\s*/i, '');
+    return meaning ? `${meaning} (${shortPos})` : cn;
+  }
+  return cn;
+}
 function pickFemaleVoice(lang='en-US'){
   if(!('speechSynthesis' in window)) return null;
   const voices = window.speechSynthesis.getVoices() || [];
