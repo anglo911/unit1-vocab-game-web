@@ -140,7 +140,7 @@
 
     <!-- Action Buttons -->
     <div class="actions" id="studyActionsBeforeStart" style="margin-top:20px">
-      <button class="big" id="startStudyBtn" onclick="alert("开始学习!"); startStudy(); renderStudyCard();">开始学习</button>
+      <button class="big" id="startStudyBtn" onclick="startStudy()">开始学习</button>
     </div>
 
     <div class="actions" id="studyActionsAfterStart" style="display:none">
@@ -1769,7 +1769,7 @@ function checkStudyAnswer(){
   }
 }
 
-function startStudy(){ alert('开始学习！unit=' + (unitSelect?.value || selectedUnit));
+function startStudy(){
   selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
   updateStudyUnitTag();
   const raw = getStudyWords(selectedUnit);
@@ -2478,20 +2478,15 @@ resetMorphIdle();
     resetMorphIdle();
   };
 
-  // Init - wrapped in error handling
-  try {
-    renderBookOptions();
-    renderUnitOptions();
-    origStartStudy();
-    document.getElementById('studyActionsBeforeStart').style.display = 'none';
-    document.getElementById('studyActionsAfterStart').style.display = 'flex';
-    showStudyArea();
-    origStartStudy();
-    console.log('V2 Study initialized successfully');
-  } catch(e) {
-    console.error('V2 Study init error:', e);
-    alert('初始化错误: ' + e.message);
-  }
+  // Init
+  renderBookOptions();
+  renderUnitOptions();
+  origStartStudy();
+  document.getElementById('studyActionsBeforeStart').style.display = 'none';
+  document.getElementById('studyActionsAfterStart').style.display = 'flex';
+  showStudyArea();
+  // Trigger startStudy on load
+  origStartStudy();
 })();
 </script>
 </body>
