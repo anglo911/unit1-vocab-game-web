@@ -12,17 +12,17 @@
     .card>.spacer{flex:1 1 0vh}
     h1{margin:0;font-size:22px;letter-spacing:.3px}
     h2{margin:0 0 8px;font-size:16px;color:var(--muted)}
-    .muted{color:#4a4540;font-size:14px}
+    .muted{color:var(--muted);font-size:13px}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     button{border:1px solid transparent;border-radius:10px;padding:10px 16px;color:#fff;font-weight:700;cursor:pointer;transition:all .18s ease;font-size:15px}
-    .pri{background:#2563eb;border-color:#1d4ed8}
-    .pri:hover{background:#1d4ed8}
-    .ok{background:#16a34a;border-color:#15803d}
-    .ok:hover{background:#15803d}
-    .warn{background:#ea580c;border-color:#c2410c}
-    .warn:hover{background:#c2410c}
-    .ghost{background:#dc2626;border-color:#b91c1c;color:#fff}
-    .ghost:hover{background:#b91c1c}
+    .pri{background:#7b6ed6;border-color:#6f63c9}
+    .pri:hover{background:#6f63c9}
+    .ok{background:#4a8f72;border-color:#3f7f64}
+    .ok:hover{background:#3f7f64}
+    .warn{background:#d3a85d;color:#2f2a24;border-color:#c2974b}
+    .warn:hover{background:#c2974b}
+    .ghost{background:#f1e8da;color:#51463a;border-color:#d8cfc1}
+    .ghost:hover{background:#e8dcc9}
     .big{background:#4a8f72;color:#fff;padding:16px 28px;border-radius:14px;font-size:18px;border:0;cursor:pointer;font-weight:700}
     select{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:10px;padding:10px;height:42px;width:100%}
     input{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:10px;padding:10px;height:42px;width:100%}
@@ -41,16 +41,15 @@
     /* Main word display */
     .word-display{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 8px;text-align:center}
     .word-display .en{font-size:50px;font-weight:900;letter-spacing:1px;line-height:1.1;text-align:center}
-    .word-display .cn{font-size:24px;color:#3a352e;margin-top:28px;text-align:center !important}
-    .word-display .ipa{font-size:24px;color:#3a352e;margin-top:8px}
+    .word-display .cn{font-size:20px;color:var(--muted);margin-top:8px;text-align:center !important}
+    .word-display .ipa{font-size:16px;color:var(--muted);margin-top:4px}
 
     /* Quiz input */
-    .quiz-wrap{text-align:center;margin-top:4px}
-    .quiz-wrap input{max-width:380px;margin:0 auto;font-size:32px;font-weight:800;text-align:center;border:none;border-bottom:4px solid #7c3aed;border-radius:0;outline:none;background:transparent;caret-color:#7c3aed;color:#2f2a24;padding:12px 6px}
-    .quiz-wrap input::placeholder{color:#555;font-weight:800;font-size:20px}
+    .quiz-wrap{text-align:center;margin-top:20px}
+    .quiz-wrap input{max-width:380px;margin:0 auto;font-size:28px;text-align:center;border:none;border-bottom:4px solid #7c3aed;border-radius:0;outline:none;background:transparent;caret-color:#7c3aed;color:#2f2a24;padding:12px 6px}
 
     /* Action row */
-    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:30px}
+    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:12px}
     .actions .primary-action{padding:14px 24px;font-size:17px;border-radius:12px}
     .actions .secondary-action{padding:10px 16px;font-size:14px;border-radius:10px}
 
@@ -60,7 +59,7 @@
 
     /* Progress */
     .progress-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:8px}
-    .pill{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fffaf3;font-size:14px;color:#3a352e;font-weight:600}
+    .pill{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fffaf3;font-size:12px}
     .bar{width:100%;height:8px;border-radius:999px;background:#ece1d3;overflow:hidden;border:1px solid var(--line)}
     .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
 
@@ -70,7 +69,7 @@
 
     /* Mode selector */
     .mode-row{display:flex;gap:8px;justify-content:center;margin-top:6px}
-    .mode-btn{padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:#fffaf3;cursor:pointer;font-size:12px;transition:all .15s}
+    .mode-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffaf3;cursor:pointer;font-size:12px;transition:all .15s}
     .mode-btn.active{background:#7b6ed6;color:#fff;border-color:#6f63c9}
 
     @media(max-width:500px){
@@ -122,7 +121,7 @@
 
     <!-- Quiz Input (hidden by default) -->
     <div id="studyQuizWrap" style="display:none" class="quiz-wrap">
-      <input id="studyQuizInput" placeholder="输入你想到的英文" style="font-size:20px;font-weight:700" />
+      <input id="studyQuizInput" placeholder="输入你想到的英文" />
       <div class="row" style="justify-content:center;margin-top:10px;gap:8px">
         <button class="pri" id="studyCheckBtn" style="font-size:14px;padding:8px 16px">提交</button>
         <button class="ghost" id="studyHintBtn" style="font-size:14px;padding:8px 16px">提示</button>
@@ -133,19 +132,21 @@
 
     <!-- Mode Selector -->
     <div class="mode-row">
-      <span class="mode-btn active" data-mode="en2cn" id="modeEn2Cn">看词识意</span>
-      <span class="mode-btn" data-mode="cn2en" id="modeCn2En">看意回词</span>
+      <span class="mode-btn active" data-mode="en2cn" id="modeEn2Cn">看词识义</span>
+      <span class="mode-btn" data-mode="cn2en" id="modeCn2En">看义回词</span>
       <span class="mode-btn" data-mode="audio2word" id="modeAudio">听音写词</span>
     </div>
 
     <!-- Action Buttons -->
-    <!-- 开始学习按钮已移除 -->
+    <div class="actions" id="studyActionsBeforeStart" style="margin-top:20px">
+      <button class="big" id="startStudyBtn">开始学习</button>
+    </div>
 
     <div class="actions" id="studyActionsAfterStart" style="display:none">
-      <button class="pri primary-action" id="speakStudyBtn">发音</button>
-      <button class="ok primary-action" id="studyKnowBtn">掌握</button>
-      <button class="warn primary-action" id="studyFuzzyBtn">模糊</button>
-      <button class="ghost secondary-action" id="studyHardBtn">生字</button>
+      <button class="pri primary-action" id="speakStudyBtn">🔊 发音</button>
+      <button class="ok primary-action" id="studyKnowBtn">✅ 会了</button>
+      <button class="warn primary-action" id="studyFuzzyBtn">🤔 模糊</button>
+      <button class="ghost secondary-action" id="studyHardBtn">❌ 不会</button>
     </div>
 
     <!-- Progress Pills -->
@@ -747,30 +748,27 @@ const RJ_G9S_TOPICS = [
   [["by the time","在……以前"],["unexpected","出乎意料的"],["backpack","背包"],["oversleep","睡过头"],["burn","燃烧"],["alive","活着的"],["airport","机场"],["cancel","取消"]]
 ];
 
-// RJ_G9X_TOPICS removed
+const RJ_G9X_TOPICS = [
+  [["survey","调查"],["standard","标准"],["instruction","说明"],["row","一排"],["keyboard","键盘"],["method","方法"],["text","文本"],["level","水平"]],
+  [["agreement","同意"],["disappoint","使失望"],["gentleman","先生"],["congratulate","祝贺"],["ceremony","典礼"],["thirsty","口渴的"],["thankful","感激的"],["task","任务"]],
+  [["leading","领先的"],["courage","勇气"],["separate","分开"],["wing","翅膀"],["attend","参加"],["overcome","克服"],["graduate","毕业"],["responsible","负责的"]],
+  [["custom","习俗"],["bow","鞠躬"],["kiss","亲吻"],["greet","问候"],["passport","护照"],["chalk","粉笔"],["blackboard","黑板"],["season","季节"]],
+  [["capital","首都"],["noon","中午"],["eastern","东方的"],["coast","海岸"],["manner","方式"],["except","除……之外"],["effort","努力"],["suggest","建议"]],
+  [["lock","锁"],["ring","戒指"],["earthquake","地震"],["sudden","突然的"],["safe","安全的"],["panic","惊慌"],["medical","医疗的"],["rescue","救援"]],
+  [["weigh","称重"],["birth","出生"],["adult","成人"],["manage","设法"],["tiny","极小的"],["huge","巨大的"],["spirit","精神"],["success","成功"]],
+  [["astronaut","宇航员"],["discovery","发现"],["technology","科技"],["recycle","回收"],["metal","金属"],["creative","有创造力的"],["imagine","想象"],["project","项目"]],
+  [["poem","诗"],["poet","诗人"],["rhyme","押韵"],["sadness","悲伤"],["friendship","友谊"],["memory","回忆"],["gentle","温柔的"],["treasure","珍惜"]],
+  [["review","复习"],["summary","总结"],["achievement","成就"],["challenge","挑战"],["future","未来"],["confidence","信心"],["dream","梦想"],["progress","进步"]]
+];
 
 function buildRenjiaoBank(grade, term, topics){
   return Object.fromEntries(topics.map((arr, i)=>[`g${grade}${term}_u${i+1}`, arr]));
 }
 
 const G8S = buildRenjiaoBank(8, 's', RJ_G8S_TOPICS);
-
-
-// 9年级上册 Unit 1-10
-// const G9S = {
-  "g9s_u1": [["textbook", "n.教科书；课本"], ["conversation", "n.交谈；谈话"], ["aloud", "adv.大声地；出声地"], ["pronunciation", "n.发音；读音"], ["sentence", "n.句子"], ["patient", "adj.有耐心的 n.病人"], ["secret", "n.秘密；秘诀"], ["expression", "n.表情；表示"], ["discover", "v.发现；发觉"], ["grammar", "n.语法"], ["repeat", "v.重复；重做"], ["note", "n.笔记 v.注意"], ["memorize", "v.记忆；记住"], ["pattern", "n.模式；方式"], ["pronounce", "v.发音"], ["increase", "v.增加；增长"], ["speed", "n.速度"], ["partner", "n.搭档；同伴"], ["born", "v.出生 adj.天生的"], ["ability", "n.能力；才能"], ["create", "v.创造；创建"], ["brain", "n.大脑"], ["active", "adj.活跃的"], ["attention", "n.注意；关注"], ["knowledge", "n.知识；学问"]],
-  "g9s_u2": [["mooncake", "n.月饼"], ["lantern", "n.灯笼"], ["stranger", "n.陌生人"], ["relative", "n.亲属；亲戚"], ["pound", "n.磅；英镑"], ["folk", "adj.民间的"], ["goddess", "n.女神"], ["whoever", "pron.无论谁"], ["steal", "v.偷；窃取"], ["lay", "v.放置"], ["dessert", "n.甜食"], ["garden", "n.花园"], ["tradition", "n.传统"], ["admire", "v.欣赏；仰慕"], ["treat", "n.款待 v.招待"], ["tie", "n.领带 v.捆"], ["dinosaur", "n.恐龙"], ["mushroom", "n.蘑菇"], ["happiness", "n.快乐"], ["firework", "n.烟火"], ["gather", "v.聚集"], ["suggest", "v.建议"], ["custom", "n.风俗"], ["crowd", "n.人群"], ["mark", "v.标志 n.记号"]],
-  "g9s_u3": [["restroom", "n.洗手间"], ["stamp", "n.邮票"], ["bookstore", "n.书店"], ["beside", "prep.在...旁边"], ["postcard", "n.明信片"], ["pardon", "v.原谅"], ["washroom", "n.洗手间"], ["bathroom", "n.浴室"], ["normally", "adv.通常"], ["correct", "adj.正确的"], ["polite", "adj.有礼貌的"], ["direct", "adj.直接的"], ["speaker", "n.发言者"], ["whom", "pron.谁"], ["impolite", "adj.不礼貌的"], ["address", "n.地址"], ["underground", "n.地铁"], ["course", "n.课程"], ["Italian", "adj.意大利的 n.意大利人"], ["expensive", "adj.昂贵的"], ["convenient", "adj.便利的"], ["mall", "n.商场"], ["clerk", "n.职员"], ["corner", "n.拐角"], ["politely", "adv.礼貌地"]],
-  "g9s_u4": [["humorous", "adj.有幽默感的"], ["silent", "adj.沉默的"], ["helpful", "adj.有帮助的"], ["score", "n.得分"], ["background", "n.背景"], ["interview", "v.采访 n.面试"], ["Asian", "adj.亚洲的 n.亚洲人"], ["deal", "v.对付"], ["shyness", "n.害羞"], ["dare", "v.敢于"], ["private", "adj.私人的"], ["guard", "n.警卫"], ["require", "v.需要"], ["European", "adj.欧洲的"], ["African", "adj.非洲的"], ["British", "adj.英国的"], ["insect", "n.昆虫"], ["speech", "n.讲话"], ["public", "n.民众 adj.公开的"], ["spider", "n.蜘蛛"], ["seldom", "adv.不常"], ["influence", "v.影响"], ["absent", "adj.缺席"], ["fail", "v.不及格"], ["examination", "n.考试"]],
-  "g9s_u5": [["chopstick", "n.筷子"], ["coin", "n.硬币"], ["fork", "n.餐叉"], ["blouse", "n.短上衣"], ["silver", "n.银 adj.银色的"], ["glass", "n.玻璃"], ["cotton", "n.棉"], ["steel", "n.钢"], ["fair", "n.展览会"], ["grass", "n.草"], ["leaf", "n.叶子"], ["produce", "v.生产"], ["widely", "adv.广泛地"], ["process", "n.过程 v.处理"], ["pack", "v.包装"], ["business", "n.生意"], ["product", "n.产品"], ["France", "n.法国"], ["local", "adj.当地的"], ["brand", "n.品牌"], ["avoid", "v.避免"], ["handbag", "n.手提包"], ["mobile", "adj.可移动的"], ["everyday", "adj.每天的"], ["boss", "n.老板"]],
-  "g9s_u6": [["mind", "n.头脑"], ["body", "n.身体"], ["relax", "v.放松"], ["health", "n.健康"], ["sound", "n.声音"], ["herself", "pron.她自己"], ["parent", "n.父母"], ["report", "n.报告 v.报道"], ["stress", "n.压力 v.强调"], ["completely", "adv.完全地"], ["suggest", "v.建议"], ["scientific", "adj.科学的"], ["talent", "n.才能"], ["special", "adj.特殊的"], ["medical", "adj.医学的"], ["condition", "n.条件"], ["environment", "n.环境"], ["average", "n.平均 adj.平均的"], ["though", "conj.虽然"], ["spend", "v.花费"], ["exercise", "n.锻炼"], ["compare", "v.比较"], ["online", "adj.在线的"], ["die", "v.死"], ["dead", "adj.死的"]],
-  "g9s_u7": [["survey", "n.调查"], ["standard", "n.标准"], ["row", "n.排"], ["keyboard", "n.键盘"], ["instruction", "n.说明"], ["text", "n.文本"], ["level", "n.水平"], ["degree", "n.程度"], ["manager", "n.经理"], ["gentleman", "n.绅士"], ["task", "n.任务"], ["wing", "n.翅膀"], ["double", "adj.双倍的"], ["shall", "aux.将"], ["overcome", "v.克服"], ["congratulate", "v.祝贺"], ["care", "v.关心"], ["senior", "adj.年长的"], ["thirsty", "adj.口渴的"], ["thankful", "adj.感激的"], ["graduation", "n.毕业"], ["ceremony", "n.典礼"], ["first of all", "首先"], ["last name", "姓氏"], ["given name", "名字"]],
-  "g9s_u8": [["ship", "n.船"], ["coal", "n.煤"], ["advantage", "n.优势"], ["industry", "n.工业"], ["law", "n.法律"], ["gate", "n.大门"], ["bottle", "n.瓶子"], ["president", "n.总统"], ["metal", "n.金属"], ["litter", "n.垃圾"], ["cost", "v.花费 n.成本"], ["afford", "v.负担得起"], ["recycle", "v.回收"], ["ugly", "adj.丑陋的"], ["wooden", "adj.木制的"], ["plastic", "n.塑料 adj.塑料的"], ["cruel", "adj.残酷的"], ["harmful", "adj.有害的"], ["science", "n.科学"], ["present", "n.礼物 adj.在场的"], ["take part in", "参加"], ["turn off", "关闭"], ["throw away", "扔掉"], ["pull down", "拉倒"], ["be used to", "习惯于"]],
-  "g9s_u9": [["saving", "n.节约"], ["pollution", "n.污染"], ["environment", "n.环境"], ["method", "n.方法"], ["reusable", "adj.可重复使用的"], ["encouragement", "n.鼓励"], ["power", "n.力量"], ["movement", "n.运动"], ["scientific", "adj.科学的"], ["perhaps", "adv.可能"], ["electricity", "n.电"], ["represent", "v.代表"], ["opposite", "adj.相反的"], ["solution", "n.解决方案"], ["cost", "n.成本"], ["tons", "n.吨"], ["plastic", "n.塑料"], ["billion", "n.十亿"], ["reachable", "adj.可到达的"], ["available", "adj.可用的"], ["afford", "v.负担"], ["environmentally", "adv.环境地"], ["ideal", "adj.理想的"], ["compare", "v.比较"], ["actually", "adv.实际上"]],
-  "g9s_u10": [["shake", "v.摇动"], ["supposed", "adj.预期的"], ["custom", "n.习俗"], ["bow", "v.鞠躬"], ["kiss", "v.亲吻"], ["greet", "v.问候"], ["value", "v.重视"], ["everyday", "adj.每天的"], ["content", "n.内容"], ["describe", "v.描述"], ["similar", "adj.相似的"], ["different", "adj.不同的"], ["avoid", "v.避免"], ["embarrassed", "adj.尴尬的"], ["calm", "v.使平静 adj.平静的"], ["secret", "n.秘密"], ["mad", "adj.生气的"], ["suggestion", "n.建议"], ["tip", "n.建议"], ["normal", "adj.正常的"], ["behavior", "n.行为"], ["impossible", "adj.不可能的"], ["probably", "adv.大概"], ["explain", "v.解释"], ["detail", "n.细节"]]
-}
-;
 const G8X = buildRenjiaoBank(8, 'x', RJ_G8X_TOPICS);
+const G9S = buildRenjiaoBank(9, 's', RJ_G9S_TOPICS);
+const G9X = buildRenjiaoBank(9, 'x', RJ_G9X_TOPICS);
 
 let ALL_UNITS = {
   starter1: G7_STARTER1_WORDS,
@@ -1126,13 +1124,8 @@ const GRADE_UNIT_OPTIONS = {
     ['unit1','上册 Unit 1'],['unit2','上册 Unit 2'],['unit3','上册 Unit 3'],['unit4','上册 Unit 4'],['unit5','上册 Unit 5'],['unit6','上册 Unit 6'],
     ['unit7','下册 Unit 7'],['unit8','下册 Unit 8'],['unit9','下册 Unit 9'],['unit10','下册 Unit 10'],['unit11','下册 Unit 11'],['unit12','下册 Unit 12'],['mix','下册 Unit1~12 混合']
   ],
-  g8:[
-    ['g8s_u1','上册 Unit 1'],['g8s_u2','上册 Unit 2'],['g8s_u3','上册 Unit 3'],['g8s_u4','上册 Unit 4'],['g8s_u5','上册 Unit 5'],['g8s_u6','上册 Unit 6'],['g8s_u7','上册 Unit 7'],['g8s_u8','上册 Unit 8'],['g8s_u9','上册 Unit 9'],['g8s_u10','上册 Unit 10'],
-    ['g8x_u1','下册 Unit 1'],['g8x_u2','下册 Unit 2'],['g8x_u3','下册 Unit 3'],['g8x_u4','下册 Unit 4'],['g8x_u5','下册 Unit 5'],['g8x_u6','下册 Unit 6'],['g8x_u7','下册 Unit 7'],['g8x_u8','下册 Unit 8'],['g8x_u9','下册 Unit 9'],['g8x_u10','下册 Unit 10']
-  ],
-  g9:[
-    ['g9s_u1','上册 Unit 1'],['g9s_u2','上册 Unit 2'],['g9s_u3','上册 Unit 3'],['g9s_u4','上册 Unit 4'],['g9s_u5','上册 Unit 5'],['g9s_u6','上册 Unit 6'],['g9s_u7','上册 Unit 7'],['g9s_u8','上册 Unit 8'],['g9s_u9','上册 Unit 9'],['g9s_u10','上册 Unit 10']
-  ],
+  g8:[['', '（待添加）']],
+  g9:[['', '（待添加）']],
 };
 
 const CUSTOM_BOOKS_KEY = 'custom_books_menu_v1';
@@ -1617,7 +1610,7 @@ function renderStudyCard(){
     studyProgress.textContent = '学习进度：当前题库暂无词';
     studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
-    studyCn.textContent = '词意 : -';
+    studyCn.textContent = '词义 : -';
     studyIpa.textContent = '音标 : -';
     studySplit.textContent = '拆分发音 : -';
     studyApprox.textContent = '近似读法 : -';
@@ -1633,7 +1626,7 @@ function renderStudyCard(){
   const mode = (studyMode && studyMode.value) || 'en2cn';
   if(mode==='en2cn'){
     studyWord.textContent = en;
-    studyCn.textContent = `词意 : ${formatCnWithPos(cn)}`;
+    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -1662,7 +1655,7 @@ function renderStudyCard(){
     studyApprox.textContent = '';
   }else{
     studyWord.textContent = '🎧 听音写词';
-    studyCn.textContent = `词意 : ${formatCnWithPos(cn)}`;
+    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -1791,7 +1784,7 @@ function startStudy(){
   studyIdx = 0;
   renderStudyCard();
   speakStudyWord();
-  // startStudyBtn.textContent = '重开学习';
+  startStudyBtn.textContent = '重开学习';
 }
 
 function prevStudy(){
@@ -2363,7 +2356,7 @@ speakBtn.onclick=speakCurrentWord;
 restartBtn.onclick=restartRound;
 redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
-// startStudyBtn.onclick set by V2 Enhancement
+startStudyBtn.onclick=startStudy;
 studyPlan.onchange=startStudy;
 studyMode.onchange=renderStudyCard;
 studyCheckBtn.onclick=checkStudyAnswer;
@@ -2419,11 +2412,6 @@ renderUnitOptions();
 startStudy();
 startDict();
 resetMorphIdle();
-<script>
-  // Force start on page load
-  window.onload = function() {
-    try { startStudy(); } catch(e) { console.log(e); }
-  };
 </script>
 
 <!-- V2 Study Enhancements -->
@@ -2489,16 +2477,20 @@ resetMorphIdle();
   document.getElementById('studyActionsBeforeStart').style.display = 'none';
   document.getElementById('studyActionsAfterStart').style.display = 'flex';
   showStudyArea();
-  // Trigger startStudy on load
-  origStartStudy();
-  // Auto-start on load
-  try { startStudy(); } catch(e) { console.log('Auto-start:', e); }
 })();
-<script>
-  // Force start on page load
-  window.onload = function() {
-    try { startStudy(); } catch(e) { console.log(e); }
-  };
+
+// Auto-start on load
+(function() {
+  try {
+    startStudy();
+    // Hide the start button after loading
+    setTimeout(function() {
+      if(document.getElementById('studyActionsBeforeStart')) {
+        document.getElementById('studyActionsBeforeStart').style.display = 'none';
+      }
+    }, 500);
+  } catch(e) { console.log('Auto-start error:', e); }
+})();
 </script>
 </body>
 </html>
