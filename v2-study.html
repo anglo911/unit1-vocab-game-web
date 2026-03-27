@@ -1610,7 +1610,7 @@ function renderStudyCard(){
     studyProgress.textContent = '学习进度：当前题库暂无词';
     studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
-    studyCn.textContent = '词义 : -';
+    studyCn.textContent = '词意 : -';
     studyIpa.textContent = '音标 : -';
     studySplit.textContent = '拆分发音 : -';
     studyApprox.textContent = '近似读法 : -';
@@ -1626,7 +1626,7 @@ function renderStudyCard(){
   const mode = (studyMode && studyMode.value) || 'en2cn';
   if(mode==='en2cn'){
     studyWord.textContent = en;
-    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
+    studyCn.textContent = `词意 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -1655,7 +1655,7 @@ function renderStudyCard(){
     studyApprox.textContent = '';
   }else{
     studyWord.textContent = '🎧 听音写词';
-    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
+    studyCn.textContent = `词意 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
