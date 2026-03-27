@@ -33,6 +33,10 @@
     /* Settings row */
     .settings-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
+    /* Course bar - horizontal selectors */
+    .course-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+    .course-bar select{flex:1;min-width:100px;max-width:200px}
+
     /* Main word display */
     .word-display{text-align:center;padding:30px 20px}
     .word-display .en{font-size:52px;font-weight:900;letter-spacing:1px;line-height:1.3}
@@ -81,10 +85,10 @@
     <h1>📘 学习区</h1>
   </div>
 
-  <!-- Settings -->
-  <div class="card" id="settingsCard">
-    <h2>选择题库</h2>
-    <div class="settings-row">
+  <!-- Single Study Card -->
+  <div class="card" id="studyCard">
+    <!-- Course selectors - horizontal row -->
+    <div class="course-bar">
       <select id="bookSelect" style="display:none"></select>
       <select id="gradeSelect">
         <option value="g1">1年级</option>
@@ -103,12 +107,9 @@
       </select>
       <select id="unitSelect"></select>
     </div>
-  </div>
 
-  <!-- Study Area -->
-  <div class="card" id="studyCard" style="display:none">
     <!-- Progress bar -->
-    <div class="bar" style="margin-bottom:10px"><span id="studyProgressBar" style="width:0%"></span></div>
+    <div class="bar" style="margin:10px 0"><span id="studyProgressBar" style="width:0%"></span></div>
 
     <!-- Word Display -->
     <div class="word-display">
