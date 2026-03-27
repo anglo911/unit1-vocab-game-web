@@ -749,18 +749,7 @@ const RJ_G9S_TOPICS = [
   [["by the time","在……以前"],["unexpected","出乎意料的"],["backpack","背包"],["oversleep","睡过头"],["burn","燃烧"],["alive","活着的"],["airport","机场"],["cancel","取消"]]
 ];
 
-const RJ_G9X_TOPICS = [
-  [["survey","调查"],["standard","标准"],["instruction","说明"],["row","一排"],["keyboard","键盘"],["method","方法"],["text","文本"],["level","水平"]],
-  [["agreement","同意"],["disappoint","使失望"],["gentleman","先生"],["congratulate","祝贺"],["ceremony","典礼"],["thirsty","口渴的"],["thankful","感激的"],["task","任务"]],
-  [["leading","领先的"],["courage","勇气"],["separate","分开"],["wing","翅膀"],["attend","参加"],["overcome","克服"],["graduate","毕业"],["responsible","负责的"]],
-  [["custom","习俗"],["bow","鞠躬"],["kiss","亲吻"],["greet","问候"],["passport","护照"],["chalk","粉笔"],["blackboard","黑板"],["season","季节"]],
-  [["capital","首都"],["noon","中午"],["eastern","东方的"],["coast","海岸"],["manner","方式"],["except","除……之外"],["effort","努力"],["suggest","建议"]],
-  [["lock","锁"],["ring","戒指"],["earthquake","地震"],["sudden","突然的"],["safe","安全的"],["panic","惊慌"],["medical","医疗的"],["rescue","救援"]],
-  [["weigh","称重"],["birth","出生"],["adult","成人"],["manage","设法"],["tiny","极小的"],["huge","巨大的"],["spirit","精神"],["success","成功"]],
-  [["astronaut","宇航员"],["discovery","发现"],["technology","科技"],["recycle","回收"],["metal","金属"],["creative","有创造力的"],["imagine","想象"],["project","项目"]],
-  [["poem","诗"],["poet","诗人"],["rhyme","押韵"],["sadness","悲伤"],["friendship","友谊"],["memory","回忆"],["gentle","温柔的"],["treasure","珍惜"]],
-  [["review","复习"],["summary","总结"],["achievement","成就"],["challenge","挑战"],["future","未来"],["confidence","信心"],["dream","梦想"],["progress","进步"]]
-];
+// RJ_G9X_TOPICS removed
 
 function buildRenjiaoBank(grade, term, topics){
   return Object.fromEntries(topics.map((arr, i)=>[`g${grade}${term}_u${i+1}`, arr]));
@@ -783,8 +772,6 @@ const G9S = {
   "g9s_u10": [["shake", "v.摇动"], ["supposed", "adj.预期的"], ["custom", "n.习俗"], ["bow", "v.鞠躬"], ["kiss", "v.亲吻"], ["greet", "v.问候"], ["value", "v.重视"], ["everyday", "adj.每天的"], ["content", "n.内容"], ["describe", "v.描述"], ["similar", "adj.相似的"], ["different", "adj.不同的"], ["avoid", "v.避免"], ["embarrassed", "adj.尴尬的"], ["calm", "v.使平静 adj.平静的"], ["secret", "n.秘密"], ["mad", "adj.生气的"], ["suggestion", "n.建议"], ["tip", "n.建议"], ["normal", "adj.正常的"], ["behavior", "n.行为"], ["impossible", "adj.不可能的"], ["probably", "adv.大概"], ["explain", "v.解释"], ["detail", "n.细节"]]
 };
 const G8X = buildRenjiaoBank(8, 'x', RJ_G8X_TOPICS);
-const G9S = buildRenjiaoBank(9, 's', RJ_G9S_TOPICS);
-const G9X = buildRenjiaoBank(9, 'x', RJ_G9X_TOPICS);
 
 let ALL_UNITS = {
   starter1: G7_STARTER1_WORDS,
