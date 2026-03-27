@@ -8,7 +8,7 @@
     :root{--bg:#f7f4ee;--card:#fffdf9;--line:#ddd5c7;--text:#2f2a24;--muted:#6b6257;--ok:#2f855a;--bad:#c05648;--pri:#5a67d8;--warn:#d69e2e}
     *{box-sizing:border-box} html{height:100%} body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6;min-height:100vh}
     .wrap{max-width:100%;margin:0;padding:0}
-    .card{background:var(--card);border:none;border-radius:0;padding:0 12px 20px;margin:0;box-shadow:none;height:100vh;display:flex;flex-direction:column;overflow:auto}
+    .card{background:var(--card);border:none;border-radius:0;padding:10px 12px 10px;margin:0;box-shadow:none;height:100vh;display:flex;flex-direction:column;overflow:hidden}
     .card>.spacer{flex:1 1 0vh}
     h1{margin:0;font-size:22px;letter-spacing:.3px}
     h2{margin:0 0 8px;font-size:16px;color:var(--muted)}
@@ -39,9 +39,9 @@
     .course-bar select{flex:1;min-width:0;max-width:260px;height:44px}
 
     /* Main word display */
-    .word-display{text-align:center;padding:16px 12px}
-    .word-display .en{font-size:44px;font-weight:900;letter-spacing:1px;line-height:1.2}
-    .word-display .cn{font-size:22px;color:var(--muted);margin-top:8px;text-align:center !important}
+    .word-display{text-align:center;padding:10px 8px;flex:1;display:flex;flex-direction:column;justify-content:center}
+    .word-display .en{font-size:40px;font-weight:900;letter-spacing:1px;line-height:1.1}
+    .word-display .cn{font-size:20px;color:var(--muted);margin-top:6px;text-align:center !important}
     .word-display .ipa{font-size:16px;color:var(--muted);margin-top:4px}
 
     /* Quiz input */
@@ -49,7 +49,7 @@
     .quiz-wrap input{max-width:380px;margin:0 auto;font-size:28px;text-align:center;border:none;border-bottom:4px solid #7c3aed;border-radius:0;outline:none;background:transparent;caret-color:#7c3aed;color:#2f2a24;padding:12px 6px}
 
     /* Action row */
-    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:20px}
+    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:12px}
     .actions .primary-action{padding:14px 24px;font-size:17px;border-radius:12px}
     .actions .secondary-action{padding:10px 16px;font-size:14px;border-radius:10px}
 
@@ -58,7 +58,7 @@
     .good{color:var(--ok)}.bad{color:var(--bad)}
 
     /* Progress */
-    .progress-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:12px}
+    .progress-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:8px}
     .pill{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fffaf3;font-size:12px}
     .bar{width:100%;height:8px;border-radius:999px;background:#ece1d3;overflow:hidden;border:1px solid var(--line)}
     .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
@@ -68,8 +68,8 @@
     .meta-row>div{white-space:nowrap;font-size:14px}
 
     /* Mode selector */
-    .mode-row{display:flex;gap:8px;justify-content:center;margin-top:10px}
-    .mode-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fffaf3;cursor:pointer;font-size:13px;transition:all .15s}
+    .mode-row{display:flex;gap:8px;justify-content:center;margin-top:6px}
+    .mode-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffaf3;cursor:pointer;font-size:12px;transition:all .15s}
     .mode-btn.active{background:#7b6ed6;color:#fff;border-color:#6f63c9}
 
     @media(max-width:500px){
@@ -111,8 +111,6 @@
 
     <!-- Progress bar -->
     <div class="bar" style="margin:8px 0"><span id="studyProgressBar" style="width:0%"></span></div>
-
-    <div class="spacer"></div>
 
     <!-- Word Display -->
     <div class="word-display">
