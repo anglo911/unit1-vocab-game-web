@@ -1532,7 +1532,7 @@ function phonicsBreak(word){
 }
 
 function toIpaLike(word){
-  // 教学用近似音标（简化版）
+  // 教学用近似音标（简化版）+ 重音标记
   const one = (w)=>{
     let s = w.toLowerCase();
     s = s.replace(/tion/g,'ʃən').replace(/sion/g,'ʒən').replace(/ing/g,'ɪŋ');
@@ -1540,6 +1540,23 @@ function toIpaLike(word){
     s = s.replace(/ee|ea/g,'iː').replace(/oo/g,'uː').replace(/ai|ay/g,'eɪ').replace(/oa/g,'oʊ').replace(/ou|ow/g,'aʊ');
     s = s.replace(/er/g,'ɜːr').replace(/ar/g,'ɑːr').replace(/or/g,'ɔːr');
     s = s.replace(/a/g,'æ').replace(/e/g,'e').replace(/i/g,'ɪ').replace(/o/g,'ɒ').replace(/u/g,'ʌ');
+    
+    // Add stress mark for multi-syllable words
+    const vowels = s.match(/[aeiouæɪʌɒ]/g) || [];
+    if(vowels.length > 1){
+      // Stress on 2nd syllable for words with 3+ syllables, else on 1st
+      let stressIdx = vowels.length >= 3 ? 1 : 0;
+      let vCount = 0;
+      for(let i=0;i<s.length;i++){
+        if(/[aeiouæɪʌɒ]/.test(s[i])){
+          vCount++;
+          if(vCount === stressIdx + 1 && !s.substring(0,i).includes('ˈ')){
+            s = s.substring(0,i) + 'ˈ' + s.substring(i);
+            break;
+          }
+        }
+      }
+    }
     return '/' + s + '/';
   };
   const parts = String(word||'').trim().split(/\s+/).filter(Boolean);
