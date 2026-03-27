@@ -1769,7 +1769,7 @@ function checkStudyAnswer(){
   }
 }
 
-function startStudy(){
+function startStudy(){ alert('开始学习！unit=' + (unitSelect?.value || selectedUnit));
   selectedUnit = $("unitSelect").value || selectedUnit || 'unit1';
   updateStudyUnitTag();
   const raw = getStudyWords(selectedUnit);
