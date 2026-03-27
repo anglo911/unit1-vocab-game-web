@@ -2420,6 +2420,11 @@ renderUnitOptions();
 startStudy();
 startDict();
 resetMorphIdle();
+<script>
+  // Force start on page load
+  window.onload = function() {
+    try { startStudy(); } catch(e) { console.log(e); }
+  };
 </script>
 
 <!-- V2 Study Enhancements -->
@@ -2487,7 +2492,14 @@ resetMorphIdle();
   showStudyArea();
   // Trigger startStudy on load
   origStartStudy();
+  // Auto-start on load
+  try { startStudy(); } catch(e) { console.log('Auto-start:', e); }
 })();
+<script>
+  // Force start on page load
+  window.onload = function() {
+    try { startStudy(); } catch(e) { console.log(e); }
+  };
 </script>
 </body>
 </html>
