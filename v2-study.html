@@ -139,9 +139,7 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="actions" id="studyActionsBeforeStart" style="margin-top:20px">
-      <button class="big" id="startStudyBtn" onclick="startStudy()">开始学习</button>
-    </div>
+    <!-- 开始学习按钮已移除 -->
 
     <div class="actions" id="studyActionsAfterStart" style="display:none">
       <button class="pri primary-action" id="speakStudyBtn">发音</button>
@@ -1793,7 +1791,7 @@ function startStudy(){
   studyIdx = 0;
   renderStudyCard();
   speakStudyWord();
-  startStudyBtn.textContent = '重开学习';
+  // startStudyBtn.textContent = '重开学习';
 }
 
 function prevStudy(){
