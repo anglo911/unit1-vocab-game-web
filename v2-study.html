@@ -1,4 +1,3 @@
-// v2.2
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -192,6 +191,22 @@
 </div>
 
 <script>
+
+// v2.2 Summary Modal
+(function(){
+var stats={master:0,fuzzy:0,hard:0};
+window._trackStat=function(type){stats[type]++;};
+window.showSummary=function(){
+ var t=stats.master+stats.fuzzy+stats.hard;
+ var r=t>0?Math.round(stats.master/t*100):0;
+ document.getElementById('sumMaster').textContent=stats.master;
+ document.getElementById('sumFuzzy').textContent=stats.fuzzy;
+ document.getElementById('sumHard').textContent=stats.hard;
+ document.getElementById('sumRate').textContent=r+'%';
+ document.getElementById('summaryModal').style.display='flex';
+};
+})();
+
 const UNIT1_WORDS = [
   ["name","名字；名称"],["nice","令人愉快的；宜人的"],["to","用于动词原形前，构成不定式"],["meet","遇见；相逢"],["too","也；又；太"],
   ["your","你的；你们的"],["his","他的"],["her","她的"],["and","和；又；而"],["yes","是的"],["no","不；不是"],["not","不；没有"],
@@ -3184,16 +3199,16 @@ function goNextStudyWord(){
   nextStudyRoundOrFinish();
 }
 
-function nextStudy(){
+function nextStudy(){ if(studyIdx>=studyList.length-1){setTimeout(showSummary,300);}
   goNextStudyWord();
 }
 
-function markStudyKnow(){
+window._trackStat("master");function markStudyKnow(){
   studyStats.know += 1;
   goNextStudyWord();
 }
 
-function markStudyFuzzy(){
+window._trackStat("fuzzy");function markStudyFuzzy(){
   if(!studyList.length) return;
   studyStreak = 0;
   studyStats.fuzzy += 1;
@@ -3202,7 +3217,7 @@ function markStudyFuzzy(){
   goNextStudyWord();
 }
 
-function markStudyHard(){
+window._trackStat("hard");function markStudyHard(){
   if(!studyList.length) return;
   studyStreak = 0;
   studyStats.hard += 1;
@@ -3773,6 +3788,22 @@ resetMorphIdle();
 
 <!-- V2 Study Enhancements -->
 <script>
+
+// v2.2 Summary Modal
+(function(){
+var stats={master:0,fuzzy:0,hard:0};
+window._trackStat=function(type){stats[type]++;};
+window.showSummary=function(){
+ var t=stats.master+stats.fuzzy+stats.hard;
+ var r=t>0?Math.round(stats.master/t*100):0;
+ document.getElementById('sumMaster').textContent=stats.master;
+ document.getElementById('sumFuzzy').textContent=stats.fuzzy;
+ document.getElementById('sumHard').textContent=stats.hard;
+ document.getElementById('sumRate').textContent=r+'%';
+ document.getElementById('summaryModal').style.display='flex';
+};
+})();
+
 (function(){
   function showStudyArea() {
     document.getElementById('studyCard').style.display = '';
@@ -3838,5 +3869,39 @@ resetMorphIdle();
   origStartStudy();
 })();
 </script>
+
+<style>
+#summaryModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:999;display:none;align-items:center;justify-content:center}
+#summaryModal .box{background:#fffaf3;padding:24px;border-radius:16px;max-width:380px;width:90%;text-align:center}
+#summaryModal h2{font-size:20px;margin:0 0 16px}
+#summaryModal .stat{font-size:36px;font-weight:bold;margin:8px 0}
+#summaryModal .master{color:#2f855a}
+#summaryModal .fuzzy{color:#d69e2e}
+#summaryModal .hard{color:#c05648}
+#summaryModal .rate{font-size:28px;font-weight:bold;margin:16px 0}
+#summaryModal .label{color:#6b6257;font-size:14px}
+#summaryModal .btns{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+#summaryModal button{padding:10px 18px;font-size:15px;border-radius:6px;cursor:pointer}
+#summaryModal .ok{background:#48bb78;color:#fff;border:none}
+#summaryModal .ghost{background:#e2e8f0;color:#4a5568;border:none}
+</style>
+<div id="summaryModal">
+<div class="box">
+<h2>本轮学习总结</h2>
+<div class="stat master" id="sumMaster">0</div>
+<div class="label">掌握</div>
+<div class="stat fuzzy" id="sumFuzzy">0</div>
+<div class="label">模糊</div>
+<div class="stat hard" id="sumHard">0</div>
+<div class="label">生字</div>
+<div class="rate" id="sumRate">0%</div>
+<div class="label">掌握率</div>
+<div class="btns">
+<button class="ok" onclick="location.reload()">重新学习</button>
+<button class="ghost" onclick="document.getElementById('summaryModal').style.display='none'">返回</button>
+</div>
+</div>
+</div>
+
 </body>
 </html>
