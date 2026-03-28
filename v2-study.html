@@ -196,7 +196,7 @@
 (function(){
 var stats={master:0,fuzzy:0,hard:0};
 window._trackStat=function(type){stats[type]++;};
-window.showSummary=function(){
+window.showSummary=function(){ alert('showSummary called! ' + studyIdx + '/' + studyList.length);
  var t=stats.master+stats.fuzzy+stats.hard;
  var r=t>0?Math.round(stats.master/t*100):0;
  document.getElementById('sumMaster').textContent=stats.master;
@@ -3793,7 +3793,7 @@ resetMorphIdle();
 (function(){
 var stats={master:0,fuzzy:0,hard:0};
 window._trackStat=function(type){stats[type]++;};
-window.showSummary=function(){
+window.showSummary=function(){ alert('showSummary called! ' + studyIdx + '/' + studyList.length);
  var t=stats.master+stats.fuzzy+stats.hard;
  var r=t>0?Math.round(stats.master/t*100):0;
  document.getElementById('sumMaster').textContent=stats.master;
