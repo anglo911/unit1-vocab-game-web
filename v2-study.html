@@ -12,17 +12,17 @@
     .card>.spacer{flex:1 1 0vh}
     h1{margin:0;font-size:22px;letter-spacing:.3px}
     h2{margin:0 0 8px;font-size:16px;color:var(--muted)}
-    .muted{color:#4a4540;font-size:14px}
+    .muted{color:var(--muted);font-size:13px}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     button{border:1px solid transparent;border-radius:10px;padding:10px 16px;color:#fff;font-weight:700;cursor:pointer;transition:all .18s ease;font-size:15px}
-    .pri{background:#2563eb;border-color:#1d4ed8}
-    .pri:hover{background:#1d4ed8}
-    .ok{background:#16a34a;border-color:#15803d}
-    .ok:hover{background:#15803d}
-    .warn{background:#ea580c;border-color:#c2410c}
-    .warn:hover{background:#c2410c}
-    .ghost{background:#dc2626;border-color:#b91c1c;color:#fff}
-    .ghost:hover{background:#b91c1c}
+    .pri{background:#7b6ed6;border-color:#6f63c9}
+    .pri:hover{background:#6f63c9}
+    .ok{background:#4a8f72;border-color:#3f7f64}
+    .ok:hover{background:#3f7f64}
+    .warn{background:#d3a85d;color:#2f2a24;border-color:#c2974b}
+    .warn:hover{background:#c2974b}
+    .ghost{background:#f1e8da;color:#51463a;border-color:#d8cfc1}
+    .ghost:hover{background:#e8dcc9}
     .big{background:#4a8f72;color:#fff;padding:16px 28px;border-radius:14px;font-size:18px;border:0;cursor:pointer;font-weight:700}
     select{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:10px;padding:10px;height:42px;width:100%}
     input{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:10px;padding:10px;height:42px;width:100%}
@@ -41,16 +41,15 @@
     /* Main word display */
     .word-display{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 8px;text-align:center}
     .word-display .en{font-size:50px;font-weight:900;letter-spacing:1px;line-height:1.1;text-align:center}
-    .word-display .cn{font-size:24px;color:#3a352e;margin-top:28px;text-align:center !important}
-    .word-display .ipa{font-size:24px;color:#3a352e;margin-top:8px}
+    .word-display .cn{font-size:20px;color:var(--muted);margin-top:8px;text-align:center !important}
+    .word-display .ipa{font-size:16px;color:var(--muted);margin-top:4px}
 
     /* Quiz input */
-    .quiz-wrap{text-align:center;margin-top:4px}
-    .quiz-wrap input{max-width:380px;margin:0 auto;font-size:32px;font-weight:800;text-align:center;border:none;border-bottom:4px solid #7c3aed;border-radius:0;outline:none;background:transparent;caret-color:#7c3aed;color:#2f2a24;padding:12px 6px}
-    .quiz-wrap input::placeholder{color:#555;font-weight:800;font-size:20px}
+    .quiz-wrap{text-align:center;margin-top:20px}
+    .quiz-wrap input{max-width:380px;margin:0 auto;font-size:28px;text-align:center;border:none;border-bottom:4px solid #7c3aed;border-radius:0;outline:none;background:transparent;caret-color:#7c3aed;color:#2f2a24;padding:12px 6px}
 
     /* Action row */
-    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:30px}
+    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap;margin-top:12px}
     .actions .primary-action{padding:14px 24px;font-size:17px;border-radius:12px}
     .actions .secondary-action{padding:10px 16px;font-size:14px;border-radius:10px}
 
@@ -60,7 +59,7 @@
 
     /* Progress */
     .progress-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:8px}
-    .pill{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fffaf3;font-size:14px;color:#3a352e;font-weight:600}
+    .pill{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fffaf3;font-size:12px}
     .bar{width:100%;height:8px;border-radius:999px;background:#ece1d3;overflow:hidden;border:1px solid var(--line)}
     .bar>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
 
@@ -70,7 +69,7 @@
 
     /* Mode selector */
     .mode-row{display:flex;gap:8px;justify-content:center;margin-top:6px}
-    .mode-btn{padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:#fffaf3;cursor:pointer;font-size:12px;transition:all .15s}
+    .mode-btn{padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fffaf3;cursor:pointer;font-size:12px;transition:all .15s}
     .mode-btn.active{background:#7b6ed6;color:#fff;border-color:#6f63c9}
 
     @media(max-width:500px){
@@ -122,7 +121,7 @@
 
     <!-- Quiz Input (hidden by default) -->
     <div id="studyQuizWrap" style="display:none" class="quiz-wrap">
-      <input id="studyQuizInput" placeholder="输入你想到的英文" style="font-size:20px;font-weight:700" />
+      <input id="studyQuizInput" placeholder="输入你想到的英文" />
       <div class="row" style="justify-content:center;margin-top:10px;gap:8px">
         <button class="pri" id="studyCheckBtn" style="font-size:14px;padding:8px 16px">提交</button>
         <button class="ghost" id="studyHintBtn" style="font-size:14px;padding:8px 16px">提示</button>
@@ -133,8 +132,8 @@
 
     <!-- Mode Selector -->
     <div class="mode-row">
-      <span class="mode-btn active" data-mode="en2cn" id="modeEn2Cn">看词识意</span>
-      <span class="mode-btn" data-mode="cn2en" id="modeCn2En">看意回词</span>
+      <span class="mode-btn active" data-mode="en2cn" id="modeEn2Cn">看词识义</span>
+      <span class="mode-btn" data-mode="cn2en" id="modeCn2En">看义回词</span>
       <span class="mode-btn" data-mode="audio2word" id="modeAudio">听音写词</span>
     </div>
 
@@ -144,10 +143,10 @@
     </div>
 
     <div class="actions" id="studyActionsAfterStart" style="display:none">
-      <button class="pri primary-action" id="speakStudyBtn">发音</button>
-      <button class="ok primary-action" id="studyKnowBtn">掌握</button>
-      <button class="warn primary-action" id="studyFuzzyBtn">模糊</button>
-      <button class="ghost secondary-action" id="studyHardBtn">生字</button>
+      <button class="pri primary-action" id="speakStudyBtn">🔊 发音</button>
+      <button class="ok primary-action" id="studyKnowBtn">✅ 会了</button>
+      <button class="warn primary-action" id="studyFuzzyBtn">🤔 模糊</button>
+      <button class="ghost secondary-action" id="studyHardBtn">❌ 不会</button>
     </div>
 
     <!-- Progress Pills -->
@@ -208,221 +207,7 @@ const UNIT2_WORDS = [
 
 const UNIT3_WORDS = [
   ["this","这；这个"],["that","那；那个"],["these","这些"],["those","那些"],["schoolbag","书包"],
-  ["book","书"],["dictionary","词典"],
-  [
-    ["decision","决定"],
-    ["meaning","意义"],
-    ["allow","允许"],
-    ["protect","保护"],
-    ["develop","发展"],
-    ["express","表达"],
-    ["describe","描述"],
-    ["experience","经验"],
-    ["hope","希望"],
-    ["mind","头脑"],
-    ["power","力量"],
-    ["refuse","拒绝"],
-    ["accept","接受"],
-    ["influence","影响"],
-    ["return","返回"],
-    ["instead","代替"],
-    ["alone","单独的"],
-    ["fair","公平的"],
-    ["especially","尤其"],
-    ["achieve","实现"],
-    ["important","重要的"],
-    ["personal","个人的"],
-    ["however","然而"],
-    ["support","支持"],
-    ["continue","继续"]
-  ],
-  [
-    ["meeting","会议"],
-    ["organize","组织"],
-    ["comfortable","舒服的"],
-    ["travel","旅行"],
-    ["without","没有"],
-    ["guest","客人"],
-    ["calendar","日历"],
-    ["daytime","白天"],
-    ["evening","晚上"],
-    ["available","可用的"],
-    ["until","直到"],
-    ["hang","挂"],
-    ["prepare","准备"],
-    ["surprise","惊喜"],
-    ["restaurant","餐厅"],
-    ["accept","接受"],
-    ["refuse","拒绝"],
-    ["weekday","工作日"],
-    ["weekend","周末"],
-    ["available","有空的"],
-    ["until","直到"],
-    ["time","时间"],
-    ["plan","计划"],
-    ["prepare","准备"],
-    ["meeting","会议"]
-  ],
-  [
-    ["ticket","票"],
-    ["unbelievable","难以置信"],
-    ["careless","粗心的"],
-    ["describe","描述"],
-    ["person","人"],
-    ["finally","最后"],
-    ["empty","空的"],
-    ["bag","包"],
-    ["sandwich","三明治"],
-    ["piece","片"],
-    ["bread","面包"],
-    ["lock","锁"],
-    ["somewhere","某处"],
-    ["anywhere","任何地方"],
-    ["anybody","任何人"],
-    ["somebody","某人"],
-    ["noise","噪音"],
-    ["wolf","狼"],
-    ["escape","逃跑"],
-    ["anything","任何事"],
-    ["somewhere","某处"],
-    ["anywhere","任何地方"],
-    ["somebody","某人"],
-    ["anybody","任何人"],
-    ["somebody","某人"]
-  ],
-  [
-    ["shoot","射击"],
-    ["point","指向"],
-    ["score","得分"],
-    ["beat","打败"],
-    ["require","需要"],
-    ["spirit","精神"],
-    ["relaxed","放松的"],
-    ["push","推"],
-    ["continue","继续"],
-    ["improve","改进"],
-    ["shy","害羞的"],
-    ["self","自我"],
-    ["self-confidence","自信心"],
-    ["learn","学习"],
-    ["from then on","从那时起"],
-    ["dream","梦想"],
-    ["come true","实现"],
-    ["team","队"],
-    ["player","球员"],
-    ["give up","放弃"],
-    ["doubt","怀疑"],
-    ["instead of","代替"],
-    ["however","然而"],
-    ["never give up","永不放弃"]
-  ],
-  [
-    ["fall","落下"],
-    ["ill","生病的"],
-    ["drop","掉下"],
-    ["feel","感觉"],
-    ["sound","听起来"],
-    ["medicine","药"],
-    ["get well","康复"],
-    ["hang","挂"],
-    ["hang out","闲逛"],
-    ["catch","抓住"],
-    ["have a fever","发烧"],
-    ["have a cold","感冒"],
-    ["have a stomachache","胃痛"],
-    ["have a headache","头痛"],
-    ["have a toothache","牙痛"],
-    ["rest","休息"],
-    ["hurt","受伤"],
-    ["break","骨折"],
-    ["pass","通过"],
-    ["onto","到...上"],
-    ["help","帮助"],
-    ["herself","她自己"],
-    ["himself","他自己"],
-    ["myself","我自己"],
-    ["yourself","你自己"]
-  ],
-  [
-    ["suggest","建议"],
-    ["suggestion","建议"],
-    ["problem","问题"],
-    ["wrong","错误的"],
-    ["What's wrong","怎么啦"],
-    ["have a cold","感冒"],
-    ["temperature","体温"],
-    ["see a doctor","看医生"],
-    ["get off","下车"],
-    ["to one's surprise","令...惊讶"],
-    ["instead of","代替"],
-    ["lie","躺"],
-    ["rest","休息"],
-    ["have a rest","休息"],
-    ["health","健康"],
-    ["balance","平衡"],
-    ["diet","饮食"],
-    ["important","重要的"],
-    ["sleep","睡眠"],
-    ["early","早的"],
-    ["exercise","锻炼"],
-    ["habit","习惯"],
-    ["healthy","健康的"],
-    ["improve","改进"],
-    ["try","尝试"]
-  ],
-  [
-    ["traffic","交通"],
-    ["heavy","重的"],
-    ["light","轻的"],
-    ["bridge","桥"],
-    ["road","路"],
-    ["car","汽车"],
-    ["bus","公共汽车"],
-    ["train","火车"],
-    ["ship","船"],
-    ["bike","自行车"],
-    ["subway","地铁"],
-    ["ride","骑"],
-    ["minute","分钟"],
-    ["kilometer","千米"],
-    ["far","远的"],
-    ["close","近的"],
-    ["between","在...之间"],
-    ["among","在...之中"],
-    ["across","穿过"],
-    ["front","前面"],
-    ["behind","后面"],
-    ["in front of","在...前面"],
-    ["on the left","在左边"],
-    ["on the right","在右边"]
-  ],
-  [
-    ["method","方法"],
-    ["practice","练习"],
-    ["result","结果"],
-    ["improve","改进"],
-    ["create","创造"],
-    ["master","掌握"],
-    ["pronunciation","发音"],
-    ["vocabulary","词汇"],
-    ["grammar","语法"],
-    ["increase","增加"],
-    ["knowledge","知识"],
-    ["ability","能力"],
-    ["brain","大脑"],
-    ["attention","注意"],
-    ["develop","发展"],
-    ["active","活跃的"],
-    ["connect","连接"],
-    ["review","复习"],
-    ["notes","笔记"],
-    ["understand","理解"],
-    ["complete","完成"],
-    ["time","时间"],
-    ["important","重要的"],
-    ["need","需要"],
-    ["try","尝试"]
-  ],,["pen","钢笔"],["pencil","铅笔"],["eraser","橡皮"],
+  ["book","书"],["dictionary","词典"],["pen","钢笔"],["pencil","铅笔"],["eraser","橡皮"],
   ["ruler","尺；直尺"],["pencil box","文具盒"],["mine","我的（名词性物主代词）"],["hers","她的"],["yours","你的；你们的"],
   ["excuse","原谅；宽恕"],["me","我（宾格）"],["thank","感谢"],["teacher","老师"],["about","关于"],
   ["for","为了；给；对"],["welcome","受欢迎的"],["help","帮助"],["find","找到"],["ask","询问；请求"]
@@ -441,112 +226,7 @@ const UNIT4_WORDS = [
 const UNIT5_WORDS = [
   ["panda","熊猫"],["zoo","动物园"],["tiger","老虎"],["elephant","大象"],["koala","考拉"],
   ["lion","狮子"],["giraffe","长颈鹿"],["animal","动物"],["cute","可爱的"],["lazy","懒惰的"],
-  ["smart","聪明的"],["beautiful","美丽的"],["kind of","有点儿"],["Australia","澳大利亚"],
-  [
-    ["survey","调查"],
-    ["standard","标准"],
-    ["row","排"],
-    ["keyboard","键盘"],
-    ["instruction","说明"],
-    ["text","文本"],
-    ["level","水平"],
-    ["degree","程度"],
-    ["manager","经理"],
-    ["gentleman","绅士"],
-    ["task","任务"],
-    ["wing","翅膀"],
-    ["double","双倍的"],
-    ["shall","将"],
-    ["overcome","克服"],
-    ["congratulate","祝贺"],
-    ["care","关心"],
-    ["senior","年长的"],
-    ["thirsty","口渴的"],
-    ["thankful","感激的"],
-    ["graduation","毕业"],
-    ["ceremony","典礼"],
-    ["first of all","首先"],
-    ["last name","姓"],
-    ["given name","名"]
-  ],
-  [
-    ["ship","船"],
-    ["coal","煤"],
-    ["advantage","优势"],
-    ["industry","工业"],
-    ["law","法律"],
-    ["gate","大门"],
-    ["bottle","瓶子"],
-    ["president","总统"],
-    ["metal","金属"],
-    ["litter","垃圾"],
-    ["cost","花费"],
-    ["afford","负担得起"],
-    ["recycle","回收"],
-    ["ugly","丑陋的"],
-    ["wooden","木制的"],
-    ["plastic","塑料"],
-    ["cruel","残酷的"],
-    ["harmful","有害的"],
-    ["science","科学"],
-    ["present","礼物"],
-    ["take part in","参加"],
-    ["turn off","关闭"],
-    ["throw away","扔掉"],
-    ["pull down","拉倒"]
-  ],
-  [
-    ["saving","节约"],
-    ["pollution","污染"],
-    ["environment","环境"],
-    ["method","方法"],
-    ["reusable","可重复使用的"],
-    ["encouragement","鼓励"],
-    ["power","力量"],
-    ["movement","运动"],
-    ["scientific","科学的"],
-    ["perhaps","可能"],
-    ["electricity","电"],
-    ["represent","代表"],
-    ["opposite","相反的"],
-    ["solution","解决方案"],
-    ["tons","吨"],
-    ["billion","十亿"],
-    ["reachable","可到达的"],
-    ["available","可用的"],
-    ["environmentally","环境地"],
-    ["ideal","理想的"],
-    ["actually","实际上"],
-    ["electric","电动的"],
-    ["percent","百分之"],
-    ["behavior","行为"]
-  ],
-  [
-    ["shake","摇动"],
-    ["supposed","预期的"],
-    ["custom","习俗"],
-    ["bow","鞠躬"],
-    ["kiss","亲吻"],
-    ["greet","问候"],
-    ["value","重视"],
-    ["content","内容"],
-    ["describe","描述"],
-    ["similar","相似的"],
-    ["different","不同的"],
-    ["avoid","避免"],
-    ["embarrassed","尴尬的"],
-    ["calm","平静的"],
-    ["secret","秘密"],
-    ["mad","生气的"],
-    ["suggestion","建议"],
-    ["tip","建议"],
-    ["normal","正常的"],
-    ["behavior","行为"],
-    ["impossible","不可能的"],
-    ["probably","大概"],
-    ["explain","解释"],
-    ["detail","细节"]
-  ],,["South Africa","南非"],
+  ["smart","聪明的"],["beautiful","美丽的"],["kind of","有点儿"],["Australia","澳大利亚"],["South Africa","南非"],
   ["pet","宠物"],["leg","腿"],["sleep","睡觉"],["friendly","友好的"],["save","拯救"]
 ];
 
@@ -1056,1043 +736,7 @@ const RJ_G8X_TOPICS = [
 ];
 
 const RJ_G9S_TOPICS = [
-  [
-    ["textbook","教科书；课本"],
-    ["conversation","交谈；谈话"],
-    ["aloud","大声地；出声地"],
-    ["pronunciation","发音；读音"],
-    ["sentence","句子"],
-    ["patient","有耐心的 n.病人"],
-    ["secret","秘密；秘诀"],
-    ["expression","表情；表示"],
-    ["discover","发现；发觉"],
-    ["grammar","语法"],
-    ["repeat","重复；重做"],
-    ["note","笔记 v.注意"],
-    ["memorize","记忆；记住"],
-    ["pattern","模式；方式"],
-    ["pronounce","发音"],
-    ["increase","增加；增长"],
-    ["speed","速度"],
-    ["partner","搭档；同伴"],
-    ["born","出生 adj.天生的"],
-    ["ability","能力；才能"],
-    ["create","创造；创建"],
-    ["brain","大脑"],
-    ["active","活跃的"],
-    ["attention","注意；关注"],
-    ["knowledge","知识；学问"],
-    ["wise","明智的"],
-    ["connect","连接"],
-    ["review","回顾；复习"],
-    ["overnight","一夜之间"],
-    ["challenge","挑战"],
-    ["solution","解决办法"],
-    ["improve","改进"],
-  [
-    ["encourage","鼓励"],
-    ["support","支持"],
-    ["develop","发展"],
-    ["control","控制"],
-    ["authority","权威"],
-    ["instead","代替"],
-    ["whatever","无论什么"],
-    ["unfair","不公平的"],
-    ["include","包括"],
-    ["except","除了"],
-    ["communicate","交流"],
-    ["argue","争论"],
-    ["comparison","比较"],
-    ["medal","奖牌"],
-    ["championship","冠军"],
-    ["fine","好的"],
-    ["condition","条件"],
-    ["practice","练习"],
-    ["improve","改进"],
-    ["receive","收到"],
-    ["injure","受伤"],
-    ["pressure","压力"],
-    ["peaceful","和平的"],
-    ["freedom","自由"],
-    ["lawyer","律师"],
-    ["business","商业"]
-  ],
-  [
-    ["video","视频"],
-    ["video call","视频通话"],
-    ["message","消息"],
-    ["reply","回复"],
-    ["receive","收到"],
-    ["accept","接受"],
-    ["refuse","拒绝"],
-    ["inform","通知"],
-    ["immediate","立即的"],
-    ["through","通过"],
-    ["enough","足够的"],
-    ["response","回应"],
-    ["confirm","确认"],
-    ["personal","个人的"],
-    ["forward","转发"],
-    ["delete","删除"],
-    ["letter","信"],
-    ["sad","难过的"],
-    ["worried","担心的"],
-    ["surprised","惊讶的"],
-    ["退出","exit"],
-    ["登录","log in"],
-    ["member","成员"],
-    ["population","人口"],
-    ["policy","政策"]
-  ],
-  [
-    ["grow up","成长"],
-    ["engineer","工程师"],
-    ["pilot","飞行员"],
-    ["scientist","科学家"],
-    ["cook","厨师"],
-    ["driver","司机"],
-    ["actor","演员"],
-    ["pianist","钢琴家"],
-    ["violinist","小提琴家"],
-    ["dream","梦想"],
-    ["college","大学"],
-    ["education","教育"],
-    ["medicine","药学"],
-    ["university","大学"],
-    ["article","文章"],
-    ["send","发送"],
-    ["solution","解决办法"],
-    ["program","程序"],
-    ["company","公司"],
-    ["create","创造"],
-    ["software","软件"],
-    ["possibility","可能性"],
-    ["gradually","渐渐地"],
-    ["personally","亲自地"],
-    ["choose","选择"],
-    ["university","大学"]
-  ],
-  [
-    ["matter","问题"],
-    ["What's the matter","怎么啦"],
-    ["hurt","受伤"],
-    ["feel","感觉"],
-    ["trouble","麻烦"],
-    ["hit","打"],
-    ["himself","他自己"],
-    ["fall down","跌倒"],
-    ["go away","走开"],
-    ["mosquito","蚊子"],
-    ["bite","咬"],
-    ["something","某事"],
-    ["everything","每件事"],
-    ["kind of","有点"],
-    ["risk","危险"],
-    ["safety","安全"],
-    ["importance","重要性"],
-    ["decision","决定"],
-    ["solve","解决"],
-    ["refuse","拒绝"],
-    ["helpout","帮助"],
-    ["shock","震惊"],
-    ["lie","躺"],
-    ["breath","呼吸"],
-    ["sunrise","日出"]
-  ],
-  [
-    ["raise","举起"],
-    ["raise money","筹钱"],
-    ["volunteer","志愿者"],
-    ["community","社区"],
-    ["clean up","打扫"],
-    ["food bank","食品银行"],
-    ["mentally","精神上"],
-    ["sign","标志"],
-    ["notice","通知"],
-    ["hand out","分发"],
-    ["change","改变"],
-    ["disabled","残疾的"],
-    ["strength","力量"],
-    ["brave","勇敢的"],
-    ["similar","相似的"],
-    ["treat","对待"],
-    ["hero","英雄"],
-    ["hobby","爱好"],
-    ["hometown","家乡"],
-    ["journey","旅程"],
-    ["solve problems","解决问题"],
-    ["disabled people","残疾人"],
-    ["make a plan","制定计划"],
-    ["call sb","打电话"],
-    ["raise money for","为...筹钱"]
-  ],
-  [
-    ["national","国家的"],
-    ["nationality","国籍"],
-    ["tourist","游客"],
-    ["guide","导游"],
-    ["hotel","酒店"],
-    ["restaurant","餐厅"],
-    ["address","地址"],
-    ["price","价格"],
-    ["neighbor","邻居"],
-    ["sentence","句子"],
-    ["direction","方向"],
-    ["useful","有用的"],
-    ["perhaps","可能"],
-    ["travel","旅行"],
-    ["lazy","懒惰的"],
-    ["door","门"],
-    ["close","关闭"],
-    ["staff","员工"],
-    ["heroic","英雄的"],
-    ["simple","简单的"],
-    ["accept","接受"],
-    ["experience","经验"],
-    ["perfect","完美的"],
-    ["impossible","不可能的"],
-    ["fit","适合"]
-  ],
-  [
-    ["first of all","首先"],
-    ["second","第二"],
-    ["third","第三"],
-    ["finally","最后"],
-    ["last name","姓"],
-    ["given name","名"],
-    ["full name","全名"],
-    ["call sb","叫..."],
-    ["last","持续"],
-    ["prepare","准备"],
-    ["surprise","惊喜"],
-    ["warm","温暖的"],
-    ["surprised","惊讶的"],
-    ["say goodbye","告别"],
-    ["have a nice day","祝你有美好的一天"],
-    ["graduate","毕业"],
-    ["ceremony","典礼"],
-    ["congratulate","祝贺"],
-    ["task","任务"],
-    ["task","任务"],
-    ["achieve","实现"],
-    ["purpose","目的"],
-    ["confirm","确认"],
-    ["present","礼物"],
-    ["thankful","感激的"]
-  ],
-  [
-    ["safety","安全"],
-    ["instruction","说明"],
-    ["tool","工具"],
-    ["sharp","锋利的"],
-    ["scissors","剪刀"],
-    ["glue","胶水"],
-    ["wood","木头"],
-    ["materials","材料"],
-    ["step","步骤"],
-    ["instructions","说明"],
-    ["brand","品牌"],
-    ["check","检查"],
-    ["model","模型"],
-    ["air","空气"],
-    ["press","按压"],
-    ["bottle","瓶子"],
-    ["iron","铁"],
-    ["glass","玻璃"],
-    ["paper","纸"],
-    ["plastic","塑料"],
-    ["environment","环境"],
-    ["reduce","减少"],
-    ["reuse","重复使用"],
-    ["recycle","回收"],
-    ["poster","海报"]
-  ],
-  [
-    ["rule","规则"],
-    ["arrive","到达"],
-    ["hallway","走廊"],
-    ["classroom","教室"],
-    ["fight","打架"],
-    ["wait","等待"],
-    ["walk","走路"],
-    ["outside","外面"],
-    ["require","需要"],
-    ["bring","带来"],
-    ["meet","见面"],
-    ["allow","允许"],
-    ["represent","代表"],
-    ["develop","发展"],
-    ["understand","理解"],
-    ["care","关心"],
-    ["careful","小心的"],
-    ["strict","严格的"],
-    ["be strict with","对...严格"],
-    ["follow","跟随"],
-    ["break","打破"],
-    ["promise","承诺"],
-    ["keep","保持"],
-    ["try","尝试"]
-  ],
-  [
-    ["mooncake","月饼"],
-    ["lantern","灯笼"],
-    ["stranger","陌生人"],
-    ["relative","亲属"],
-    ["pound","磅；英镑"],
-    ["folk","民间的"],
-    ["goddess","女神"],
-    ["whoever","无论谁"],
-    ["steal","偷；窃取"],
-    ["lay","放置"],
-    ["dessert","甜食"],
-    ["garden","花园"],
-    ["tradition","传统"],
-    ["admire","欣赏"],
-    ["treat","款待"],
-    ["tie","领带"],
-    ["dinosaur","恐龙"],
-    ["mushroom","蘑菇"],
-    ["happiness","快乐"],
-    ["firework","烟火"],
-    ["gather","聚集"],
-    ["custom","风俗"],
-    ["crowd","人群"],
-    ["century","世纪"],
-    ["national","国家的"],
-    ["rich","富有的"],
-    ["traditional","传统的"],
-    ["spread","传播"]
-  ],
-  [
-    ["restroom","洗手间"],
-    ["stamp","邮票"],
-    ["bookstore","书店"],
-    ["beside","在...旁边"],
-    ["postcard","明信片"],
-    ["pardon","原谅"],
-    ["washroom","洗手间"],
-    ["bathroom","浴室"],
-    ["normally","通常"],
-    ["correct","正确的"],
-    ["polite","有礼貌的"],
-    ["direct","直接的"],
-    ["speaker","发言者"],
-    ["whom","谁"],
-    ["impolite","不礼貌的"],
-    ["address","地址"],
-    ["underground","地铁"],
-    ["course","课程"],
-    ["Italian","意大利的"],
-    ["expensive","昂贵的"],
-    ["convenient","便利的"],
-    ["mall","商场"],
-    ["clerk","职员"],
-    ["corner","拐角"],
-    ["politely","礼貌地"],
-    ["Excuse me","打扰一下"]
-  ],
-  [
-    ["humorous","幽默的"],
-    ["silent","沉默的"],
-    ["helpful","有帮助的"],
-    ["score","得分"],
-    ["background","背景"],
-    ["interview","采访"],
-    ["Asian","亚洲的"],
-    ["deal","对付"],
-    ["shyness","害羞"],
-    ["dare","敢于"],
-    ["private","私人的"],
-    ["guard","警卫"],
-    ["require","需要"],
-    ["European","欧洲的"],
-    ["African","非洲的"],
-    ["British","英国的"],
-    ["insect","昆虫"],
-    ["speech","讲话"],
-    ["public","公众"],
-    ["spider","蜘蛛"],
-    ["seldom","不常"],
-    ["influence","影响"],
-    ["absent","缺席"],
-    ["fail","不及格"],
-    ["examination","考试"],
-    ["exactly","确切地"]
-  ],
-  [
-    ["chopstick","筷子"],
-    ["coin","硬币"],
-    ["fork","餐叉"],
-    ["blouse","短上衣"],
-    ["silver","银"],
-    ["glass","玻璃"],
-    ["cotton","棉"],
-    ["steel","钢"],
-    ["fair","展览会"],
-    ["grass","草"],
-    ["leaf","叶子"],
-    ["produce","生产"],
-    ["widely","广泛地"],
-    ["process","过程"],
-    ["pack","包装"],
-    ["business","生意"],
-    ["product","产品"],
-    ["France","法国"],
-    ["local","当地的"],
-    ["brand","品牌"],
-    ["avoid","避免"],
-    ["handbag","手提包"],
-    ["mobile","可移动的"],
-    ["everyday","每天的"],
-    ["boss","老板"],
-    ["Germany","德国"],
-  [
-    ["textbook","教科书"],
-    ["conversation","交谈"],
-    ["aloud","大声地"],
-    ["pronunciation","发音"],
-    ["sentence","句子"],
-    ["patient","有耐心的"],
-    ["secret","秘密"],
-    ["grammar","语法"],
-    ["repeat","重复"],
-    ["note","笔记"],
-    ["memorize","记住"],
-    ["pattern","模式"],
-    ["pronounce","发音"],
-    ["increase","增加"],
-    ["speed","速度"],
-    ["partner","搭档"],
-    ["born","出生"],
-    ["ability","能力"],
-    ["create","创造"],
-    ["brain","大脑"],
-    ["active","活跃的"],
-    ["attention","注意"],
-    ["knowledge","知识"],
-    ["improve","改进"],
-  [
-    ["encourage","鼓励"],
-    ["support","支持"],
-    ["develop","发展"],
-    ["control","控制"],
-    ["authority","权威"],
-    ["instead","代替"],
-    ["whatever","无论什么"],
-    ["unfair","不公平的"],
-    ["include","包括"],
-    ["except","除了"],
-    ["communicate","交流"],
-    ["argue","争论"],
-    ["comparison","比较"],
-    ["medal","奖牌"],
-    ["championship","冠军"],
-    ["fine","好的"],
-    ["condition","条件"],
-    ["practice","练习"],
-    ["improve","改进"],
-    ["receive","收到"],
-    ["injure","受伤"],
-    ["pressure","压力"],
-    ["peaceful","和平的"],
-    ["freedom","自由"],
-    ["lawyer","律师"],
-    ["business","商业"]
-  ],
-  [
-    ["video","视频"],
-    ["video call","视频通话"],
-    ["message","消息"],
-    ["reply","回复"],
-    ["receive","收到"],
-    ["accept","接受"],
-    ["refuse","拒绝"],
-    ["inform","通知"],
-    ["immediate","立即的"],
-    ["through","通过"],
-    ["enough","足够的"],
-    ["response","回应"],
-    ["confirm","确认"],
-    ["personal","个人的"],
-    ["forward","转发"],
-    ["delete","删除"],
-    ["letter","信"],
-    ["sad","难过的"],
-    ["worried","担心的"],
-    ["surprised","惊讶的"],
-    ["退出","exit"],
-    ["登录","log in"],
-    ["member","成员"],
-    ["population","人口"],
-    ["policy","政策"]
-  ],
-  [
-    ["grow up","成长"],
-    ["engineer","工程师"],
-    ["pilot","飞行员"],
-    ["scientist","科学家"],
-    ["cook","厨师"],
-    ["driver","司机"],
-    ["actor","演员"],
-    ["pianist","钢琴家"],
-    ["violinist","小提琴家"],
-    ["dream","梦想"],
-    ["college","大学"],
-    ["education","教育"],
-    ["medicine","药学"],
-    ["university","大学"],
-    ["article","文章"],
-    ["send","发送"],
-    ["solution","解决办法"],
-    ["program","程序"],
-    ["company","公司"],
-    ["create","创造"],
-    ["software","软件"],
-    ["possibility","可能性"],
-    ["gradually","渐渐地"],
-    ["personally","亲自地"],
-    ["choose","选择"],
-    ["university","大学"]
-  ],
-  [
-    ["matter","问题"],
-    ["What's the matter","怎么啦"],
-    ["hurt","受伤"],
-    ["feel","感觉"],
-    ["trouble","麻烦"],
-    ["hit","打"],
-    ["himself","他自己"],
-    ["fall down","跌倒"],
-    ["go away","走开"],
-    ["mosquito","蚊子"],
-    ["bite","咬"],
-    ["something","某事"],
-    ["everything","每件事"],
-    ["kind of","有点"],
-    ["risk","危险"],
-    ["safety","安全"],
-    ["importance","重要性"],
-    ["decision","决定"],
-    ["solve","解决"],
-    ["refuse","拒绝"],
-    ["helpout","帮助"],
-    ["shock","震惊"],
-    ["lie","躺"],
-    ["breath","呼吸"],
-    ["sunrise","日出"]
-  ],
-  [
-    ["raise","举起"],
-    ["raise money","筹钱"],
-    ["volunteer","志愿者"],
-    ["community","社区"],
-    ["clean up","打扫"],
-    ["food bank","食品银行"],
-    ["mentally","精神上"],
-    ["sign","标志"],
-    ["notice","通知"],
-    ["hand out","分发"],
-    ["change","改变"],
-    ["disabled","残疾的"],
-    ["strength","力量"],
-    ["brave","勇敢的"],
-    ["similar","相似的"],
-    ["treat","对待"],
-    ["hero","英雄"],
-    ["hobby","爱好"],
-    ["hometown","家乡"],
-    ["journey","旅程"],
-    ["solve problems","解决问题"],
-    ["disabled people","残疾人"],
-    ["make a plan","制定计划"],
-    ["call sb","打电话"],
-    ["raise money for","为...筹钱"]
-  ],
-  [
-    ["national","国家的"],
-    ["nationality","国籍"],
-    ["tourist","游客"],
-    ["guide","导游"],
-    ["hotel","酒店"],
-    ["restaurant","餐厅"],
-    ["address","地址"],
-    ["price","价格"],
-    ["neighbor","邻居"],
-    ["sentence","句子"],
-    ["direction","方向"],
-    ["useful","有用的"],
-    ["perhaps","可能"],
-    ["travel","旅行"],
-    ["lazy","懒惰的"],
-    ["door","门"],
-    ["close","关闭"],
-    ["staff","员工"],
-    ["heroic","英雄的"],
-    ["simple","简单的"],
-    ["accept","接受"],
-    ["experience","经验"],
-    ["perfect","完美的"],
-    ["impossible","不可能的"],
-    ["fit","适合"]
-  ],
-  [
-    ["first of all","首先"],
-    ["second","第二"],
-    ["third","第三"],
-    ["finally","最后"],
-    ["last name","姓"],
-    ["given name","名"],
-    ["full name","全名"],
-    ["call sb","叫..."],
-    ["last","持续"],
-    ["prepare","准备"],
-    ["surprise","惊喜"],
-    ["warm","温暖的"],
-    ["surprised","惊讶的"],
-    ["say goodbye","告别"],
-    ["have a nice day","祝你有美好的一天"],
-    ["graduate","毕业"],
-    ["ceremony","典礼"],
-    ["congratulate","祝贺"],
-    ["task","任务"],
-    ["task","任务"],
-    ["achieve","实现"],
-    ["purpose","目的"],
-    ["confirm","确认"],
-    ["present","礼物"],
-    ["thankful","感激的"]
-  ],
-  [
-    ["safety","安全"],
-    ["instruction","说明"],
-    ["tool","工具"],
-    ["sharp","锋利的"],
-    ["scissors","剪刀"],
-    ["glue","胶水"],
-    ["wood","木头"],
-    ["materials","材料"],
-    ["step","步骤"],
-    ["instructions","说明"],
-    ["brand","品牌"],
-    ["check","检查"],
-    ["model","模型"],
-    ["air","空气"],
-    ["press","按压"],
-    ["bottle","瓶子"],
-    ["iron","铁"],
-    ["glass","玻璃"],
-    ["paper","纸"],
-    ["plastic","塑料"],
-    ["environment","环境"],
-    ["reduce","减少"],
-    ["reuse","重复使用"],
-    ["recycle","回收"],
-    ["poster","海报"]
-  ],
-  [
-    ["rule","规则"],
-    ["arrive","到达"],
-    ["hallway","走廊"],
-    ["classroom","教室"],
-    ["fight","打架"],
-    ["wait","等待"],
-    ["walk","走路"],
-    ["outside","外面"],
-    ["require","需要"],
-    ["bring","带来"],
-    ["meet","见面"],
-    ["allow","允许"],
-    ["represent","代表"],
-    ["develop","发展"],
-    ["understand","理解"],
-    ["care","关心"],
-    ["careful","小心的"],
-    ["strict","严格的"],
-    ["be strict with","对...严格"],
-    ["follow","跟随"],
-    ["break","打破"],
-    ["promise","承诺"],
-    ["keep","保持"],
-    ["try","尝试"]
-  ],
-    ["learning","学习"],
-    ["dictionary","词典"],
-  [
-    ["decision","决定"],
-    ["meaning","意义"],
-    ["allow","允许"],
-    ["protect","保护"],
-    ["develop","发展"],
-    ["express","表达"],
-    ["describe","描述"],
-    ["experience","经验"],
-    ["hope","希望"],
-    ["mind","头脑"],
-    ["power","力量"],
-    ["refuse","拒绝"],
-    ["accept","接受"],
-    ["influence","影响"],
-    ["return","返回"],
-    ["instead","代替"],
-    ["alone","单独的"],
-    ["fair","公平的"],
-    ["especially","尤其"],
-    ["achieve","实现"],
-    ["important","重要的"],
-    ["personal","个人的"],
-    ["however","然而"],
-    ["support","支持"],
-    ["continue","继续"]
-  ],
-  [
-    ["meeting","会议"],
-    ["organize","组织"],
-    ["comfortable","舒服的"],
-    ["travel","旅行"],
-    ["without","没有"],
-    ["guest","客人"],
-    ["calendar","日历"],
-    ["daytime","白天"],
-    ["evening","晚上"],
-    ["available","可用的"],
-    ["until","直到"],
-    ["hang","挂"],
-    ["prepare","准备"],
-    ["surprise","惊喜"],
-    ["restaurant","餐厅"],
-    ["accept","接受"],
-    ["refuse","拒绝"],
-    ["weekday","工作日"],
-    ["weekend","周末"],
-    ["available","有空的"],
-    ["until","直到"],
-    ["time","时间"],
-    ["plan","计划"],
-    ["prepare","准备"],
-    ["meeting","会议"]
-  ],
-  [
-    ["ticket","票"],
-    ["unbelievable","难以置信"],
-    ["careless","粗心的"],
-    ["describe","描述"],
-    ["person","人"],
-    ["finally","最后"],
-    ["empty","空的"],
-    ["bag","包"],
-    ["sandwich","三明治"],
-    ["piece","片"],
-    ["bread","面包"],
-    ["lock","锁"],
-    ["somewhere","某处"],
-    ["anywhere","任何地方"],
-    ["anybody","任何人"],
-    ["somebody","某人"],
-    ["noise","噪音"],
-    ["wolf","狼"],
-    ["escape","逃跑"],
-    ["anything","任何事"],
-    ["somewhere","某处"],
-    ["anywhere","任何地方"],
-    ["somebody","某人"],
-    ["anybody","任何人"],
-    ["somebody","某人"]
-  ],
-  [
-    ["shoot","射击"],
-    ["point","指向"],
-    ["score","得分"],
-    ["beat","打败"],
-    ["require","需要"],
-    ["spirit","精神"],
-    ["relaxed","放松的"],
-    ["push","推"],
-    ["continue","继续"],
-    ["improve","改进"],
-    ["shy","害羞的"],
-    ["self","自我"],
-    ["self-confidence","自信心"],
-    ["learn","学习"],
-    ["from then on","从那时起"],
-    ["dream","梦想"],
-    ["come true","实现"],
-    ["team","队"],
-    ["player","球员"],
-    ["give up","放弃"],
-    ["doubt","怀疑"],
-    ["instead of","代替"],
-    ["however","然而"],
-    ["never give up","永不放弃"]
-  ],
-  [
-    ["fall","落下"],
-    ["ill","生病的"],
-    ["drop","掉下"],
-    ["feel","感觉"],
-    ["sound","听起来"],
-    ["medicine","药"],
-    ["get well","康复"],
-    ["hang","挂"],
-    ["hang out","闲逛"],
-    ["catch","抓住"],
-    ["have a fever","发烧"],
-    ["have a cold","感冒"],
-    ["have a stomachache","胃痛"],
-    ["have a headache","头痛"],
-    ["have a toothache","牙痛"],
-    ["rest","休息"],
-    ["hurt","受伤"],
-    ["break","骨折"],
-    ["pass","通过"],
-    ["onto","到...上"],
-    ["help","帮助"],
-    ["herself","她自己"],
-    ["himself","他自己"],
-    ["myself","我自己"],
-    ["yourself","你自己"]
-  ],
-  [
-    ["suggest","建议"],
-    ["suggestion","建议"],
-    ["problem","问题"],
-    ["wrong","错误的"],
-    ["What's wrong","怎么啦"],
-    ["have a cold","感冒"],
-    ["temperature","体温"],
-    ["see a doctor","看医生"],
-    ["get off","下车"],
-    ["to one's surprise","令...惊讶"],
-    ["instead of","代替"],
-    ["lie","躺"],
-    ["rest","休息"],
-    ["have a rest","休息"],
-    ["health","健康"],
-    ["balance","平衡"],
-    ["diet","饮食"],
-    ["important","重要的"],
-    ["sleep","睡眠"],
-    ["early","早的"],
-    ["exercise","锻炼"],
-    ["habit","习惯"],
-    ["healthy","健康的"],
-    ["improve","改进"],
-    ["try","尝试"]
-  ],
-  [
-    ["traffic","交通"],
-    ["heavy","重的"],
-    ["light","轻的"],
-    ["bridge","桥"],
-    ["road","路"],
-    ["car","汽车"],
-    ["bus","公共汽车"],
-    ["train","火车"],
-    ["ship","船"],
-    ["bike","自行车"],
-    ["subway","地铁"],
-    ["ride","骑"],
-    ["minute","分钟"],
-    ["kilometer","千米"],
-    ["far","远的"],
-    ["close","近的"],
-    ["between","在...之间"],
-    ["among","在...之中"],
-    ["across","穿过"],
-    ["front","前面"],
-    ["behind","后面"],
-    ["in front of","在...前面"],
-    ["on the left","在左边"],
-    ["on the right","在右边"]
-  ],
-  [
-    ["method","方法"],
-    ["practice","练习"],
-    ["result","结果"],
-    ["improve","改进"],
-    ["create","创造"],
-    ["master","掌握"],
-    ["pronunciation","发音"],
-    ["vocabulary","词汇"],
-    ["grammar","语法"],
-    ["increase","增加"],
-    ["knowledge","知识"],
-    ["ability","能力"],
-    ["brain","大脑"],
-    ["attention","注意"],
-    ["develop","发展"],
-    ["active","活跃的"],
-    ["connect","连接"],
-    ["review","复习"],
-    ["notes","笔记"],
-    ["understand","理解"],
-    ["complete","完成"],
-    ["time","时间"],
-    ["important","重要的"],
-    ["need","需要"],
-    ["try","尝试"]
-  ],
-  ],
-  [
-    ["railway","铁路"],
-    ["subway","地铁"],
-    ["schedule","时刻表"],
-    ["least","最少"],
-    ["pick up","接"],
-    ["traffic","交通"],
-    ["patient","病人"],
-    ["instruction","说明"],
-    ["stubborn","固执的"],
-    ["properly","适当地"],
-    ["disappointed","失望的"],
-    ["exactly","确切地"],
-    ["accept","接受"],
-    ["temperature","温度"],
-    ["experience","经验"],
-    ["level","水平"],
-    ["plate","盘子"],
-    ["knife","刀"],
-    ["fork","叉"],
-    ["chopsticks","筷子"],
-    ["bowl","碗"],
-    ["soup","汤"],
-    ["menu","菜单"],
-    ["bill","账单"]
-  ],
-  ],
-  [
-    ["mind","头脑"],
-    ["body","身体"],
-    ["relax","放松"],
-    ["health","健康"],
-    ["sound","声音"],
-    ["herself","她自己"],
-    ["parent","父母"],
-    ["report","报告"],
-    ["stress","压力"],
-    ["completely","完全地"],
-    ["suggest","建议"],
-    ["scientific","科学的"],
-    ["talent","才能"],
-    ["special","特殊的"],
-    ["medical","医学的"],
-    ["condition","条件"],
-    ["environment","环境"],
-    ["average","平均的"],
-    ["though","虽然"],
-    ["spend","花费"],
-    ["exercise","锻炼"],
-    ["compare","比较"],
-    ["online","在线的"],
-    ["die","死"],
-    ["dead","死的"],
-    ["Australia","澳大利亚"],
-  [
-    ["survey","调查"],
-    ["standard","标准"],
-    ["row","排"],
-    ["keyboard","键盘"],
-    ["instruction","说明"],
-    ["text","文本"],
-    ["level","水平"],
-    ["degree","程度"],
-    ["manager","经理"],
-    ["gentleman","绅士"],
-    ["task","任务"],
-    ["wing","翅膀"],
-    ["double","双倍的"],
-    ["shall","将"],
-    ["overcome","克服"],
-    ["congratulate","祝贺"],
-    ["care","关心"],
-    ["senior","年长的"],
-    ["thirsty","口渴的"],
-    ["thankful","感激的"],
-    ["graduation","毕业"],
-    ["ceremony","典礼"],
-    ["first of all","首先"],
-    ["last name","姓"],
-    ["given name","名"]
-  ],
-  [
-    ["ship","船"],
-    ["coal","煤"],
-    ["advantage","优势"],
-    ["industry","工业"],
-    ["law","法律"],
-    ["gate","大门"],
-    ["bottle","瓶子"],
-    ["president","总统"],
-    ["metal","金属"],
-    ["litter","垃圾"],
-    ["cost","花费"],
-    ["afford","负担得起"],
-    ["recycle","回收"],
-    ["ugly","丑陋的"],
-    ["wooden","木制的"],
-    ["plastic","塑料"],
-    ["cruel","残酷的"],
-    ["harmful","有害的"],
-    ["science","科学"],
-    ["present","礼物"],
-    ["take part in","参加"],
-    ["turn off","关闭"],
-    ["throw away","扔掉"],
-    ["pull down","拉倒"]
-  ],
-  [
-    ["saving","节约"],
-    ["pollution","污染"],
-    ["environment","环境"],
-    ["method","方法"],
-    ["reusable","可重复使用的"],
-    ["encouragement","鼓励"],
-    ["power","力量"],
-    ["movement","运动"],
-    ["scientific","科学的"],
-    ["perhaps","可能"],
-    ["electricity","电"],
-    ["represent","代表"],
-    ["opposite","相反的"],
-    ["solution","解决方案"],
-    ["tons","吨"],
-    ["billion","十亿"],
-    ["reachable","可到达的"],
-    ["available","可用的"],
-    ["environmentally","环境地"],
-    ["ideal","理想的"],
-    ["actually","实际上"],
-    ["electric","电动的"],
-    ["percent","百分之"],
-    ["behavior","行为"]
-  ],
-  [
-    ["shake","摇动"],
-    ["supposed","预期的"],
-    ["custom","习俗"],
-    ["bow","鞠躬"],
-    ["kiss","亲吻"],
-    ["greet","问候"],
-    ["value","重视"],
-    ["content","内容"],
-    ["describe","描述"],
-    ["similar","相似的"],
-    ["different","不同的"],
-    ["avoid","避免"],
-    ["embarrassed","尴尬的"],
-    ["calm","平静的"],
-    ["secret","秘密"],
-    ["mad","生气的"],
-    ["suggestion","建议"],
-    ["tip","建议"],
-    ["normal","正常的"],
-    ["behavior","行为"],
-    ["impossible","不可能的"],
-    ["probably","大概"],
-    ["explain","解释"],
-    ["detail","细节"]
-  ],
-  ],
-  ],
+  [["textbook","教科书"],["conversation","对话"],["aloud","大声地"],["pronunciation","发音"],["sentence","句子"],["patient","有耐心的"],["grammar","语法"],["expression","表达方式"]],
   [["stranger","陌生人"],["relative","亲属"],["pound","磅"],["steal","偷"],["dessert","甜点"],["garden","花园"],["tradition","传统"],["admire","欣赏"]],
   [["restroom","洗手间"],["stamp","邮票"],["beside","在旁边"],["postcard","明信片"],["pardon","请再说一遍"],["direct","直接的"],["request","请求"],["correct","正确的"]],
   [["humorous","幽默的"],["silent","沉默的"],["helpful","有帮助的"],["score","得分"],["interview","采访"],["private","私人的"],["influence","影响"],["absent","缺席的"]],
@@ -2966,7 +1610,7 @@ function renderStudyCard(){
     studyProgress.textContent = '学习进度：当前题库暂无词';
     studyProgressBar.style.width = '0%';
     studyWord.textContent = '-';
-    studyCn.textContent = '词意 : -';
+    studyCn.textContent = '词义 : -';
     studyIpa.textContent = '音标 : -';
     studySplit.textContent = '拆分发音 : -';
     studyApprox.textContent = '近似读法 : -';
@@ -2982,7 +1626,7 @@ function renderStudyCard(){
   const mode = (studyMode && studyMode.value) || 'en2cn';
   if(mode==='en2cn'){
     studyWord.textContent = en;
-    studyCn.textContent = `词意 : ${formatCnWithPos(cn)}`;
+    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -3011,7 +1655,7 @@ function renderStudyCard(){
     studyApprox.textContent = '';
   }else{
     studyWord.textContent = '🎧 听音写词';
-    studyCn.textContent = `词意 : ${formatCnWithPos(cn)}`;
+    studyCn.textContent = `词义 : ${formatCnWithPos(cn)}`;
     studyCn.style.textAlign = 'left';
     studyCn.style.fontSize = '';
     studyCn.style.gridColumn = '';
@@ -3183,7 +1827,7 @@ function goNextStudyWord(){
   nextStudyRoundOrFinish();
 }
 
-checkAndShowSummary();
+showStudySummary();
   function nextStudy(){
   goNextStudyWord();
 }
@@ -3713,7 +2357,7 @@ speakBtn.onclick=speakCurrentWord;
 restartBtn.onclick=restartRound;
 redoWrongBtn.onclick=redoWrong;
 downloadWrongBtn.onclick=downloadWrong;
-// startStudyBtn.onclick set by V2 Enhancement
+startStudyBtn.onclick=startStudy;
 studyPlan.onchange=startStudy;
 studyMode.onchange=renderStudyCard;
 studyCheckBtn.onclick=checkStudyAnswer;
@@ -3769,6 +2413,36 @@ renderUnitOptions();
 startStudy();
 startDict();
 resetMorphIdle();
+
+// Summary Modal - show after each round
+(function() {
+  // Add modal HTML
+  const modal = document.createElement('div');
+  modal.id = 'studySummaryModal';
+  modal.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center';
+  modal.innerHTML = '<div style="background:#fffaf3;padding:30px;border-radius:16px;max-width:400px;width:90%;text-align:center"><h2 style="margin:0 0 20px;font-size:22px">本轮学习总结</h2><div style="font-size:48px;font-weight:bold;color:#2f855a;margin:10px 0" id="summaryMaster">0</div><div style="color:#6b6257">掌握</div><div style="font-size:48px;font-weight:bold;color:#d69e2e;margin:10px 0" id="summaryFuzzy">0</div><div style="color:#6b6257">模糊</div><div style="font-size:48px;font-weight:bold;color:#c05648;margin:10px 0" id="summaryHard">0</div><div style="color:#6b6257">生字</div><div style="font-size:32px;font-weight:bold;margin:20px 0" id="summaryRate">0%</div><div style="color:#6b6257">掌握率</div><div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap"><button class="ok" style="padding:12px 20px;font-size:16px" onclick="location.reload()">重新学习</button><button class="ghost" style="padding:12px 20px;font-size:16px" onclick="document.getElementById('studySummaryModal').style.display='none'">返回</button></div></div>';
+  document.body.appendChild(modal);
+  
+  // Track stats
+  let stats = {master:0, fuzzy:0, hard:0};
+  
+  // Override button clicks
+  if(studyKnowBtn) studyKnowBtn.onclick = function() { stats.master++; };
+  if(studyFuzzyBtn) studyFuzzyBtn.onclick = function() { stats.fuzzy++; };
+  if(studyHardBtn) studyHardBtn.onclick = function() { stats.hard++; };
+  
+  // Show summary when reaching end
+  window.showStudySummary = function() {
+    const total = stats.master + stats.fuzzy + stats.hard;
+    const rate = total > 0 ? Math.round(stats.master / total * 100) : 0;
+    document.getElementById('summaryMaster').textContent = stats.master;
+    document.getElementById('summaryFuzzy').textContent = stats.fuzzy;
+    document.getElementById('summaryHard').textContent = stats.hard;
+    document.getElementById('summaryRate').textContent = rate + '%';
+    document.getElementById('studySummaryModal').style.display = 'flex';
+  };
+})();
+
 </script>
 
 <!-- V2 Study Enhancements -->
@@ -3834,9 +2508,37 @@ resetMorphIdle();
   document.getElementById('studyActionsBeforeStart').style.display = 'none';
   document.getElementById('studyActionsAfterStart').style.display = 'flex';
   showStudyArea();
-  // Trigger startStudy on load
-  origStartStudy();
 })();
+
+// Summary Modal - show after each round
+(function() {
+  // Add modal HTML
+  const modal = document.createElement('div');
+  modal.id = 'studySummaryModal';
+  modal.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center';
+  modal.innerHTML = '<div style="background:#fffaf3;padding:30px;border-radius:16px;max-width:400px;width:90%;text-align:center"><h2 style="margin:0 0 20px;font-size:22px">本轮学习总结</h2><div style="font-size:48px;font-weight:bold;color:#2f855a;margin:10px 0" id="summaryMaster">0</div><div style="color:#6b6257">掌握</div><div style="font-size:48px;font-weight:bold;color:#d69e2e;margin:10px 0" id="summaryFuzzy">0</div><div style="color:#6b6257">模糊</div><div style="font-size:48px;font-weight:bold;color:#c05648;margin:10px 0" id="summaryHard">0</div><div style="color:#6b6257">生字</div><div style="font-size:32px;font-weight:bold;margin:20px 0" id="summaryRate">0%</div><div style="color:#6b6257">掌握率</div><div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap"><button class="ok" style="padding:12px 20px;font-size:16px" onclick="location.reload()">重新学习</button><button class="ghost" style="padding:12px 20px;font-size:16px" onclick="document.getElementById('studySummaryModal').style.display='none'">返回</button></div></div>';
+  document.body.appendChild(modal);
+  
+  // Track stats
+  let stats = {master:0, fuzzy:0, hard:0};
+  
+  // Override button clicks
+  if(studyKnowBtn) studyKnowBtn.onclick = function() { stats.master++; };
+  if(studyFuzzyBtn) studyFuzzyBtn.onclick = function() { stats.fuzzy++; };
+  if(studyHardBtn) studyHardBtn.onclick = function() { stats.hard++; };
+  
+  // Show summary when reaching end
+  window.showStudySummary = function() {
+    const total = stats.master + stats.fuzzy + stats.hard;
+    const rate = total > 0 ? Math.round(stats.master / total * 100) : 0;
+    document.getElementById('summaryMaster').textContent = stats.master;
+    document.getElementById('summaryFuzzy').textContent = stats.fuzzy;
+    document.getElementById('summaryHard').textContent = stats.hard;
+    document.getElementById('summaryRate').textContent = rate + '%';
+    document.getElementById('studySummaryModal').style.display = 'flex';
+  };
+})();
+
 </script>
 </body>
 </html>
