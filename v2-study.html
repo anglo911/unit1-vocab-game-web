@@ -1055,16 +1055,16 @@ const RJ_G8S_TOPICS = [
 ];
 
 const RJ_G8X_TOPICS = [
-  [["matter","问题"],["sore","疼痛的"],["stomachache","胃痛"],["rest","休息"],["lie down","躺下"],["cough","咳嗽"],["fever","发烧"],["passenger","乘客"],["headache","头痛"],["cold","感冒"]],
-  [["volunteer","志愿者"],["sign","标志"],["notice","通知"],["lonely","孤独的"],["cheer","欢呼"],["raise","筹集"],["disabled","残疾的"],["imagine","想象"],["provide","提供"],["crowd","人群"]],
-  [["chore","杂务"],["sweep","打扫"],["fold","折叠"],["mess","杂乱"],["stress","压力"],["fairness","公平"],["provide","提供"],["depend","依靠"],["allow","允许"],["borrow","借"]],
-  [["relation","关系"],["communicate","交流"],["argue","争吵"],["elder","年长者"],["instead","代替"],["pressure","压力"],["compare","比较"],["proper","恰当的"],["student","学生"],["goal","目标"]],
-  [["rainstorm","暴风雨"],["alarm","闹钟"],["begin","开始"],["heavily","大量地"],["suddenly","突然"],["strange","奇怪的"],["realize","意识到"],["truth","真相"],["wind","风"],["window","窗户"]],
-  [["shoot","射击"],["stone","石头"],["weak","虚弱的"],["remind","提醒"],["bit","一点"],["object","物体"],["hide","隐藏"],["tail","尾巴"],["magic","魔法"],["dragon","龙"]],
-  [["ancient","古代的"],["protect","保护"],["include","包括"],["condition","条件"],["succeed","成功"],["challenge","挑战"],["force","力量"],["nature","自然"],["country","国家"],["kill","杀"]],
-  [["treasure","财富"],["island","岛屿"],["page","页"],["hurry","赶快"],["tool","工具"],["mark","标记"],["toward","朝向"],["forever","永远"],["film","电影"],["scene","场景"]],
-  [["camera","照相机"],["invention","发明"],["progress","进步"],["rapid","快速的"],["unusual","不寻常的"],["toilet","厕所"],["social","社会的"],["peaceful","和平的"],["service","服务"],["receive","接收"]],
-  [["fox","狐狸"],["husband","丈夫"],["wife","妻子"],["gold","金子"],["emperor","皇帝"],["nobody","没有人"],["silly","愚蠢的"],["cheat","欺骗"],["clothes","衣服"],["shirt","衬衫"]]
+  [["matter","问题；事情"],["sore","疼痛的"],["stomachache","胃痛"],["rest","休息"],["lie down","躺下"],["cough","咳嗽"],["fever","发烧"],["passenger","乘客"]],
+  [["volunteer","志愿者"],["sign","标志"],["notice","通知"],["lonely","孤独的"],["cheer","欢呼"],["raise","筹集"],["disabled","残疾的"],["imagine","想象"]],
+  [["chore","杂务"],["sweep","打扫"],["fold","折叠"],["mess","杂乱"],["stress","压力"],["fairness","公平"],["provide","提供"],["depend","依靠"]],
+  [["relation","关系"],["communicate","交流"],["argue","争吵"],["elder","年长者"],["instead","代替"],["pressure","压力"],["compare","比较"],["proper","恰当的"]],
+  [["rainstorm","暴风雨"],["alarm","闹钟"],["begin","开始"],["heavily","大量地"],["suddenly","突然"],["strange","奇怪的"],["realize","意识到"],["truth","真相"]],
+  [["shoot","射击"],["stone","石头"],["weak","虚弱的"],["remind","提醒"],["bit","一点"],["object","物体"],["hide","隐藏"],["tail","尾巴"]],
+  [["ancient","古代的"],["protect","保护"],["include","包括"],["condition","条件"],["succeed","成功"],["challenge","挑战"],["force","力量"],["nature","自然"]],
+  [["treasure","财富"],["island","岛屿"],["page","页"],["hurry","赶快"],["tool","工具"],["mark","标记"],["toward","朝向"],["forever","永远"]],
+  [["camera","照相机"],["invention","发明"],["progress","进步"],["rapid","快速的"],["unusual","不寻常的"],["toilet","厕所"],["social","社会的"],["peaceful","和平的"]],
+  [["fox","狐狸"],["husband","丈夫"],["wife","妻子"],["gold","金子"],["emperor","皇帝"],["nobody","没有人"],["silly","愚蠢的"],["cheat","欺骗"]]
 ];
 
 const RJ_G9S_TOPICS = [
@@ -1101,7 +1101,6 @@ const RJ_G9S_TOPICS = [
     ["challenge","挑战"],
     ["solution","解决办法"],
     ["improve","改进"],
-  ],
   [
     ["encourage","鼓励"],
     ["support","支持"],
@@ -1484,7 +1483,6 @@ const RJ_G9S_TOPICS = [
     ["attention","注意"],
     ["knowledge","知识"],
     ["improve","改进"],
-  ],
   [
     ["encourage","鼓励"],
     ["support","支持"],
@@ -3712,7 +3710,7 @@ function importCurrentUnit(){
     saveCustomOverrides();
   }
   selectedUnit = unitSelect.value || selectedUnit || 'unit1';
-  startStudy();  startDict(); applyUnitBank();
+  startStudy(); startDict(); applyUnitBank();
   importStatus.textContent = `已导入 ${pairs.length} 条到当前单元`;
 }
 function exportCurrentUnit(){
@@ -3768,10 +3766,10 @@ dictInput.addEventListener('keydown',e=>{
   if(!dictChecked) submitDict();
   else nextDict();
 });
-bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy();  startDict(); resetMorphIdle(); };
-gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy();  startDict(); resetMorphIdle(); };
-termSelect.onchange=()=>{ renderUnitOptions(); startStudy();  startDict(); resetMorphIdle(); };
-unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy();  startDict(); resetMorphIdle(); };
+bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
+gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
+termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
+unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); resetMorphIdle(); };
 addBookBtn.onclick=addCustomBook;
 deleteBookBtn.onclick=deleteCurrentBook;
 importWordsBtn.onclick=importCurrentUnit;
@@ -3783,7 +3781,7 @@ renderRank();
 renderSpeakEvalHistory();
 renderBookOptions();
 renderUnitOptions();
-startStudy(); 
+startStudy();
 startDict();
 resetMorphIdle();
 </script>
