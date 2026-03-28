@@ -192,20 +192,7 @@
 
 <script>
 
-// v2.2 Summary Modal
-(function(){
-var stats={master:0,fuzzy:0,hard:0};
-window._trackStat=function(type){stats[type]++;};
-window.showSummary=function(){ 
- var t=stats.master+stats.fuzzy+stats.hard;
- var r=t>0?Math.round(stats.master/t*100):0;
- document.getElementById('sumMaster').textContent=stats.master;
- document.getElementById('sumFuzzy').textContent=stats.fuzzy;
- document.getElementById('sumHard').textContent=stats.hard;
- document.getElementById('sumRate').textContent=r+'%';
- document.getElementById('summaryModal').style.display='flex';
-};
-})();
+// v2.2 - showSummary uses studyStats
 
 const UNIT1_WORDS = [
   ["name","名字；名称"],["nice","令人愉快的；宜人的"],["to","用于动词原形前，构成不定式"],["meet","遇见；相逢"],["too","也；又；太"],
@@ -3207,12 +3194,12 @@ function nextStudy(){ if(studyIdx>=studyList.length-1){setTimeout(showSummary,30
   goNextStudyWord();
 }
 
-window._trackStat("master");function markStudyKnow(){
+function markStudyKnow(){
   studyStats.know += 1;
   nextStudy();
 }
 
-window._trackStat("fuzzy");function markStudyFuzzy(){
+function markStudyFuzzy(){
   if(!studyList.length) return;
   studyStreak = 0;
   studyStats.fuzzy += 1;
@@ -3221,7 +3208,7 @@ window._trackStat("fuzzy");function markStudyFuzzy(){
   nextStudy();
 }
 
-window._trackStat("hard");function markStudyHard(){
+function markStudyHard(){
   if(!studyList.length) return;
   studyStreak = 0;
   studyStats.hard += 1;
@@ -3793,20 +3780,7 @@ resetMorphIdle();
 <!-- V2 Study Enhancements -->
 <script>
 
-// v2.2 Summary Modal
-(function(){
-var stats={master:0,fuzzy:0,hard:0};
-window._trackStat=function(type){stats[type]++;};
-window.showSummary=function(){ 
- var t=stats.master+stats.fuzzy+stats.hard;
- var r=t>0?Math.round(stats.master/t*100):0;
- document.getElementById('sumMaster').textContent=stats.master;
- document.getElementById('sumFuzzy').textContent=stats.fuzzy;
- document.getElementById('sumHard').textContent=stats.hard;
- document.getElementById('sumRate').textContent=r+'%';
- document.getElementById('summaryModal').style.display='flex';
-};
-})();
+// v2.2 - showSummary uses studyStats
 
 (function(){
   function showStudyArea() {
