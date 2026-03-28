@@ -3712,7 +3712,7 @@ function importCurrentUnit(){
     saveCustomOverrides();
   }
   selectedUnit = unitSelect.value || selectedUnit || 'unit1';
-  startStudy(); // debug: G9S loaded startDict(); applyUnitBank();
+  startStudy();  startDict(); applyUnitBank();
   importStatus.textContent = `已导入 ${pairs.length} 条到当前单元`;
 }
 function exportCurrentUnit(){
@@ -3768,10 +3768,10 @@ dictInput.addEventListener('keydown',e=>{
   if(!dictChecked) submitDict();
   else nextDict();
 });
-bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
-gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
-termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
-unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
+bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy();  startDict(); resetMorphIdle(); };
+gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy();  startDict(); resetMorphIdle(); };
+termSelect.onchange=()=>{ renderUnitOptions(); startStudy();  startDict(); resetMorphIdle(); };
+unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy();  startDict(); resetMorphIdle(); };
 addBookBtn.onclick=addCustomBook;
 deleteBookBtn.onclick=deleteCurrentBook;
 importWordsBtn.onclick=importCurrentUnit;
@@ -3783,7 +3783,7 @@ renderRank();
 renderSpeakEvalHistory();
 renderBookOptions();
 renderUnitOptions();
-startStudy(); // debug: G9S loaded
+startStudy(); 
 startDict();
 resetMorphIdle();
 </script>
