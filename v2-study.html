@@ -3218,7 +3218,7 @@ window._trackStat("fuzzy");function markStudyFuzzy(){
   studyStats.fuzzy += 1;
   const cur = studyList[studyIdx];
   if(cur) studyFuzzyQueue.push(cur);
-  goNextStudyWord();
+  nextStudy();
 }
 
 window._trackStat("hard");function markStudyHard(){
@@ -3227,7 +3227,7 @@ window._trackStat("hard");function markStudyHard(){
   studyStats.hard += 1;
   const cur = studyList[studyIdx];
   if(cur) studyHardQueue.push(cur);
-  goNextStudyWord();
+  nextStudy();
 }
 
 function speakPronWord(){
