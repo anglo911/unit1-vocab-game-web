@@ -3199,7 +3199,7 @@ function goNextStudyWord(){
   nextStudyRoundOrFinish();
 }
 
-function nextStudy(){ if(studyIdx>=studyList.length-1){setTimeout(showSummary,300);}
+function nextStudy(){ if(studyIdx>=studyList.length-1){setTimeout(showSummary,300);return;}
   goNextStudyWord();
 }
 
