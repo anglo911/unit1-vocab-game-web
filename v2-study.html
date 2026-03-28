@@ -42,6 +42,7 @@
     .word-display{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 8px;text-align:center}
     .word-display .en{font-size:50px;font-weight:900;letter-spacing:1px;line-height:1.1;text-align:center}
     .word-display .cn{font-size:24px;color:#3a352e;margin-top:28px;text-align:center !important}
+    .word-display .pos{font-size:16px;color:#888;margin-top:8px;font-style:italic}
     .word-display .ipa{font-size:24px;color:#3a352e;margin-top:8px}
 
     /* Quiz input */
@@ -3143,7 +3144,7 @@ function renderStudyCard(){
     updateStudyStatus();
     return;
   }
-  const [en, cn] = studyList[studyIdx];
+  const [en, cn, ...rest] = studyList[studyIdx]; const pos = rest[0] || extractPos(cn);
   const pct = Math.round(((studyIdx+1)/studyList.length)*100);
   studyProgress.textContent = `${studyRoundName}：${studyIdx+1}/${studyList.length} · ${(selectedUnit||'unit1').toUpperCase()}`;
   studyProgressBar.style.width = `${pct}%`;
