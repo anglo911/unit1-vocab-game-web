@@ -193,7 +193,7 @@
 <script>
 
 // v2.2 - showSummary uses studyStats
-window.showSummary = function() {
+window.showSummary = function() { alert('showSummary called! know='+studyStats.know+' fuzzy='+studyStats.fuzzy+' hard='+studyStats.hard);
   var t = studyStats.know + studyStats.fuzzy + studyStats.hard;
   var r = t > 0 ? Math.round(studyStats.know / t * 100) : 0;
   document.getElementById('sumMaster').textContent = studyStats.know;
@@ -3790,7 +3790,7 @@ resetMorphIdle();
 <script>
 
 // v2.2 - showSummary uses studyStats
-window.showSummary = function() {
+window.showSummary = function() { alert('showSummary called! know='+studyStats.know+' fuzzy='+studyStats.fuzzy+' hard='+studyStats.hard);
   var t = studyStats.know + studyStats.fuzzy + studyStats.hard;
   var r = t > 0 ? Math.round(studyStats.know / t * 100) : 0;
   document.getElementById('sumMaster').textContent = studyStats.know;
