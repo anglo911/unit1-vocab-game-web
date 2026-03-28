@@ -3205,7 +3205,7 @@ function nextStudy(){ if(studyIdx>=studyList.length-1){setTimeout(showSummary,30
 
 window._trackStat("master");function markStudyKnow(){
   studyStats.know += 1;
-  goNextStudyWord();
+  nextStudy();
 }
 
 window._trackStat("fuzzy");function markStudyFuzzy(){
