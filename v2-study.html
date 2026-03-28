@@ -193,6 +193,15 @@
 <script>
 
 // v2.2 - showSummary uses studyStats
+window.showSummary = function() {
+  var t = studyStats.know + studyStats.fuzzy + studyStats.hard;
+  var r = t > 0 ? Math.round(studyStats.know / t * 100) : 0;
+  document.getElementById('sumMaster').textContent = studyStats.know;
+  document.getElementById('sumFuzzy').textContent = studyStats.fuzzy;
+  document.getElementById('sumHard').textContent = studyStats.hard;
+  document.getElementById('sumRate').textContent = r + '%';
+  document.getElementById('summaryModal').style.display = 'flex';
+};
 
 const UNIT1_WORDS = [
   ["name","名字；名称"],["nice","令人愉快的；宜人的"],["to","用于动词原形前，构成不定式"],["meet","遇见；相逢"],["too","也；又；太"],
@@ -3781,6 +3790,15 @@ resetMorphIdle();
 <script>
 
 // v2.2 - showSummary uses studyStats
+window.showSummary = function() {
+  var t = studyStats.know + studyStats.fuzzy + studyStats.hard;
+  var r = t > 0 ? Math.round(studyStats.know / t * 100) : 0;
+  document.getElementById('sumMaster').textContent = studyStats.know;
+  document.getElementById('sumFuzzy').textContent = studyStats.fuzzy;
+  document.getElementById('sumHard').textContent = studyStats.hard;
+  document.getElementById('sumRate').textContent = r + '%';
+  document.getElementById('summaryModal').style.display = 'flex';
+};
 
 (function(){
   function showStudyArea() {
