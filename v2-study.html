@@ -1101,6 +1101,7 @@ const RJ_G9S_TOPICS = [
     ["challenge","挑战"],
     ["solution","解决办法"],
     ["improve","改进"],
+  ],
   [
     ["encourage","鼓励"],
     ["support","支持"],
@@ -1483,6 +1484,7 @@ const RJ_G9S_TOPICS = [
     ["attention","注意"],
     ["knowledge","知识"],
     ["improve","改进"],
+  ],
   [
     ["encourage","鼓励"],
     ["support","支持"],
@@ -3710,7 +3712,7 @@ function importCurrentUnit(){
     saveCustomOverrides();
   }
   selectedUnit = unitSelect.value || selectedUnit || 'unit1';
-  startStudy(); startDict(); applyUnitBank();
+  startStudy(); // debug: G9S loaded startDict(); applyUnitBank();
   importStatus.textContent = `已导入 ${pairs.length} 条到当前单元`;
 }
 function exportCurrentUnit(){
@@ -3766,10 +3768,10 @@ dictInput.addEventListener('keydown',e=>{
   if(!dictChecked) submitDict();
   else nextDict();
 });
-bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
-gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
-termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
-unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); resetMorphIdle(); };
+bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
+gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
+termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
+unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); // debug: G9S loaded startDict(); resetMorphIdle(); };
 addBookBtn.onclick=addCustomBook;
 deleteBookBtn.onclick=deleteCurrentBook;
 importWordsBtn.onclick=importCurrentUnit;
@@ -3781,7 +3783,7 @@ renderRank();
 renderSpeakEvalHistory();
 renderBookOptions();
 renderUnitOptions();
-startStudy();
+startStudy(); // debug: G9S loaded
 startDict();
 resetMorphIdle();
 </script>
