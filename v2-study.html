@@ -196,7 +196,7 @@
 (function(){
 var stats={master:0,fuzzy:0,hard:0};
 window._trackStat=function(type){stats[type]++;};
-window.showSummary=function(){ alert('showSummary called! ' + studyIdx + '/' + studyList.length);
+window.showSummary=function(){ 
  var t=stats.master+stats.fuzzy+stats.hard;
  var r=t>0?Math.round(stats.master/t*100):0;
  document.getElementById('sumMaster').textContent=stats.master;
@@ -3185,6 +3185,10 @@ function nextStudyRoundOrFinish(){
   }
   className = $("className").value.trim() || "未命名班级";
   studentName = $("studentName").value.trim() || "匿名学生";
+  // No more words to review, show summary
+  if(!studyHardQueue.length && !studyFuzzyQueue.length){
+    setTimeout(function(){showSummary();},500);
+  }
   startGame();
 }
 
@@ -3793,7 +3797,7 @@ resetMorphIdle();
 (function(){
 var stats={master:0,fuzzy:0,hard:0};
 window._trackStat=function(type){stats[type]++;};
-window.showSummary=function(){ alert('showSummary called! ' + studyIdx + '/' + studyList.length);
+window.showSummary=function(){ 
  var t=stats.master+stats.fuzzy+stats.hard;
  var r=t>0?Math.round(stats.master/t*100):0;
  document.getElementById('sumMaster').textContent=stats.master;
