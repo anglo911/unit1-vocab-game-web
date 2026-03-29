@@ -3074,9 +3074,8 @@ function studyHint(){
 
 function studyReveal(){
   if(!studyList.length) return;
-  const [en] = studyList[studyIdx];
-  studyCheckFb.textContent = `答案：${en}`;
   markStudyFuzzy();
+  nextStudy();
 }
 
 function checkStudyAnswer(){
