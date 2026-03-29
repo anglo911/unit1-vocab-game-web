@@ -2391,7 +2391,7 @@ let studyRound=1;
 let studyRoundName='首轮';
 let studyStats={know:0,fuzzy:0,hard:0};
 let studyTotalTarget=0;
-let studyStreak=0;
+let studyStreak=0, studyAnswerRevealed=false;
 let pronList=[];
 let pronIdx=0;
 let pronScore=0;
@@ -3074,8 +3074,10 @@ function studyHint(){
 
 function studyReveal(){
   if(!studyList.length) return;
-  markStudyFuzzy();
-  nextStudy();
+  const [en] = studyList[studyIdx];
+  markStudyFuzzy(); studyAnswerRevealed=true;
+  // Show answer next to button
+  studyCheckFb.textContent = `答案：${en}`;
 }
 
 function checkStudyAnswer(){
@@ -3094,6 +3096,14 @@ function checkStudyAnswer(){
     studyStreak = 0;
     studyCheckFb.textContent=`❌ 正确是：${en}`;
     markStudyHard();
+  }
+  // If answer was revealed, auto go next after delay
+  if(studyAnswerRevealed){
+    studyAnswerRevealed=false;
+    setTimeout(()=>{
+      studyQuizInput.value='';
+      nextStudy();
+    }, 1200);
   }
 }
 
