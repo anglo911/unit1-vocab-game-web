@@ -127,7 +127,7 @@
 
     <!-- Quiz Input (hidden by default) -->
     <div id="studyQuizWrap" style="display:none" class="quiz-wrap">
-      <input id="studyQuizInput" placeholder="" style="font-size:40px;font-weight:700" />
+      <input id="studyQuizInput" placeholder="" style="font-size:40px;font-weight:700" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
       <div class="row" style="justify-content:center;margin-top:10px;gap:8px">
         <button class="pri" id="studyCheckBtn" style="font-size:14px;padding:8px 16px">提交</button>
         <button class="ghost" id="studyHintBtn" style="font-size:14px;padding:8px 16px">提示</button>
@@ -3717,6 +3717,14 @@ studyCheckBtn.onclick=checkStudyAnswer;
 studyHintBtn.onclick=studyHint;
 studyRevealBtn.onclick=studyReveal;
 studyQuizInput.addEventListener('keydown',e=>{ if(e.key==='Enter') checkStudyAnswer(); });
+studyQuizInput.addEventListener('focus',()=>{
+  try{
+    studyQuizInput.setAttribute('autocomplete','off');
+    studyQuizInput.setAttribute('autocorrect','off');
+    studyQuizInput.setAttribute('autocapitalize','off');
+    studyQuizInput.setAttribute('spellcheck','false');
+  }catch(_e){}
+});
 prevStudyBtn.onclick=prevStudy;
 nextStudyBtn.onclick=nextStudy;
 speakStudyBtn.onclick=()=>speakStudyWord();
