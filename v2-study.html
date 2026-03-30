@@ -3884,7 +3884,7 @@ window.showSummary = function() {
 <div class="label">掌握率</div>
 <div class="btns">
 <button class="ok" onclick="location.reload()">重新学习</button>
-<button class="ghost" onclick="document.getElementById('summaryModal').style.display='none'">返回</button>
+<button class="ghost" onclick="document.getElementById('summaryModal').style.display='none'; studyIdx=0; renderStudyCard(); speakStudyWord();">返回</button>
 </div>
 </div>
 </div>
