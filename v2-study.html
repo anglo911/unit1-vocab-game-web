@@ -127,7 +127,7 @@
 
     <!-- Quiz Input (hidden by default) -->
     <div id="studyQuizWrap" style="display:none" class="quiz-wrap">
-      <input id="studyQuizInput" placeholder="" style="font-size:20px;font-weight:700" />
+      <input id="studyQuizInput" placeholder="" style="font-size:40px;font-weight:700" />
       <div class="row" style="justify-content:center;margin-top:10px;gap:8px">
         <button class="pri" id="studyCheckBtn" style="font-size:14px;padding:8px 16px">提交</button>
         <button class="ghost" id="studyHintBtn" style="font-size:14px;padding:8px 16px">提示</button>
@@ -2985,6 +2985,7 @@ function renderStudyCard(){
     studySplit.style.display = 'none';
     studyApprox.style.display = 'none';
     studyQuizWrap.style.display='block';
+    studyQuizInput.style.setProperty('font-size','40px','important');
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
     studyIpa.textContent = '';
