@@ -2971,6 +2971,7 @@ function renderStudyCard(){
     studySplit.style.display = '';
     studyApprox.style.display = '';
     studyQuizWrap.style.display='none';
+    studyQuizWrap.style.marginTop='4px';
     studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
     studySplit.textContent = `拆分发音 : ${toSplitPron(en)}`;
     studyApprox.textContent = `近似读法 : ${toApproxCn(en)}`;
@@ -2985,6 +2986,7 @@ function renderStudyCard(){
     studySplit.style.display = 'none';
     studyApprox.style.display = 'none';
     studyQuizWrap.style.display='block';
+    studyQuizWrap.style.marginTop='-12px';
     studyQuizInput.style.setProperty('font-size','40px','important');
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
@@ -3001,6 +3003,7 @@ function renderStudyCard(){
     studySplit.style.display = '';
     studyApprox.style.display = '';
     studyQuizWrap.style.display='block';
+    studyQuizWrap.style.marginTop='4px';
     studyQuizInput.value='';
     studyCheckFb.textContent='-';
     studyIpa.textContent = `音标 : ${toIpaLike(en)}`;
