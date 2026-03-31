@@ -85,7 +85,6 @@
     <select id="termSelect"><option value="s">上册</option><option value="x" selected>下册</option></select>
     <select id="unitSelect"><option value="unit1">Unit 1</option></select>
   </div>
-  <div class="muted test-hint">题库选择与学习区风格一致，进入检测前可在此切换。</div>
   <input id="className" type="hidden"><input id="studentName" type="hidden">
 </div>
   <div class="grid2">
@@ -2333,6 +2332,11 @@ bookSelect.onchange=()=>{ renderBookOptions(); renderUnitOptions(); startStudy()
 gradeSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
 termSelect.onchange=()=>{ renderUnitOptions(); startStudy(); startDict(); resetMorphIdle(); };
 unitSelect.onchange=()=>{ selectedUnit = unitSelect.value || selectedUnit || 'unit1'; updateStudyUnitTag(); startStudy(); startDict(); resetMorphIdle(); };
+
+// 锁定检测区题库选择
+if(gradeSelect){ gradeSelect.disabled = true; gradeSelect.onchange = null; }
+if(termSelect){ termSelect.disabled = true; termSelect.onchange = null; }
+if(unitSelect){ unitSelect.disabled = true; unitSelect.onchange = null; }
 addBookBtn.onclick=addCustomBook;
 deleteBookBtn.onclick=deleteCurrentBook;
 importWordsBtn.onclick=importCurrentUnit;
