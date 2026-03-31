@@ -12,7 +12,8 @@
     h1,h2{margin:0 0 6px} h1{font-size:26px;letter-spacing:.3px} h2{font-size:19px;text-align:left;padding-left:2px}
     .muted{color:var(--muted)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .header-card{text-align:center;padding:16px 14px}
+    .header-card{text-align:center;padding:16px 14px;position:relative}
+    .back-home{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border:1px solid #d8cfc1;border-radius:8px;background:#fffaf3;color:#2f2a24;text-decoration:none;font-size:13px;font-weight:600}
     .settings-card{grid-column:1 / -1}
     .settings-form{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;align-items:center}
     input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:9px;padding:8px;min-width:0}
@@ -66,6 +67,7 @@
 <body>
 <div class="wrap">
   <div class="card header-card">
+    <a class="back-home" href="./v2.html">← 返回首页</a>
     <h1>📘 检测区 2.0</h1>
 
   </div>
@@ -2326,6 +2328,19 @@ renderRank();
 renderSpeakEvalHistory();
 renderBookOptions();
 renderUnitOptions();
+
+(function syncFromHomeSelection(){
+  const sg = localStorage.getItem('vocab-grade');
+  const st = localStorage.getItem('vocab-term');
+  const su = localStorage.getItem('vocab-unit');
+  if(sg && [...gradeSelect.options].some(o=>o.value===sg)) gradeSelect.value = sg;
+  if(st && [...termSelect.options].some(o=>o.value===st)) termSelect.value = st;
+  renderUnitOptions();
+  if(su && [...unitSelect.options].some(o=>o.value===su)) unitSelect.value = su;
+  selectedUnit = unitSelect.value || selectedUnit || 'unit1';
+  applyUnitBank();
+})();
+
 startStudy();
 startDict();
 resetMorphIdle();
