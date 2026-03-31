@@ -2418,7 +2418,7 @@ const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
 const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn"), studyCheckBtn=$("studyCheckBtn"), studyHintBtn=$("studyHintBtn"), studyRevealBtn=$("studyRevealBtn"), studyQuizInput=$("studyQuizInput");
-const summaryRetryWeakBtn=$("summaryRetryWeakBtn");
+
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan"), studyMode=$("studyMode"), studyQuizWrap=$("studyQuizWrap"), studyCheckFb=$("studyCheckFb"), studyTargetPill=$("studyTargetPill"), studyDonePill=$("studyDonePill"), studyMasterPill=$("studyMasterPill");
@@ -3762,11 +3762,7 @@ speakStudySlowBtn.onclick=speakStudySlow;
 studyKnowBtn.onclick=markStudyKnow;
 studyFuzzyBtn.onclick=markStudyFuzzy;
 studyHardBtn.onclick=markStudyHard;
-if(summaryRetryWeakBtn) summaryRetryWeakBtn.onclick=()=>{
-  const m = document.getElementById('summaryModal');
-  if(m) m.style.display='none';
-  startStudyWeakRetry();
-};
+
 speakSplitBtn.onclick=speakSplitWord;
 startPronBtn.onclick=startPron;
 replayPronBtn.onclick=speakPronWord;
@@ -3988,6 +3984,15 @@ window.showSummary = function() {
     if(gradeSelect){ gradeSelect.disabled = true; gradeSelect.onchange = null; }
     if(termSelect){ termSelect.disabled = true; termSelect.onchange = null; }
     if(unitSelect){ unitSelect.disabled = true; unitSelect.onchange = null; }
+  }
+
+  const summaryRetryWeakBtn = document.getElementById('summaryRetryWeakBtn');
+  if(summaryRetryWeakBtn){
+    summaryRetryWeakBtn.onclick = function(){
+      const m = document.getElementById('summaryModal');
+      if(m) m.style.display='none';
+      if(typeof startStudyWeakRetry === 'function') startStudyWeakRetry();
+    };
   }
 
   setTimeout(applyBankFromEntry, 0);
