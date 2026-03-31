@@ -155,6 +155,7 @@
       <button class="ok primary-action" id="studyKnowBtn">掌握</button>
       <button class="warn primary-action" id="studyFuzzyBtn">模糊</button>
       <button class="ghost secondary-action" id="studyHardBtn">生字</button>
+      <button class="ghost secondary-action" id="studyRetryWeakBtn">生字重学</button>
     </div>
 
     <!-- Progress Pills -->
@@ -2389,6 +2390,7 @@ let studyList=[];
 let studyIdx=0;
 let studyHardQueue=[];
 let studyFuzzyQueue=[];
+let studyWeakPool=[]; // 生字重学临时题库（模糊+生字）
 let studyRound=1;
 let studyRoundName='首轮';
 let studyStats={know:0,fuzzy:0,hard:0};
@@ -2416,7 +2418,7 @@ let morphTimerId=null;
 const $=id=>document.getElementById(id);
 const meta=$("meta"), q=$("question"), opts=$("options"), fb=$("feedback"), spellWrap=$("spellWrap"), spellInput=$("spellInput");
 const submitBtn=$("submitBtn"), nextBtn=$("nextBtn"), speakBtn=$("speakBtn"), restartBtn=$("restartBtn"), redoWrongBtn=$("redoWrongBtn"), downloadWrongBtn=$("downloadWrongBtn");
-const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), speakSplitBtn=$("speakSplitBtn"), studyCheckBtn=$("studyCheckBtn"), studyHintBtn=$("studyHintBtn"), studyRevealBtn=$("studyRevealBtn"), studyQuizInput=$("studyQuizInput");
+const startStudyBtn=$("startStudyBtn"), prevStudyBtn=$("prevStudyBtn"), nextStudyBtn=$("nextStudyBtn"), speakStudyBtn=$("speakStudyBtn"), speakStudySlowBtn=$("speakStudySlowBtn"), studyKnowBtn=$("studyKnowBtn"), studyFuzzyBtn=$("studyFuzzyBtn"), studyHardBtn=$("studyHardBtn"), studyRetryWeakBtn=$("studyRetryWeakBtn"), speakSplitBtn=$("speakSplitBtn"), studyCheckBtn=$("studyCheckBtn"), studyHintBtn=$("studyHintBtn"), studyRevealBtn=$("studyRevealBtn"), studyQuizInput=$("studyQuizInput");
 const startDictBtn=$("startDictBtn"), dictSubmitBtn=$("dictSubmitBtn"), dictNextBtn=$("dictNextBtn"), dictSpeakBtn=$("dictSpeakBtn"), dictInput=$("dictInput"), dictMeta=$("dictMeta"), dictCn=$("dictCn"), dictFeedback=$("dictFeedback");
 const startMorphBtn=$("startMorphBtn"), nextMorphBtn=$("nextMorphBtn"), speakMorphBtn=$("speakMorphBtn"), morphWord=$("morphWord"), morphMeaning=$("morphMeaning"), morphBlocks=$("morphBlocks"), morphFb=$("morphFb"), morphMeta=$("morphMeta"), morphScorePill=$("morphScorePill"), morphComboPill=$("morphComboPill"), morphTimerPill=$("morphTimerPill"), morphProgressBar=$("morphProgressBar"), morphBankMode=$("morphBankMode"), morphCount=$("morphCount");
 const studyProgress=$("studyProgress"), studyProgressBar=$("studyProgressBar"), studyWord=$("studyWord"), studyCn=$("studyCn"), studyIpa=$("studyIpa"), studySplit=$("studySplit"), studyApprox=$("studyApprox"), studyStatus=$("studyStatus"), studyPlan=$("studyPlan"), studyMode=$("studyMode"), studyQuizWrap=$("studyQuizWrap"), studyCheckFb=$("studyCheckFb"), studyTargetPill=$("studyTargetPill"), studyDonePill=$("studyDonePill"), studyMasterPill=$("studyMasterPill");
@@ -3210,6 +3212,32 @@ function markStudyHard(){
   nextStudy();
 }
 
+function startStudyWeakRetry(){
+  const merged = [...studyHardQueue, ...studyFuzzyQueue];
+  const uniq = [];
+  const seen = new Set();
+  merged.forEach(item=>{
+    if(!item) return;
+    const k = `${item[0]}|||${item[1]}`;
+    if(seen.has(k)) return;
+    seen.add(k);
+    uniq.push(item);
+  });
+  if(!uniq.length){
+    alert('当前没有可重学的生字/模糊词');
+    return;
+  }
+  studyWeakPool = uniq;
+  studyList = [...studyWeakPool];
+  studyIdx = 0;
+  studyRound = 1;
+  studyRoundName = '生字重学';
+  studyStats = {know:0,fuzzy:0,hard:0};
+  studyStreak = 0;
+  renderStudyCard();
+  speakStudyWord();
+}
+
 function speakPronWord(){
   if(!pronCurrent || !("speechSynthesis" in window)) return;
   const u = new SpeechSynthesisUtterance(String(pronCurrent[0]||''));
@@ -3734,6 +3762,7 @@ speakStudySlowBtn.onclick=speakStudySlow;
 studyKnowBtn.onclick=markStudyKnow;
 studyFuzzyBtn.onclick=markStudyFuzzy;
 studyHardBtn.onclick=markStudyHard;
+if(studyRetryWeakBtn) studyRetryWeakBtn.onclick=startStudyWeakRetry;
 speakSplitBtn.onclick=speakSplitWord;
 startPronBtn.onclick=startPron;
 replayPronBtn.onclick=speakPronWord;
