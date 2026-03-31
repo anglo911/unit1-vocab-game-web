@@ -3893,33 +3893,44 @@ window.showSummary = function() {
 (function(){
   function applyBankFromEntry(){
     const bank = localStorage.getItem('vocab-bank');
-    if(!bank) return;
+    const savedGrade = localStorage.getItem('vocab-grade');
+    const savedTerm = localStorage.getItem('vocab-term');
+    const savedUnit = localStorage.getItem('vocab-unit');
+    if(!bank && !savedGrade && !savedUnit) return;
 
     let grade='g7', term='x', unit='unit8';
 
-    if(/^g[1-6][sx]$/.test(bank)){
-      grade = bank.slice(0,2);
-      term = bank.slice(2);
-      unit = `${grade}${term}_u1`;
-    } else if(/^g[1-6]$/.test(bank)){
-      grade = bank;
-      term = 's';
-      unit = `${bank}s_u1`;
-    } else if(/^g7starter[123]$/.test(bank)){
-      grade='g7'; term='s'; unit = bank.replace('g7','');
-    } else if(/^g7u(\d+)$/.test(bank)){
-      const n = Number(bank.match(/^g7u(\d+)$/)[1]);
-      grade='g7';
-      if(n<=7){ term='s'; unit=`unit${n}`; }
-      else { term='x'; unit=`unit${n}`; }
-    } else if(/^g8[sx][-_]u\d+$/i.test(bank)){
-      const m = bank.match(/^g8([sx])[-_]u(\d+)$/i);
-      if(m){ grade='g8'; term=m[1].toLowerCase(); unit=`g8${term}_u${Number(m[2])}`; }
-    } else if(/^g9[sx][-_]u\d+$/i.test(bank)){
-      const m = bank.match(/^g9([sx])[-_]u(\d+)$/i);
-      if(m){ grade='g9'; term=m[1].toLowerCase(); unit=`g9${term}_u${Number(m[2])}`; }
-    } else if(bank==='ket' || bank==='pet'){
-      grade='g9'; term='s'; unit='g9s_u1';
+    // 优先使用首页精确保存的选择
+    if(savedGrade) grade = savedGrade;
+    if(savedTerm) term = savedTerm;
+    if(savedUnit) unit = savedUnit;
+
+    // 若缺少精确值，再按 bank 反推
+    if(!savedUnit){
+      if(/^g[1-6][sx]$/.test(bank||'')){
+        grade = bank.slice(0,2);
+        term = bank.slice(2);
+        unit = `${grade}${term}_u1`;
+      } else if(/^g[1-6]$/.test(bank||'')){
+        grade = bank;
+        term = 's';
+        unit = `${bank}s_u1`;
+      } else if(/^g7starter[123]$/.test(bank||'')){
+        grade='g7'; term='s'; unit = bank.replace('g7','');
+      } else if(/^g7u(\d+)$/.test(bank||'')){
+        const n = Number((bank||'').match(/^g7u(\d+)$/)[1]);
+        grade='g7';
+        if(n<=7){ term='s'; unit=`unit${n}`; }
+        else { term='x'; unit=`unit${n}`; }
+      } else if(/^g8[sx][-_]u\d+$/i.test(bank||'')){
+        const m = (bank||'').match(/^g8([sx])[-_]u(\d+)$/i);
+        if(m){ grade='g8'; term=m[1].toLowerCase(); unit=`g8${term}_u${Number(m[2])}`; }
+      } else if(/^g9[sx][-_]u\d+$/i.test(bank||'')){
+        const m = (bank||'').match(/^g9([sx])[-_]u(\d+)$/i);
+        if(m){ grade='g9'; term=m[1].toLowerCase(); unit=`g9${term}_u${Number(m[2])}`; }
+      } else if(bank==='ket' || bank==='pet'){
+        grade='g9'; term='s'; unit='g9s_u1';
+      }
     }
 
     if(gradeSelect) gradeSelect.value = grade;
