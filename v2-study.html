@@ -207,6 +207,10 @@ window.showSummary = function() {
   document.getElementById('sumFuzzy').textContent = studyStats.fuzzy;
   document.getElementById('sumHard').textContent = studyStats.hard;
   document.getElementById('sumRate').textContent = r + '%';
+  var retryBtn = document.getElementById('summaryRetryWeakBtn');
+  if(retryBtn){
+    retryBtn.style.display = (studyStats.fuzzy===0 && studyStats.hard===0) ? 'none' : '';
+  }
   document.getElementById('summaryModal').style.display = 'flex';
 };
 
@@ -3818,6 +3822,10 @@ window.showSummary = function() {
   document.getElementById('sumFuzzy').textContent = studyStats.fuzzy;
   document.getElementById('sumHard').textContent = studyStats.hard;
   document.getElementById('sumRate').textContent = r + '%';
+  var retryBtn = document.getElementById('summaryRetryWeakBtn');
+  if(retryBtn){
+    retryBtn.style.display = (studyStats.fuzzy===0 && studyStats.hard===0) ? 'none' : '';
+  }
   document.getElementById('summaryModal').style.display = 'flex';
 };
 
