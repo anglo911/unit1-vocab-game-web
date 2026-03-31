@@ -74,6 +74,20 @@
     <h1>📘 检测区 2.0</h1>
 
   </div>
+
+<div class="card settings-card">
+  <div class="muted" style="text-align:center;margin-bottom:6px">📍题库选择（顶部）</div>
+  <div class="course-bar">
+    <select id="bookSelect" style="display:none"></select>
+    <select id="gradeSelect">
+      <option value="g1">1年级</option><option value="g2">2年级</option><option value="g3">3年级</option><option value="g4">4年级</option><option value="g5">5年级</option><option value="g6">6年级</option><option value="g7" selected>7年级</option><option value="g8">8年级</option><option value="g9">9年级</option>
+    </select>
+    <select id="termSelect"><option value="s">上册</option><option value="x" selected>下册</option></select>
+    <select id="unitSelect"><option value="unit1">Unit 1</option></select>
+  </div>
+  <div class="muted test-hint">题库选择与学习区风格一致，进入检测前可在此切换。</div>
+  <input id="className" type="hidden"><input id="studentName" type="hidden">
+</div>
   <div class="grid2">
   <div class="card" id="gameCard">
     <h2>1) 检测区</h2>
@@ -118,18 +132,6 @@
   </div>
   </div>
 
-<div class="card settings-card">
-  <div class="course-bar">
-    <select id="bookSelect" style="display:none"></select>
-    <select id="gradeSelect">
-      <option value="g1">1年级</option><option value="g2">2年级</option><option value="g3">3年级</option><option value="g4">4年级</option><option value="g5">5年级</option><option value="g6">6年级</option><option value="g7" selected>7年级</option><option value="g8">8年级</option><option value="g9">9年级</option>
-    </select>
-    <select id="termSelect"><option value="s">上册</option><option value="x" selected>下册</option></select>
-    <select id="unitSelect"><option value="unit1">Unit 1</option></select>
-  </div>
-  <div class="muted test-hint">题库选择与学习区风格一致，进入检测前可在此切换。</div>
-  <input id="className" type="hidden"><input id="studentName" type="hidden">
-</div>
 <div class="card study-page" style="display:none"><div id="studyProgress"></div><span id="studyProgressBar"></span><div id="studyWord"></div><div id="studyCn"></div><div id="studyIpa"></div><div id="studySplit"></div><div id="studyApprox"></div><div id="studyQuizWrap"></div><input id="studyQuizInput"><div id="studyCheckFb"></div><div id="studyStatus"></div><span id="studyTargetPill"></span><span id="studyDonePill"></span><span id="studyMasterPill"></span><select id="studyPlan"><option value="all">all</option></select><select id="studyMode"><option value="en2cn">en2cn</option></select><button id="startStudyBtn"></button><button id="speakStudyBtn"></button><button id="speakStudySlowBtn"></button><button id="studyHardBtn"></button><button id="studyFuzzyBtn"></button><button id="studyKnowBtn"></button><button id="prevStudyBtn"></button><button id="nextStudyBtn"></button><button id="speakSplitBtn"></button><button id="studyCheckBtn"></button><button id="studyHintBtn"></button><button id="studyRevealBtn"></button></div>
 <div id="dictCard" style="display:none">
     <h2>3) 单词听写</h2>
