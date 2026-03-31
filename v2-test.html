@@ -93,8 +93,12 @@
   <div class="grid2">
   <div class="card" id="gameCard">
 
-    <div class="row" style="margin-bottom:8px">
-      <select id="questionCount" style="max-width:130px"><option>10</option><option selected>20</option><option>30</option></select>
+    <div class="row" style="margin-bottom:8px;align-items:center;gap:10px;flex-wrap:wrap">
+      <span class="muted">检测数量</span>
+      <select id="questionCount" style="max-width:130px">
+        <option>10</option><option selected>20</option><option>30</option><option value="all">全部</option>
+      </select>
+      <span class="muted">检测难度</span>
       <select id="difficulty" style="max-width:180px"><option value="easy">简单</option><option value="normal" selected>标准</option><option value="hard">困难</option></select>
       <button class="pri" id="startBtn">开始闯关</button>
     </div>
@@ -1980,10 +1984,11 @@ function applyUnitBank(){
 function startGame(){
   className = $("className").value.trim() || "未命名班级";
   studentName = $("studentName").value.trim() || "匿名学生";
-  total = Number($("questionCount").value || 20);
+  const qcValue = $("questionCount").value || "20";
   difficulty = $("difficulty").value || 'normal';
   selectedUnit = $("unitSelect").value || 'unit1';
   applyUnitBank();
+  total = (qcValue === 'all') ? WORDS.length : Number(qcValue);
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
   combo=0; bestCombo=0; stage=1;
