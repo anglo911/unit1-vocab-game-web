@@ -12,11 +12,13 @@
     h1,h2{margin:0 0 6px} h1{font-size:26px;letter-spacing:.3px} h2{font-size:19px;text-align:left;padding-left:2px}
     .muted{color:var(--muted)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .header-card{text-align:center;padding:16px 14px;position:relative;max-width:760px;margin:0 auto 10px}
+    .header-card{text-align:center;padding:16px 14px;position:relative;margin:0 auto 10px}
     .back-home{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border:1px solid #d8cfc1;border-radius:8px;background:#fffaf3;color:#2f2a24;text-decoration:none;font-size:13px;font-weight:600}
-    .settings-card{padding:10px 12px;max-width:760px;margin:0 auto}
+    .settings-card{padding:10px 12px;margin:0 auto}
     .course-bar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap}
     .course-bar select{flex:1;min-width:0;max-width:220px;height:42px;font-size:15px}
+    /* 三块区域强制同宽 */
+    .header-card,.settings-card,#gameCard{width:min(760px, calc(100vw - 24px));max-width:min(760px, calc(100vw - 24px));margin-left:auto;margin-right:auto}
     .test-hint{text-align:center;font-size:13px;margin-top:6px}
     .settings-form{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;align-items:center}
     input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:9px;padding:8px;min-width:0}
@@ -38,7 +40,7 @@
     .fb{min-height:24px;font-weight:700;margin-top:6px}.good{color:#2f855a}.bad{color:#c05648}
     table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid #ece1d3;padding:8px;text-align:left;font-size:14px}
     .grid2{display:grid;grid-template-columns:1fr;gap:12px;max-width:980px;margin:0 auto}
-    #gameCard{max-width:760px;margin:0 auto}
+    #gameCard{margin:0 auto}
     .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 12px;justify-content:flex-start}
     .pill{padding:6px 10px;border:1px solid #d8cfc1;border-radius:999px;background:#fffaf3;font-size:13px}
     .bar{width:220px;height:10px;border-radius:999px;background:#ece1d3;overflow:hidden;border:1px solid #d8cfc1}
