@@ -3897,7 +3897,11 @@ window.showSummary = function() {
 
     let grade='g7', term='x', unit='unit8';
 
-    if(/^g[1-6]$/.test(bank)){
+    if(/^g[1-6][sx]$/.test(bank)){
+      grade = bank.slice(0,2);
+      term = bank.slice(2);
+      unit = `${grade}${term}_u1`;
+    } else if(/^g[1-6]$/.test(bank)){
       grade = bank;
       term = 's';
       unit = `${bank}s_u1`;
