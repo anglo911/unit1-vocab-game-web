@@ -37,6 +37,7 @@
     /* Course bar - horizontal selectors */
     .course-bar{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;justify-content:center}
     .course-bar select{flex:1;min-width:0;max-width:260px;height:44px;font-size:16px}
+    .course-home{height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid #d8cfc1;border-radius:10px;background:#fffaf3;color:#2f2a24;text-decoration:none;font-size:14px;font-weight:600;white-space:nowrap}
 
     /* Main word display */
     .word-display{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 8px;text-align:center}
@@ -96,6 +97,7 @@
   <div class="card" id="studyCard">
     <!-- Course selectors - horizontal row -->
     <div class="course-bar">
+      <a class="course-home" href="./v2.html">← 返回首页</a>
       <select id="bookSelect" style="display:none"></select>
       <select id="gradeSelect">
         <option value="g1">1年级</option>
