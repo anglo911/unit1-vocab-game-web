@@ -1020,7 +1020,8 @@ const DEFAULT_WORDS = [...UNIT1_WORDS];
 let WORDS = [...DEFAULT_WORDS];
 let pool=[], idx=0, score=0, wrongItems=[], current=null, mode="", started=false;
 let className="", studentName="", total=20;
-let combo=0, bestCombo=0, stage=1;
+let combo=0, bestCombo=0, stage=1, correctCount=0;
+let modePlan=[];
 let timer=30, timerId=null;
 let difficulty='normal';
 let selectedUnit='unit1';
@@ -1981,6 +1982,15 @@ function applyUnitBank(){
 }
 
 
+function buildModePlan(totalCount){
+  if(difficulty==='easy') return Array.from({length: totalCount}, (_,i)=> i%2===0 ? 'cn2en' : 'en2cn');
+  if(difficulty==='hard') return Array.from({length: totalCount}, ()=> 'dictation');
+  const half = Math.floor(totalCount/2);
+  const pickChoices = Array.from({length: half}, (_,i)=> i%2===0 ? 'cn2en' : 'en2cn');
+  const spells = Array.from({length: totalCount-half}, ()=> 'spell');
+  return shuffle([...pickChoices, ...spells]);
+}
+
 function startGame(){
   className = $("className").value.trim() || "未命名班级";
   studentName = $("studentName").value.trim() || "匿名学生";
@@ -1990,8 +2000,9 @@ function startGame(){
   applyUnitBank();
   total = (qcValue === 'all') ? WORDS.length : Number(qcValue);
   pool = pick(WORDS, Math.min(total, WORDS.length));
+  modePlan = buildModePlan(pool.length);
   idx=0; score=0; wrongItems=[]; started=true;
-  combo=0; bestCombo=0; stage=1;
+  combo=0; bestCombo=0; stage=1; correctCount=0;
   submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; redoWrongBtn.disabled=false; downloadWrongBtn.disabled=false;
   showQ();
 }
@@ -1999,27 +2010,28 @@ function startGame(){
 function showQ(){
   if(idx>=pool.length) return finish();
   current = pool[idx];
-  mode = randomMode();
+  mode = modePlan[idx] || randomMode();
   stage = Math.min(5, Math.floor(idx/5)+1);
-  const isBoss = idx === pool.length - 1; // 最后一题 Boss 关
-  if(isBoss) mode = 'spell';
   fb.textContent=""; fb.className="fb"; nextBtn.disabled=true; submitBtn.disabled=false;
   spellInput.value=""; opts.innerHTML="";
 
   const [en,cn] = current;
   if(mode==="cn2en"){
-    q.innerHTML = `【中译英（基础）】把中文选成英文：<br><b>${cn}</b>`;
+    q.innerHTML = `【中译英】把中文选成英文：<br><b>${cn}</b>`;
     renderChoice(en, WORDS.filter(w=>w[0]!==en).map(w=>w[0]));
   }else if(mode==="en2cn"){
-    q.innerHTML = `【英译中（基础）】选择英文词义：<br><b>${en}</b>`;
+    q.innerHTML = `【英译中】选择英文词义：<br><b>${en}</b>`;
     renderChoice(cn, WORDS.filter(w=>w[1]!==cn).map(w=>w[1]));
+  }else if(mode==="dictation"){
+    q.innerHTML = `【听音拼写】听读音，按词义+音标写英文：<br><b>${cn}</b><br><span class="muted">音标：${toIpaLike(en)}</span>`;
+    spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }else{
-    q.innerHTML = `${isBoss ? '👑【Boss关·拼写题】' : '【拼写题（进阶）】'}请根据中文写出英文：<br><b>${cn}</b>`;
+    q.innerHTML = `【拼写题】根据词义+音标写英文：<br><b>${cn}</b><br><span class="muted">音标：${toIpaLike(en)}</span>`;
     spellWrap.style.display="flex"; opts.style.display="none"; spellInput.focus();
   }
-  const baseTimer = difficulty==='easy' ? 35 : (difficulty==='hard' ? 27 : 30);
-  const stagePenalty = mode==='spell' ? Math.max(0, stage-1) : 0;
-  timer = Math.max(7, baseTimer - stagePenalty - (isBoss ? 2 : 0));
+  const baseTimer = difficulty==='easy' ? 35 : (difficulty==='hard' ? 26 : 30);
+  const stagePenalty = (mode==='spell' || mode==='dictation') ? Math.max(0, stage-1) : 0;
+  timer = Math.max(7, baseTimer - stagePenalty);
   startTimer();
   renderMeta();
   speakCurrentWord();
@@ -2037,10 +2049,10 @@ function renderChoice(correct,distr){
 }
 
 function randomMode(){
-  const r=Math.random();
-  if(difficulty==='easy') return r<0.45?"cn2en":r<0.9?"en2cn":"spell";      // 拼写少
-  if(difficulty==='hard') return r<0.2?"cn2en":r<0.4?"en2cn":"spell";       // 拼写多
-  return r<0.35?"cn2en":r<0.7?"en2cn":"spell";                               // 标准
+  // 简单：全选择题；标准：选择题/拼写各一半；困难：全听音拼写
+  if(difficulty==='easy') return Math.random()<0.5?"cn2en":"en2cn";
+  if(difficulty==='hard') return "dictation";
+  return Math.random()<0.5?(Math.random()<0.5?"cn2en":"en2cn"):"spell";
 }
 
 function submit(){
@@ -2048,7 +2060,7 @@ function submit(){
   stopTimer();
   const [en,cn] = current;
   let your="", correct="", right=false;
-  if(mode==="spell"){
+  if(mode==="spell" || mode==="dictation"){
     your=spellInput.value.trim(); if(!your) return alert("请输入答案");
     correct=en; right=your.toLowerCase()===correct.toLowerCase();
   }else{
@@ -2059,14 +2071,9 @@ function submit(){
   if(right){
     combo += 1;
     bestCombo = Math.max(bestCombo, combo);
-    const isBoss = idx === pool.length - 1;
-    const base=(mode==="spell"?12:4);  // 选择题低分、拼写题高分
-    const diffBonus = difficulty==='hard' ? 3 : (difficulty==='easy' ? 0 : 1);
-    const bonus=Math.min(14, Math.floor(combo*1.2)); // 连击加分更高
-    const bossBonus = isBoss ? 8 : 0;
-    const add=base+bonus+diffBonus+bossBonus;
-    score+=add;
-    fb.textContent=`✅ 正确 +${add}（连击 +${bonus}，难度 +${diffBonus}${bossBonus?`，Boss +${bossBonus}`:''}）`;
+    correctCount += 1;
+    score = Math.round((correctCount / Math.max(1, pool.length)) * 100);
+    fb.textContent=`✅ 正确（当前 ${score} 分）`;
     fb.className="fb good";
     playSfx('ok');
 
@@ -2074,7 +2081,6 @@ function submit(){
     nextBtn.disabled=true;
     renderMeta();
 
-    // 提交正确后自动下一题（Boss 关答对会进入结算）
     setTimeout(()=>{
       if(idx < pool.length){
         nextQ();
@@ -2084,6 +2090,7 @@ function submit(){
   }
   else {
     combo = 0;
+    score = Math.round((correctCount / Math.max(1, pool.length)) * 100);
     wrongItems.push({mode,en,cn,your,correct});
     fb.textContent=`❌ 正确答案：${correct}`;
     fb.className="fb bad";
@@ -2094,7 +2101,7 @@ function submit(){
 }
 
 function nextQ(){ idx++; showQ(); }
-function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; isRedoMode=false; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
+function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; correctCount=0; isRedoMode=false; pool=pick(WORDS, Math.min(total, WORDS.length)); modePlan=buildModePlan(pool.length); showQ(); }
 
 function redoWrong(){
   if(!wrongItems.length) return alert("当前没有错题可重做");
@@ -2105,9 +2112,12 @@ function redoWrong(){
     if(!seen.has(k)){ seen.add(k); uniq.push([w.en, w.cn]); }
   });
   pool = uniq;
+  modePlan = buildModePlan(pool.length);
   idx = 0;
   combo = 0;
   bestCombo = 0;
+  correctCount = 0;
+  score = 0;
   isRedoMode = true;
   fb.textContent = "🧠 已进入错题重做模式";
   fb.className = "fb";
@@ -2124,6 +2134,7 @@ function startTimer(){
       stopTimer();
       if(!submitBtn.disabled){
         combo = 0;
+        score = Math.round((correctCount / Math.max(1, pool.length)) * 100);
         wrongItems.push({mode, en: current?.[0]||"", cn: current?.[1]||"", your: "超时", correct: mode==="cn2en"?(current?.[0]||""):(mode==="en2cn"?(current?.[1]||""):(current?.[0]||""))});
         fb.textContent = "⏰ 超时，本题判错";
         fb.className = "fb bad";
@@ -2188,18 +2199,19 @@ function renderMeta(){
 
 function finish(){
   stopTimer();
+  score = Math.round((correctCount / Math.max(1, pool.length)) * 100);
   let level="💪 再练一轮会更稳";
-  if(difficulty==='hard'){ if(score>=190) level="🏆 大师级"; else if(score>=145) level="🌟 高阶通过"; }
-  else if(difficulty==='easy'){ if(score>=95) level="🏆 基础扎实"; else if(score>=70) level="🌟 入门通过"; }
-  else { if(score>=150) level="🏆 词汇达人"; else if(score>=110) level="🌟 掌握不错"; }
+  if(score>=90) level="🏆 优秀";
+  else if(score>=75) level="🌟 良好";
+  else if(score>=60) level="✅ 及格";
 
   const medals = [];
   if(bestCombo>=8) medals.push('🔥 连击王');
   if(wrongItems.length<=2) medals.push('🛡️ 稳定输出');
-  if(difficulty==='hard' && score>=145) medals.push('👑 困难征服者');
+  if(difficulty==='hard' && score>=85) medals.push('👑 困难征服者');
   if(isRedoMode && wrongItems.length===0) medals.push('🧠 纠错达人');
 
-  q.innerHTML=`🎉 本轮完成<br><b>总分：${score}</b> · ${level}<br>🔥 最高连击：x${bestCombo}<br>${medals.length?('🏅 勋章：'+medals.join(' / ')):'🏅 勋章：继续挑战'}`;
+  q.innerHTML=`🎉 本轮完成<br><b>总分：${score}分（百分制）</b> · ${level}<br>🔥 最高连击：x${bestCombo}<br>${medals.length?('🏅 勋章：'+medals.join(' / ')):'🏅 勋章：继续挑战'}`;
   opts.innerHTML=""; spellWrap.style.display="none"; fb.textContent=`错题数：${wrongItems.length}`;
   submitBtn.disabled=true; nextBtn.disabled=true; speakBtn.disabled=true;
   progressBar.style.width = `100%`;
