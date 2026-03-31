@@ -17,8 +17,8 @@
     .settings-card{padding:10px 12px;margin:0 auto}
     .course-bar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap}
     .course-bar select{flex:1;min-width:0;max-width:220px;height:42px;font-size:15px}
-    /* 三块区域强制同宽 */
-    .header-card,.settings-card,#gameCard{width:min(760px, calc(100vw - 24px));max-width:min(760px, calc(100vw - 24px));margin-left:auto;margin-right:auto}
+    .focus-col{width:min(760px, calc(100vw - 24px));margin:0 auto}
+    .header-card,.settings-card,#gameCard{width:100%;max-width:none;margin-left:0;margin-right:0}
     .test-hint{text-align:center;font-size:13px;margin-top:6px}
     .settings-form{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;align-items:center}
     input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:9px;padding:8px;min-width:0}
@@ -72,6 +72,7 @@
 </head>
 <body>
 <div class="wrap">
+  <div class="focus-col">
   <div class="card header-card">
     <a class="back-home" href="./v2.html">← 返回首页</a>
     <h1>📘 检测区 2.0</h1>
@@ -130,6 +131,7 @@
       <thead><tr><th>时间</th><th>班级</th><th>学生</th><th>题库</th><th>得分</th><th>错题</th><th>题量</th></tr></thead>
       <tbody id="rankBody"></tbody>
     </table>
+  </div>
   </div>
   </div>
 
