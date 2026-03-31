@@ -14,6 +14,7 @@
     .bank-section{background:#f5f1eb;border-radius:12px;padding:20px;margin:20px 0 8px;border:1px solid #e5ddd3}
     .bank-section h2{margin:0 0 16px;font-size:18px;color:#5a5247}
 
+    /* 同学习区样式 */
     .course-bar{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;justify-content:center}
     .course-bar select{flex:1;min-width:0;max-width:260px;height:44px;font-size:16px;background:#fffaf3;color:#2f2a24;border:1px solid #d8cfc1;border-radius:10px;padding:10px}
 
@@ -25,7 +26,12 @@
     .btn{display:block;text-decoration:none;background:#7b6ed6;color:#fff;padding:22px;border-radius:16px;font-size:24px;font-weight:700;text-align:center;cursor:pointer;border:none;width:100%}
     .btn.alt{background:#4a8f72}
     .sub{margin-top:10px;font-size:15px;color:#6b6257;text-align:center}
-    @media(max-width:700px){.grid{grid-template-columns:1fr}.course-bar{flex-wrap:wrap}.course-bar select{max-width:100%}}
+
+    @media(max-width:700px){
+      .grid{grid-template-columns:1fr}
+      .course-bar{flex-wrap:wrap}
+      .course-bar select{max-width:100%}
+    }
   </style>
 </head>
 <body>
@@ -36,7 +42,10 @@
 
       <div class="bank-section">
         <h2>🎯 选择题库</h2>
+
+        <!-- 直接复制学习区同款结构 -->
         <div class="course-bar">
+          <select id="bookSelect" style="display:none"></select>
           <select id="gradeSelect">
             <option value="g1">1年级</option>
             <option value="g2">2年级</option>
@@ -81,14 +90,15 @@
     const curBankName = document.getElementById('curBankName');
 
     function renderUnitOptions(){
-      const grade = gradeSelect.value;
-      const term = termSelect.value;
+      const grade = gradeSelect.value || 'g7';
+      const term = termSelect.value || 'x';
       let list = [];
 
       if(/^g[1-6]$/.test(grade)){
+        const g = grade.slice(1);
         list = Array.from({length:10}, (_,i)=>{
           const u=i+1;
-          return [`${grade}${term}_u${u}`, `Unit ${u}`];
+          return [`g${g}${term}_u${u}`, `Unit ${u}`];
         });
       }else if(grade==='g7'){
         if(term==='s'){
@@ -102,20 +112,22 @@
           ];
         }
       }else if(grade==='g8' || grade==='g9'){
+        const g = grade.slice(1);
         list = Array.from({length:14}, (_,i)=>{
           const u=i+1;
-          return [`${grade}${term}_u${u}`, `Unit ${u}`];
+          return [`g${g}${term}_u${u}`, `Unit ${u}`];
         });
       }
 
       unitSelect.innerHTML = '';
-      list.forEach(([v,t],i)=>{
+      list.forEach(([val,label],i)=>{
         const op = document.createElement('option');
-        op.value = v;
-        op.textContent = t;
+        op.value = val;
+        op.textContent = label;
         if(i===0) op.selected = true;
         unitSelect.appendChild(op);
       });
+
       updateCurrentText();
     }
 
@@ -125,14 +137,17 @@
       const u = unitSelect.value || '';
 
       if(/^g[1-6]$/.test(g)) return `${g}${t}`;
+
       if(g==='g7'){
         if(/^starter[123]$/.test(u)) return `g7${u}`;
         const m = u.match(/^unit(\d+)$/);
         if(m) return `g7u${m[1]}`;
       }
+
       if((g==='g8' || g==='g9') && /^g[89][sx]_u\d+$/i.test(u)){
         return u.replace('_u','-u');
       }
+
       return `${g}${t}`;
     }
 
@@ -152,9 +167,9 @@
       return true;
     }
 
-    gradeSelect.addEventListener('change', renderUnitOptions);
-    termSelect.addEventListener('change', renderUnitOptions);
-    unitSelect.addEventListener('change', updateCurrentText);
+    gradeSelect.onchange = renderUnitOptions;
+    termSelect.onchange = renderUnitOptions;
+    unitSelect.onchange = updateCurrentText;
 
     (function init(){
       const sg = localStorage.getItem('vocab-grade');
