@@ -7,14 +7,17 @@
   <style>
     :root{--bg:#f7f4ee;--card:#fffdf9;--line:#ddd5c7;--text:#2f2a24;--muted:#6b6257;--ok:#2f855a;--bad:#c05648;--pri:#5a67d8;--warn:#d69e2e}
     *{box-sizing:border-box} body{margin:0;background:linear-gradient(120deg,#f7f4ee,#efe7dc);color:var(--text);font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.5}
-    .wrap{max-width:1120px;margin:14px auto;padding:0 12px}
+    .wrap{max-width:980px;margin:12px auto;padding:0 12px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 8px 18px rgba(90,80,60,.08)}
     h1,h2{margin:0 0 6px} h1{font-size:26px;letter-spacing:.3px} h2{font-size:19px;text-align:left;padding-left:2px}
     .muted{color:var(--muted)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .header-card{text-align:center;padding:16px 14px;position:relative}
     .back-home{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border:1px solid #d8cfc1;border-radius:8px;background:#fffaf3;color:#2f2a24;text-decoration:none;font-size:13px;font-weight:600}
-    .settings-card{grid-column:1 / -1}
+    .settings-card{padding:10px 12px}
+    .course-bar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:nowrap}
+    .course-bar select{flex:1;min-width:0;max-width:220px;height:42px;font-size:15px}
+    .test-hint{text-align:center;font-size:13px;margin-top:6px}
     .settings-form{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:8px;align-items:center}
     input,select,textarea{background:#fffaf3;color:var(--text);border:1px solid #d8cfc1;border-radius:9px;padding:8px;min-width:0}
     input,select{height:38px;width:100%}
@@ -115,7 +118,18 @@
   </div>
   </div>
 
-<div class="card settings-card" style="display:none"><input id="className"><input id="studentName"><select id="bookSelect"></select><select id="gradeSelect"><option value="g1">1</option><option value="g2">2</option><option value="g3">3</option><option value="g4">4</option><option value="g5">5</option><option value="g6">6</option><option value="g7" selected>7</option><option value="g8">8</option><option value="g9">9</option></select><select id="termSelect"><option value="s">上</option><option value="x" selected>下</option></select><select id="unitSelect"><option value="unit1">Unit1</option></select></div>
+<div class="card settings-card">
+  <div class="course-bar">
+    <select id="bookSelect" style="display:none"></select>
+    <select id="gradeSelect">
+      <option value="g1">1年级</option><option value="g2">2年级</option><option value="g3">3年级</option><option value="g4">4年级</option><option value="g5">5年级</option><option value="g6">6年级</option><option value="g7" selected>7年级</option><option value="g8">8年级</option><option value="g9">9年级</option>
+    </select>
+    <select id="termSelect"><option value="s">上册</option><option value="x" selected>下册</option></select>
+    <select id="unitSelect"><option value="unit1">Unit 1</option></select>
+  </div>
+  <div class="muted test-hint">题库选择与学习区风格一致，进入检测前可在此切换。</div>
+  <input id="className" type="hidden"><input id="studentName" type="hidden">
+</div>
 <div class="card study-page" style="display:none"><div id="studyProgress"></div><span id="studyProgressBar"></span><div id="studyWord"></div><div id="studyCn"></div><div id="studyIpa"></div><div id="studySplit"></div><div id="studyApprox"></div><div id="studyQuizWrap"></div><input id="studyQuizInput"><div id="studyCheckFb"></div><div id="studyStatus"></div><span id="studyTargetPill"></span><span id="studyDonePill"></span><span id="studyMasterPill"></span><select id="studyPlan"><option value="all">all</option></select><select id="studyMode"><option value="en2cn">en2cn</option></select><button id="startStudyBtn"></button><button id="speakStudyBtn"></button><button id="speakStudySlowBtn"></button><button id="studyHardBtn"></button><button id="studyFuzzyBtn"></button><button id="studyKnowBtn"></button><button id="prevStudyBtn"></button><button id="nextStudyBtn"></button><button id="speakSplitBtn"></button><button id="studyCheckBtn"></button><button id="studyHintBtn"></button><button id="studyRevealBtn"></button></div>
 <div id="dictCard" style="display:none">
     <h2>3) 单词听写</h2>
