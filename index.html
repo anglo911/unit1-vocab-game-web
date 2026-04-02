@@ -1163,6 +1163,9 @@ let timer=30, timerId=null;
 let difficulty='normal';
 let selectedUnit='unit1';
 let isRedoMode=false;
+let redoQueue=[];
+let redoRound=1;
+let redoBasePool=[];
 let studyList=[];
 let studyIdx=0;
 let studyHardQueue=[];
@@ -2129,12 +2132,26 @@ function startGame(){
   pool = pick(WORDS, Math.min(total, WORDS.length));
   idx=0; score=0; wrongItems=[]; started=true;
   combo=0; bestCombo=0; stage=1;
+  isRedoMode=false; redoQueue=[]; redoRound=1; redoBasePool=[];
   submitBtn.disabled=false; speakBtn.disabled=false; restartBtn.disabled=false; redoWrongBtn.disabled=false; downloadWrongBtn.disabled=false;
   showQ();
 }
 
 function showQ(){
-  if(idx>=pool.length) return finish();
+  if(idx>=pool.length){
+    if(isRedoMode && redoQueue.length){
+      pool = [...redoBasePool];
+      redoQueue = [];
+      idx = 0;
+      combo = 0;
+      bestCombo = 0;
+      redoRound += 1;
+      fb.textContent = `🔁 错题重学第${redoRound}轮（全量覆盖 ${pool.length}题）`;
+      fb.className = "fb";
+    }else{
+      return finish();
+    }
+  }
   current = pool[idx];
   mode = randomMode();
   stage = Math.min(5, Math.floor(idx/5)+1);
@@ -2222,7 +2239,14 @@ function submit(){
   else {
     combo = 0;
     wrongItems.push({mode,en,cn,your,correct});
-    fb.textContent=`❌ 正确答案：${correct}`;
+    if(isRedoMode){
+      const key = `${en}|||${cn}`;
+      const exists = redoQueue.some(item=>`${item[0]}|||${item[1]}`===key);
+      if(!exists) redoQueue.push([en,cn]);
+      fb.textContent=`❌ 正确答案：${correct}（已加入下一轮重学）`;
+    }else{
+      fb.textContent=`❌ 正确答案：${correct}`;
+    }
     fb.className="fb bad";
     playSfx('bad');
   }
@@ -2231,7 +2255,7 @@ function submit(){
 }
 
 function nextQ(){ idx++; showQ(); }
-function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; isRedoMode=false; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
+function restartRound(){ if(!started) return; idx=0; score=0; wrongItems=[]; combo=0; bestCombo=0; stage=1; isRedoMode=false; redoQueue=[]; redoRound=1; redoBasePool=[]; pool=pick(WORDS, Math.min(total, WORDS.length)); showQ(); }
 
 function redoWrong(){
   if(!wrongItems.length) return alert("当前没有错题可重做");
@@ -2246,7 +2270,10 @@ function redoWrong(){
   combo = 0;
   bestCombo = 0;
   isRedoMode = true;
-  fb.textContent = "🧠 已进入错题重做模式";
+  redoQueue = [];
+  redoRound = 1;
+  redoBasePool = [...uniq];
+  fb.textContent = "🧠 已进入错题重做模式（第1轮）";
   fb.className = "fb";
   showQ();
 }
@@ -2316,7 +2343,7 @@ function playSfx(type='ok'){
 }
 
 function renderMeta(){
-  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · ${selectedUnit.toUpperCase()} · 难度 ${difficulty}${isRedoMode?' · 错题重做':''}`;
+  meta.textContent=`第 ${Math.min(idx+1,pool.length)}/${pool.length} 题 · 得分 ${score} · 错题 ${wrongItems.length} · ${className} / ${studentName} · ${selectedUnit.toUpperCase()} · 难度 ${difficulty}${isRedoMode?` · 错题重做·第${redoRound}轮`:''}`;
   stagePill.textContent = `关卡 Lv.${stage}`;
   comboPill.textContent = `连击 x${combo}`;
   const pct = pool.length ? Math.round((idx / pool.length) * 100) : 0;
