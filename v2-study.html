@@ -2939,7 +2939,7 @@ function renderUnitOptions(){
     else list = [['unit8','Unit 1'],['unit9','Unit 2'],['unit10','Unit 3'],['unit11','Unit 4'],['unit12','Unit 5'],['unit13','Unit 6'],['unit14','Unit 7'],['unit15','Unit 8'],['mix','Unit1~8 混合']];
   }else if(grade==='g8'){
     const g = grade.slice(1);
-    const maxUnits = term==='x' ? 8 : 14; // 八下按用户要求删除 Unit 9 及以上
+    const maxUnits = 8; // 八年级上下册都只保留 Unit 1~8
     list = Array.from({length:maxUnits}, (_,i)=>{
       const u=i+1;
       return [`g${g}${term}_u${u}`, `Unit ${u}`];
