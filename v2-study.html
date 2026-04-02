@@ -2621,9 +2621,60 @@ let ALL_UNITS = {
   g6x_u10: G6X_U10_WORDS,
 };
 
-// 八下兼容补丁：当前题库仅到 g8x_u6，避免 Unit 7 回退到默认 UNIT1(name...)
+// 八下用户校对补丁：Unit 6 / Unit 7 / Unit 8（按用户提供词汇页重导）
+ALL_UNITS['g8x_u6'] = [
+  ["shake","（与某人）握手；摇动"],["shook","shake的过去式"],["shaken","shake的过去分词"],["bow","鞠躬"],["bump","碰；撞；肿块"],
+  ["fist","拳头"],["rub","揉；搓"],["kiss","亲吻"],["cheek","脸颊"],["hug","拥抱"],
+  ["embarrassed","尴尬的"],["confused","困惑的"],["formal","正式的"],["curry","咖喱"],["rude","粗鲁的"],
+  ["uncommon","罕见的；不寻常的"],["palm","手掌"],["namaste","合十礼（问候语）"],["fork","餐叉"],["Indian","印度的；印度人的"],
+  ["manner","方式；礼仪"],["so ... that","如此……以至于"],["confusing","令人困惑的"],["unless","除非"],["proper","恰当的；正确的"],
+  ["sit up","坐直"],["keep ... off","使避开"],["elbow","肘部"],["serving","分菜用的"],["chopstick","筷子"],
+  ["serving chopsticks","公筷"],["embarrassing","使人难堪的"],["be / get used to","习惯于"],["cultural","文化的；与文化有关的"],["hear from","收到……的来信（消息）"],
+  ["custom","习俗"],["occasion","场合；重大活动"],["nicely","礼貌地；令人愉快地"],["blouse","女式衬衫（短上衣）"],["private","私人的"],
+  ["whether","是否"],["married","已婚的；婚姻的"],["merci","谢谢（法语）"],["go a long way","帮助很大"],["au revoir","再见（法语）"],
+  ["unsafe","不安全的"],["improper","不合适的"],["informal","非正式的"],["jeans","牛仔裤"],["marry","结婚"],
+  ["congratulate","祝贺"],["Asian","亚洲的；亚洲人"],["tradition","传统"],["firstly","第一；首先"],["secondly","第二；其次"],
+  ["thirdly","第三"],["correctly","正确地；得体地"],["receive","收到"],["sign-off","结束写信"],["main","主要的"],
+  ["in one's forties","在某人四十多岁时"],["false","错误的；不真实的"],["impression","印象"],["cheer","欢呼；庆祝"],["cheers","干杯"],
+  ["Ji-Hoon","智勋（人名）"],["Kaito","海斗（人名）"],["Marie","玛丽（人名）"],["Turkiye","土耳其"],["Mexico","墨西哥"],["Peru","秘鲁"],["Germany","德国"],["Paris","巴黎"]
+];
+
+ALL_UNITS['g8x_u7'] = [
+  ["a good read","好的读物；好书（或文章等）"],["adventure","冒险；冒险经历"],["fantasy","幻想；幻想作品"],["mystery","悬疑小说（或电影、戏剧）；奥秘"],["fiction","小说"],
+  ["science fiction","科幻小说（或影片等）"],["detective","侦探"],["alien","外星人"],["attack","攻击；进攻"],["historical","历史的；有关历史的"],
+  ["force","迫使；武力"],["steal","偷；窃取"],["punish","处罚"],["idiom","习语；成语"],["recently","最近"],
+  ["lost","迷路的；丢失的；失去的"],["get lost","迷路"],["hear of","听说；得知"],["recommend","推荐；建议"],["society","社会；社团"],
+  ["literary","文学的；文学上的"],["base","以……为基础；基础；根据地"],["base on","以……为基础；以……为根据"],["summary","总结；概要"],["spoiled","宠坏的"],
+  ["selfish","自私的"],["lock","锁上；锁"],["lock up","锁好（门）"],["unlock","开锁；揭开"],["hidden","隐藏的；秘密的"],
+  ["nobody","没有人"],["therefore","因此；所以"],["state","状态；陈述；说明"],["weak","虚弱的；（能力）弱的"],["secretly","秘密地"],
+  ["prove","证明；证实"],["get to one's feet","站起身来"],["day by day","一天天；逐日"],["build-up","准备过程；铺垫"],["climax","高潮；极点"],
+  ["effect","影响；效果"],["in time","及时；来得及"],["reader","读者；简易读物"],["librarian","图书管理员"],["consider","考虑；认为"],
+  ["enemy","敌人"],["naughty","淘气的"],["gentle","温和的"],["defeat","击败；失败"],["recommendation","推荐；提议"],
+  ["basic","基本的；初步的"],["American","美国的；美国人"],["bone","骨头"],["doubt","怀疑；不确定"],["destroy","毁坏；摧毁"],
+  ["introduction","引言；序言"],
+  ["Journey to the West","《西游记》"],["The Romance of the Three Kingdoms","《三国演义》"],["Oliver Twist","《雾都孤儿》"],["Alice's Adventures in Wonderland","《爱丽丝梦游仙境》"],["The Adventures of Tom Sawyer","《汤姆·索亚历险记》"],["The Little Prince","《小王子》"],["The Little Match Girl","《卖火柴的小女孩》"],["Outlaws of the Marsh","《水浒传》"],["My Childhood","《童年》"],["The Wonderful Wizard of Oz","《绿野仙踪》"],["A Dream of Red Mansions","《红楼梦》"],["The Old Man and the Sea","《老人与海》"]
+];
+
+ALL_UNITS['g8x_u8'] = [
+  ["make a difference","有（重要）作用"],["visitor","参观者；来访者"],["elderly","上了年纪的"],["the elderly","老人"],["organization","组织；机构"],
+  ["stadium","体育馆；运动场"],["provide","提供；给予"],["owner","物主；主人"],["cage","笼子"],["donation","捐赠；捐赠物"],
+  ["shelter","居所；避难所"],["youth","青年；青年时期"],["active","活跃的；积极的"],["come along","跟着来；出现"],["army","军队"],
+  ["primary","小学教育的；首要的"],["help out","分担工作；帮忙"],["charity","慈善机构；慈善事业"],["warmly","热情地"],["lady","女士；淑女"],
+  ["gentleman","先生；男士"],["bark","（狗）吠叫"],["sign up","报名"],["ever since","自……以后"],["adult","成年人；成年的"],
+  ["missing","失踪的；找不到的"],["practical","实用的；实际的"],["life-saving","救命的"],["teamwork","团队合作"],["successful","成功的"],
+  ["most of all","最主要的是"],["value","重要作用；价值"],["voluntary","自愿的；无偿的"],["ordinary","普通的"],["worth","值得；有价值"],
+  ["audience","听众；观众"],["willing","乐意的；愿意的"],["on the go","忙碌的"],["in need","在困境中；生活困难"],["success","成功"],
+  ["elder","年长者"],["donate","捐赠"],["pocket","口袋"],["effort","努力；艰难尝试"],["hand out","分发"],
+  ["familiar with","熟悉；通晓"],["talent","天赋；才能"],["madam","女士；夫人"],["advertisement","广告；启事"],["interviewer","采访者；面试官"],
+  ["United Nations Peacekeeping","联合国维和部队"],["Blue Sky Rescue","蓝天救援队"],["Philippines","菲律宾"],["Argentina","阿根廷"],["Robert","罗伯特"],["Rose","罗斯"]
+];
+
+// 兜底：若后续题库构建缺失，仍保留可练词库
 if(!ALL_UNITS['g8x_u7'] && ALL_UNITS['g8x_u6']){
   ALL_UNITS['g8x_u7'] = [...ALL_UNITS['g8x_u6']];
+}
+if(!ALL_UNITS['g8x_u8'] && ALL_UNITS['g8x_u7']){
+  ALL_UNITS['g8x_u8'] = [...ALL_UNITS['g8x_u7']];
 }
 
 // 八上用户校对补丁：Unit 7 / Unit 8
