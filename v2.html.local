@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>成长教育学单词 2.0</title>
+  <style>
+    body{margin:0;font-family:Arial,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#f7f4ee,#efe7dc);color:#2f2a24}
+    .wrap{max-width:860px;margin:60px auto;padding:24px}
+    .card{background:#fffdf9;border:1px solid #ddd5c7;border-radius:18px;padding:28px;box-shadow:0 10px 24px rgba(90,80,60,.08)}
+    h1{margin:0 0 8px;font-size:34px}
+    .muted{color:#6b6257}
+
+    .bank-section{background:#f5f1eb;border-radius:12px;padding:20px;margin:20px 0 8px;border:1px solid #e5ddd3}
+    .bank-section h2{margin:0 0 16px;font-size:18px;color:#5a5247}
+
+    /* 同学习区样式 */
+    .course-bar{display:flex;gap:10px;align-items:center;flex-wrap:nowrap;justify-content:center}
+    .course-bar select{flex:1;min-width:0;max-width:260px;height:44px;font-size:16px;background:#fffaf3;color:#2f2a24;border:1px solid #d8cfc1;border-radius:10px;padding:10px}
+
+    .cur-bank{margin:14px 0 4px;padding:12px;background:#fff;border-radius:8px;border-left:4px solid #7b6ed6}
+    .cur-bank .label{font-size:12px;color:#888;margin-bottom:4px}
+    .cur-bank .name{font-size:16px;font-weight:600;color:#2f2a24}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .btn{display:block;text-decoration:none;background:#7b6ed6;color:#fff;padding:22px;border-radius:12px;font-size:18px;font-weight:700;text-align:center;cursor:pointer;border:none;width:88%;margin:0 auto}
+    .btn.alt{background:#4a8f72}
+    .sub{margin-top:6px;font-size:13px;color:#6b6257;text-align:center}
+
+    @media(max-width:700px){
+      .grid{grid-template-columns:1fr}
+      .course-bar{flex-wrap:wrap}
+      .course-bar select{max-width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>📘 成长教育学单词 2.0</h1>
+      <div class="muted">当前 1.0 保留不动，这里先开始拆成学习区 / 检测区双页结构。</div>
+
+      <div class="bank-section">
+        <h2>🎯 选择题库</h2>
+
+        <!-- 直接复制学习区同款结构 -->
+        <div class="course-bar">
+          <select id="bookSelect" style="display:none"></select>
+          <select id="gradeSelect">
+            <option value="g1">1年级</option>
+            <option value="g2">2年级</option>
+            <option value="g3">3年级</option>
+            <option value="g4">4年级</option>
+            <option value="g5">5年级</option>
+            <option value="g6">6年级</option>
+            <option value="g7" selected>7年级</option>
+            <option value="g8">8年级</option>
+            <option value="g9">9年级</option>
+          </select>
+          <select id="termSelect">
+            <option value="s">上册</option>
+            <option value="x" selected>下册</option>
+          </select>
+          <select id="unitSelect"></select>
+        </div>
+
+        <div class="cur-bank" id="curBank">
+          <div class="label">当前选择</div>
+          <div class="name" id="curBankName">-</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <a class="btn" href="./v2-study.html" onclick="return goWithBank()">进入学习区</a>
+          <div class="sub">设置 + 生字学习</div>
+        </div>
+        <div>
+          <a class="btn alt" href="./v2-test.html" onclick="return goWithBank()">进入检测区</a>
+          <div class="sub">闯关 + 成绩</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const gradeSelect = document.getElementById('gradeSelect');
+    const termSelect = document.getElementById('termSelect');
+    const unitSelect = document.getElementById('unitSelect');
+    const curBankName = document.getElementById('curBankName');
+
+    function renderUnitOptions(){
+      const grade = gradeSelect.value || 'g7';
+      const term = termSelect.value || 'x';
+      let list = [];
+
+      if(/^g[1-6]$/.test(grade)){
+        const g = grade.slice(1);
+        list = Array.from({length:10}, (_,i)=>{
+          const u=i+1;
+          return [`g${g}${term}_u${u}`, `Unit ${u}`];
+        });
+      }else if(grade==='g7'){
+        if(term==='s'){
+          list = [
+            ['starter1','Starter Unit 1'],['starter2','Starter Unit 2'],['starter3','Starter Unit 3'],
+            ['unit1','Unit 1'],['unit2','Unit 2'],['unit3','Unit 3'],['unit4','Unit 4'],['unit5','Unit 5'],['unit6','Unit 6'],['unit7','Unit 7']
+          ];
+        }else{
+          list = [
+            ['unit8','Unit 1'],['unit9','Unit 2'],['unit10','Unit 3'],['unit11','Unit 4'],['unit12','Unit 5'],['unit13','Unit 6'],['unit14','Unit 7'],['unit15','Unit 8']
+          ];
+        }
+      }else if(grade==='g8' || grade==='g9'){
+        const g = grade.slice(1);
+        list = Array.from({length:14}, (_,i)=>{
+          const u=i+1;
+          return [`g${g}${term}_u${u}`, `Unit ${u}`];
+        });
+      }
+
+      unitSelect.innerHTML = '';
+      list.forEach(([val,label],i)=>{
+        const op = document.createElement('option');
+        op.value = val;
+        op.textContent = label;
+        if(i===0) op.selected = true;
+        unitSelect.appendChild(op);
+      });
+
+      updateCurrentText();
+    }
+
+    function buildBankCode(){
+      const g = gradeSelect.value;
+      const t = termSelect.value;
+      const u = unitSelect.value || '';
+
+      if(/^g[1-6]$/.test(g)) return `${g}${t}`;
+
+      if(g==='g7'){
+        if(/^starter[123]$/.test(u)) return `g7${u}`;
+        const m = u.match(/^unit(\d+)$/);
+        if(m) return `g7u${m[1]}`;
+      }
+
+      if((g==='g8' || g==='g9') && /^g[89][sx]_u\d+$/i.test(u)){
+        return u.replace('_u','-u');
+      }
+
+      return `${g}${t}`;
+    }
+
+    function updateCurrentText(){
+      const gtxt = gradeSelect.options[gradeSelect.selectedIndex]?.text || '';
+      const ttxt = termSelect.options[termSelect.selectedIndex]?.text || '';
+      const utxt = unitSelect.options[unitSelect.selectedIndex]?.text || '';
+      curBankName.textContent = `${gtxt} · ${ttxt} · ${utxt}`;
+    }
+
+    function goWithBank(){
+      const bank = buildBankCode();
+      localStorage.setItem('vocab-bank', bank);
+      localStorage.setItem('vocab-grade', gradeSelect.value);
+      localStorage.setItem('vocab-term', termSelect.value);
+      localStorage.setItem('vocab-unit', unitSelect.value || '');
+      return true;
+    }
+
+    gradeSelect.onchange = renderUnitOptions;
+    termSelect.onchange = renderUnitOptions;
+    unitSelect.onchange = updateCurrentText;
+
+    (function init(){
+      const sg = localStorage.getItem('vocab-grade');
+      const st = localStorage.getItem('vocab-term');
+      const su = localStorage.getItem('vocab-unit');
+      if(sg && [...gradeSelect.options].some(o=>o.value===sg)) gradeSelect.value = sg;
+      if(st && [...termSelect.options].some(o=>o.value===st)) termSelect.value = st;
+      renderUnitOptions();
+      if(su && [...unitSelect.options].some(o=>o.value===su)) unitSelect.value = su;
+      updateCurrentText();
+    })();
+
+    window.goWithBank = goWithBank;
+  </script>
+</body>
+</html>
