@@ -113,7 +113,8 @@
         }
       }else if(grade==='g8' || grade==='g9'){
         const g = grade.slice(1);
-        list = Array.from({length:14}, (_,i)=>{
+        const maxUnits = (grade==='g8' && term==='x') ? 8 : 14; // 八下仅保留 Unit 1~8
+        list = Array.from({length:maxUnits}, (_,i)=>{
           const u=i+1;
           return [`g${g}${term}_u${u}`, `Unit ${u}`];
         });
