@@ -1559,7 +1559,7 @@ const RJ_G8X_TOPICS = [
     ["advertisement","广告；启事"],
     ["interviewer","采访者"]
   ]
-]
+];
 const RJ_G9S_TOPICS = [
   [
     ["textbook","教科书；课本"],
@@ -2620,6 +2620,11 @@ let ALL_UNITS = {
   g6x_u9: G6X_U9_WORDS,
   g6x_u10: G6X_U10_WORDS,
 };
+
+// 八下兼容补丁：当前题库仅到 g8x_u6，避免 Unit 7 回退到默认 UNIT1(name...)
+if(!ALL_UNITS['g8x_u7'] && ALL_UNITS['g8x_u6']){
+  ALL_UNITS['g8x_u7'] = [...ALL_UNITS['g8x_u6']];
+}
 
 // 八上用户校对补丁：Unit 7 / Unit 8
 ALL_UNITS['g8s_u7'] = [
