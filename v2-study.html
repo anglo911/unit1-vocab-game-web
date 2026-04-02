@@ -2868,7 +2868,13 @@ function loadCustomBooks(){
 }
 function saveCustomBooks(){ localStorage.setItem(CUSTOM_BOOKS_KEY, JSON.stringify(CUSTOM_BOOKS)); }
 function loadCustomOverrides(){
-  try{ return JSON.parse(localStorage.getItem(CUSTOM_OVERRIDES_KEY) || '{}') || {}; }catch{ return {}; }
+  try{
+    const data = JSON.parse(localStorage.getItem(CUSTOM_OVERRIDES_KEY) || '{}') || {};
+    // 八下用户锁定单元：忽略旧缓存覆盖，始终使用内置校对词表
+    ['g8x_u6','g8x_u7','g8x_u8'].forEach(k=>{ if(k in data) delete data[k]; });
+    localStorage.setItem(CUSTOM_OVERRIDES_KEY, JSON.stringify(data));
+    return data;
+  }catch{ return {}; }
 }
 function saveCustomOverrides(){ localStorage.setItem(CUSTOM_OVERRIDES_KEY, JSON.stringify(CUSTOM_OVERRIDES)); }
 function isCustomBookValue(v){ return String(v||'').startsWith('custom:'); }
@@ -4138,6 +4144,18 @@ function importCurrentUnit(){
     unitSelect.value = customUnitKey(book.id, term, u);
   }else{
     const key = unitSelect.value || selectedUnit || 'unit1';
+    const lockedKeys = ['g8x_u6','g8x_u7','g8x_u8'];
+    if(lockedKeys.includes(key)){
+      if(CUSTOM_OVERRIDES[key]){
+        delete CUSTOM_OVERRIDES[key];
+        saveCustomOverrides();
+      }
+      alert('该单元已锁定为校对词表，不能再被导入覆盖。');
+      importStatus.textContent = `已保持内置校对词表：${key.toUpperCase()}`;
+      selectedUnit = unitSelect.value || selectedUnit || 'unit1';
+      startStudy(); startDict(); applyUnitBank();
+      return;
+    }
     CUSTOM_OVERRIDES[key] = pairs;
     saveCustomOverrides();
   }
